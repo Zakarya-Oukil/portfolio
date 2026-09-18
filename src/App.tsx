@@ -526,9 +526,17 @@ function SoftIconButton({
 function SystemTopChrome({
   osMode,
   onSwitchOS,
+  onOpenControlCenter,
+  isIslandExpanded,
+  onToggleIsland,
+  isDark,
 }: {
   osMode: "ios" | "android" | "desktop";
   onSwitchOS: (mode: "ios" | "android" | "desktop") => void;
+  onOpenControlCenter: () => void;
+  isIslandExpanded: boolean;
+  onToggleIsland: () => void;
+  isDark?: boolean;
 }) {
   const [time, setTime] = useState("09:41");
 
@@ -547,17 +555,53 @@ function SystemTopChrome({
     return () => clearInterval(iv);
   }, []);
 
+  const topPanResponder = useMemo(() => {
+    return PanResponder.create({
+      onStartShouldSetPanResponder: () => false,
+      onMoveShouldSetPanResponder: (_, gs) => {
+        return gs.dy > 12 && gs.dy > Math.abs(gs.dx);
+      },
+      onPanResponderRelease: (_, gs) => {
+        if (gs.dy > 25 || gs.vy > 0.35) {
+          onOpenControlCenter();
+        }
+      },
+    });
+  }, [onOpenControlCenter]);
+
   if (osMode === "ios") {
     return (
-      <View style={styles.iosTopChrome}>
-        <Text style={styles.iosClockText}>{time}</Text>
-        <View style={styles.dynamicIsland}>
-          <View style={styles.dynamicIslandLens} />
-          <View style={styles.dynamicIslandDot} />
-        </View>
-        <View style={styles.iosRightStatus}>
-          <Text style={styles.iosStatusGlyph}>5G</Text>
-          <Text style={styles.iosStatusGlyph}>🔋</Text>
+      <View style={styles.systemTopChromeWrapper} pointerEvents="box-none">
+        <View {...topPanResponder.panHandlers} style={styles.iosTopChrome}>
+          <Pressable onPress={onOpenControlCenter} style={{ cursor: "pointer" }}>
+            <Text style={[styles.iosClockText, isDark && { color: "#FFFFFF" }]}>
+              {time}
+            </Text>
+          </Pressable>
+
+          <Pressable
+            onPress={onToggleIsland}
+            onLongPress={onOpenControlCenter}
+            accessibilityRole="button"
+            accessibilityLabel="Dynamic Island - Tap to expand, drag down for Control Center"
+            style={styles.dynamicIsland}
+          >
+            <View style={styles.dynamicIslandLens} />
+            <View style={styles.dynamicIslandDot} />
+          </Pressable>
+
+          <Pressable
+            onPress={onOpenControlCenter}
+            style={[styles.iosRightStatus, { cursor: "pointer" }]}
+            hitSlop={10}
+          >
+            <Text style={[styles.iosStatusGlyph, isDark && { color: "#FFFFFF" }]}>
+              5G
+            </Text>
+            <Text style={[styles.iosStatusGlyph, isDark && { color: "#FFFFFF" }]}>
+              🔋
+            </Text>
+          </Pressable>
         </View>
       </View>
     );
@@ -565,16 +609,26 @@ function SystemTopChrome({
 
   if (osMode === "android") {
     return (
-      <View style={styles.androidTopChrome}>
-        <View style={styles.androidLeftStatus}>
-          <Text style={styles.androidClockText}>{time}</Text>
-          <Text style={styles.androidNotifGlyph}>🛡</Text>
-          <Text style={styles.androidNotifGlyph}>⚡</Text>
-        </View>
-        <View style={styles.punchHoleCutout} />
-        <View style={styles.androidRightStatus}>
-          <Text style={styles.androidStatusGlyph}>📶</Text>
-          <Text style={styles.androidStatusGlyph}>88%</Text>
+      <View style={styles.systemTopChromeWrapper} pointerEvents="box-none">
+        <View {...topPanResponder.panHandlers} style={styles.androidTopChrome}>
+          <Pressable onPress={onOpenControlCenter} style={[styles.androidLeftStatus, { cursor: "pointer" }]}>
+            <Text style={[styles.androidClockText, isDark && { color: "#FFFFFF" }]}>
+              {time}
+            </Text>
+            <Text style={styles.androidNotifGlyph}>🛡</Text>
+            <Text style={styles.androidNotifGlyph}>⚡</Text>
+          </Pressable>
+
+          <Pressable onPress={onOpenControlCenter} style={[styles.punchHoleCutout, { cursor: "pointer" }]} />
+
+          <Pressable onPress={onOpenControlCenter} style={[styles.androidRightStatus, { cursor: "pointer" }]}>
+            <Text style={[styles.androidStatusGlyph, isDark && { color: "#FFFFFF" }]}>
+              📶
+            </Text>
+            <Text style={[styles.androidStatusGlyph, isDark && { color: "#FFFFFF" }]}>
+              88%
+            </Text>
+          </Pressable>
         </View>
       </View>
     );
@@ -582,54 +636,578 @@ function SystemTopChrome({
 
   // Desktop Ribbon
   return (
-    <View style={styles.desktopTopChrome}>
-      <View style={styles.desktopWindowControls}>
-        <View style={[styles.windowDot, { backgroundColor: "#EF4444" }]} />
-        <View style={[styles.windowDot, { backgroundColor: "#F59E0B" }]} />
-        <View style={[styles.windowDot, { backgroundColor: "#10B981" }]} />
+    <View style={styles.systemTopChromeWrapper} pointerEvents="box-none">
+      <View style={styles.desktopTopChrome}>
+        <View style={styles.desktopWindowControls}>
+          <Pressable
+            onPress={onOpenControlCenter}
+            accessibilityLabel="Control Center"
+            style={[styles.windowDot, { backgroundColor: "#EF4444", cursor: "pointer" }]}
+          />
+          <Pressable
+            onPress={() => onSwitchOS("ios")}
+            accessibilityLabel="Toggle Mobile Mode"
+            style={[styles.windowDot, { backgroundColor: "#F59E0B", cursor: "pointer" }]}
+          />
+          <Pressable
+            onPress={onOpenControlCenter}
+            accessibilityLabel="Maximize System"
+            style={[styles.windowDot, { backgroundColor: "#10B981", cursor: "pointer" }]}
+          />
+        </View>
+        <Text style={styles.desktopTitleText}>ZakOS Desktop Web • Portfolio</Text>
+        <Pressable
+          onPress={onOpenControlCenter}
+          style={[styles.desktopRightStatus, { cursor: "pointer" }]}
+        >
+          <Text style={styles.desktopStatusGlyph}>⚡ 88%</Text>
+          <Text style={styles.desktopStatusGlyph}>📶</Text>
+          <Text style={styles.desktopStatusTime}>{time}</Text>
+          <Text style={[styles.desktopStatusGlyph, { marginLeft: 4 }]}>⚙ Control</Text>
+        </Pressable>
       </View>
-      <Text style={styles.desktopTitleText}>ZakOS Desktop Web • Portfolio</Text>
-      <View style={styles.desktopRightStatus}>
-        <Text style={styles.desktopStatusGlyph}>⚡ 88%</Text>
-        <Text style={styles.desktopStatusGlyph}>📶</Text>
-        <Text style={styles.desktopStatusTime}>{time}</Text>
-      </View>
+    </View>
+  );
+}
+
+function DynamicIslandOverlay({
+  onClose,
+  onOpenControlCenter,
+  currentProject,
+}: {
+  onClose: () => void;
+  onOpenControlCenter: () => void;
+  currentProject?: any;
+}) {
+  const expandAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.spring(expandAnim, {
+      toValue: 1,
+      friction: 7,
+      tension: 65,
+      useNativeDriver: true,
+    }).start();
+  }, [expandAnim]);
+
+  return (
+    <View style={styles.islandOverlayWrapper} pointerEvents="box-none">
+      <Animated.View
+        style={[
+          styles.islandExpandedContainer,
+          {
+            transform: [
+              {
+                scale: expandAnim.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0.6, 1],
+                }),
+              },
+              {
+                translateY: expandAnim.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [-15, 0],
+                }),
+              },
+            ],
+            opacity: expandAnim,
+          },
+        ]}
+      >
+        <View style={styles.islandExpandedLeft}>
+          <View style={styles.islandPulseDot} />
+          <View>
+            <Text style={styles.islandExpandedTitle}>
+              {currentProject ? currentProject.title : "ZakOS Sentinel Active"}
+            </Text>
+            <Text style={styles.islandExpandedSubtitle}>
+              {currentProject
+                ? currentProject.distance
+                : "Real-time NIDS Engine • 99.4% Accuracy"}
+            </Text>
+          </View>
+        </View>
+
+        <View style={styles.islandExpandedActions}>
+          <Pressable
+            onPress={onOpenControlCenter}
+            style={styles.islandActionPill}
+          >
+            <Text style={styles.islandActionText}>Control</Text>
+          </Pressable>
+          <Pressable onPress={onClose} style={styles.islandCloseBtn}>
+            <Text style={styles.islandCloseText}>✕</Text>
+          </Pressable>
+        </View>
+      </Animated.View>
     </View>
   );
 }
 
 function SystemBottomChrome({
   osMode,
-  onHomePress,
+  onHome,
+  onBack,
+  onRecents,
+  isDark,
+  homeSwipeY,
 }: {
   osMode: "ios" | "android" | "desktop";
-  onHomePress?: () => void;
+  onHome: () => void;
+  onBack: () => void;
+  onRecents: () => void;
+  isDark?: boolean;
+  homeSwipeY?: Animated.Value;
 }) {
+  const panResponder = useMemo(() => {
+    return PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onStartShouldSetPanResponderCapture: () => false,
+      onMoveShouldSetPanResponder: (_, gs) => {
+        return Math.abs(gs.dy) > 4 && Math.abs(gs.dy) > Math.abs(gs.dx);
+      },
+      onMoveShouldSetPanResponderCapture: (_, gs) => {
+        return Math.abs(gs.dy) > 4 && Math.abs(gs.dy) > Math.abs(gs.dx);
+      },
+      onPanResponderGrant: () => {
+        if (homeSwipeY) {
+          homeSwipeY.stopAnimation();
+        }
+      },
+      onPanResponderMove: (_, gs) => {
+        if (gs.dy < 0 && homeSwipeY) {
+          homeSwipeY.setValue(gs.dy);
+        }
+      },
+      onPanResponderRelease: (_, gs) => {
+        if (gs.dy < -40 || gs.vy < -0.4) {
+          if (homeSwipeY) {
+            Animated.timing(homeSwipeY, {
+              toValue: -180,
+              duration: 160,
+              easing: Easing.out(Easing.cubic),
+              useNativeDriver: true,
+            }).start(() => {
+              onHome();
+              homeSwipeY.setValue(0);
+            });
+          } else {
+            onHome();
+          }
+        } else if (Math.abs(gs.dy) < 5 && Math.abs(gs.dx) < 5) {
+          // Single tap/click
+          onHome();
+        } else {
+          if (homeSwipeY) {
+            Animated.spring(homeSwipeY, {
+              toValue: 0,
+              friction: 6,
+              tension: 60,
+              useNativeDriver: true,
+            }).start();
+          }
+        }
+      },
+      onPanResponderTerminate: () => {
+        if (homeSwipeY) {
+          Animated.spring(homeSwipeY, {
+            toValue: 0,
+            friction: 6,
+            useNativeDriver: true,
+          }).start();
+        }
+      },
+    });
+  }, [onHome, homeSwipeY]);
+
   if (osMode === "ios") {
     return (
-      <Pressable onPress={onHomePress} style={styles.iosBottomBarArea}>
-        <View style={styles.iosHomeIndicator} />
-      </Pressable>
+      <View style={styles.iosBottomBarArea} pointerEvents="box-none">
+        <View
+          {...panResponder.panHandlers}
+          style={styles.iosHomeIndicatorHitZone}
+        >
+          <Pressable
+            onPress={onHome}
+            accessibilityRole="button"
+            accessibilityLabel="iOS Home Bar - Return to Home"
+            hitSlop={{ top: 25, bottom: 25, left: 80, right: 80 }}
+            style={({ pressed }) => [
+              styles.iosHomeIndicatorTouchArea,
+              pressed && { opacity: 0.7 },
+            ]}
+          >
+            <View
+              style={[
+                styles.iosHomeIndicator,
+                isDark && { backgroundColor: "#FFFFFF" },
+              ]}
+            />
+          </Pressable>
+        </View>
+      </View>
     );
   }
 
   if (osMode === "android") {
     return (
-      <View style={styles.androidBottomBarArea}>
-        <Pressable onPress={onHomePress} style={styles.androidNavBtn}>
-          <Text style={styles.androidNavIcon}>◀</Text>
+      <View style={styles.androidBottomBarArea} pointerEvents="auto">
+        <Pressable
+          onPress={onBack}
+          accessibilityRole="button"
+          accessibilityLabel="Android Back Button"
+          hitSlop={{ top: 12, bottom: 12, left: 18, right: 18 }}
+          style={({ pressed }) => [
+            styles.androidNavBtn,
+            pressed && styles.androidNavBtnPressed,
+          ]}
+        >
+          <Text style={[styles.androidNavIcon, isDark && { color: "#F1F5F9" }]}>◀</Text>
         </Pressable>
-        <Pressable onPress={onHomePress} style={styles.androidNavBtn}>
-          <View style={styles.androidHomeCircle} />
+
+        <Pressable
+          onPress={onHome}
+          accessibilityRole="button"
+          accessibilityLabel="Android Home Button"
+          hitSlop={{ top: 12, bottom: 12, left: 18, right: 18 }}
+          style={({ pressed }) => [
+            styles.androidNavBtn,
+            pressed && styles.androidNavBtnPressed,
+          ]}
+        >
+          <View
+            style={[
+              styles.androidHomeCircle,
+              isDark && { borderColor: "#F1F5F9" },
+            ]}
+          />
         </Pressable>
-        <Pressable onPress={onHomePress} style={styles.androidNavBtn}>
-          <View style={styles.androidRecentsSquare} />
+
+        <Pressable
+          onPress={onRecents}
+          accessibilityRole="button"
+          accessibilityLabel="Android Recents Button"
+          hitSlop={{ top: 12, bottom: 12, left: 18, right: 18 }}
+          style={({ pressed }) => [
+            styles.androidNavBtn,
+            pressed && styles.androidNavBtnPressed,
+          ]}
+        >
+          <View
+            style={[
+              styles.androidRecentsSquare,
+              isDark && { borderColor: "#F1F5F9" },
+            ]}
+          />
         </Pressable>
       </View>
     );
   }
 
   return null;
+}
+
+function ControlCenterModal({
+  visible,
+  onClose,
+  osMode,
+  onSwitchOS,
+  theme,
+  onSwitchTheme,
+}: {
+  visible: boolean;
+  onClose: () => void;
+  osMode: "ios" | "android" | "desktop";
+  onSwitchOS: (m: "ios" | "android" | "desktop") => void;
+  theme: "light" | "dark" | "cyberpunk";
+  onSwitchTheme: (t: "light" | "dark" | "cyberpunk") => void;
+}) {
+  const slideAnim = useRef(new Animated.Value(-600)).current;
+  const [wifi, setWifi] = useState(true);
+  const [bluetooth, setBluetooth] = useState(true);
+  const [airplane, setAirplane] = useState(false);
+  const [cellular, setCellular] = useState(true);
+
+  useEffect(() => {
+    if (visible) {
+      Animated.spring(slideAnim, {
+        toValue: 0,
+        friction: 8,
+        tension: 50,
+        useNativeDriver: true,
+      }).start();
+    } else {
+      slideAnim.setValue(-600);
+    }
+  }, [visible, slideAnim]);
+
+  const closeWithAnimation = () => {
+    Animated.timing(slideAnim, {
+      toValue: -600,
+      duration: 200,
+      easing: Easing.in(Easing.cubic),
+      useNativeDriver: true,
+    }).start(onClose);
+  };
+
+  const panResponder = useMemo(() => {
+    return PanResponder.create({
+      onStartShouldSetPanResponder: () => false,
+      onMoveShouldSetPanResponder: (_, gs) => {
+        return gs.dy < -12 && Math.abs(gs.dy) > Math.abs(gs.dx);
+      },
+      onPanResponderRelease: (_, gs) => {
+        if (gs.dy < -25 || gs.vy < -0.35) {
+          closeWithAnimation();
+        }
+      },
+    });
+  }, []);
+
+  if (!visible) return null;
+
+  return (
+    <View style={[StyleSheet.absoluteFill, { zIndex: 10000 }]}>
+      <Pressable onPress={closeWithAnimation} style={StyleSheet.absoluteFill}>
+        <View style={styles.modalBackdrop} />
+      </Pressable>
+
+      <Animated.View
+        style={[
+          styles.controlCenterSheet,
+          {
+            transform: [{ translateY: slideAnim }],
+          },
+        ]}
+        {...panResponder.panHandlers}
+      >
+        {/* Header */}
+        <View style={styles.controlCenterHeader}>
+          <View>
+            <Text style={styles.controlCenterEyebrow}>SYSTEM CONTROL & NOTIFICATIONS</Text>
+            <Text style={styles.controlCenterTitle}>Control Center</Text>
+          </View>
+          <Pressable onPress={closeWithAnimation} style={styles.bookingCloseButton}>
+            <Text style={{ fontSize: 18, color: "#94A3B8" }}>✕</Text>
+          </Pressable>
+        </View>
+
+        {/* Connectivity Toggles Row */}
+        <View style={styles.controlTogglesGrid}>
+          <Pressable
+            onPress={() => setWifi(!wifi)}
+            style={[styles.controlToggleCard, wifi && styles.controlToggleCardActive]}
+          >
+            <Text style={styles.controlToggleIcon}>📶</Text>
+            <Text style={styles.controlToggleLabel}>Wi-Fi</Text>
+            <Text style={styles.controlToggleSubtext}>{wifi ? "ZakOS-Net" : "Off"}</Text>
+          </Pressable>
+
+          <Pressable
+            onPress={() => setBluetooth(!bluetooth)}
+            style={[styles.controlToggleCard, bluetooth && styles.controlToggleCardActive]}
+          >
+            <Text style={styles.controlToggleIcon}>🎧</Text>
+            <Text style={styles.controlToggleLabel}>Bluetooth</Text>
+            <Text style={styles.controlToggleSubtext}>{bluetooth ? "Connected" : "Off"}</Text>
+          </Pressable>
+
+          <Pressable
+            onPress={() => setAirplane(!airplane)}
+            style={[styles.controlToggleCard, airplane && styles.controlToggleCardWarning]}
+          >
+            <Text style={styles.controlToggleIcon}>✈</Text>
+            <Text style={styles.controlToggleLabel}>Airplane</Text>
+            <Text style={styles.controlToggleSubtext}>{airplane ? "On" : "Off"}</Text>
+          </Pressable>
+
+          <Pressable
+            onPress={() => setCellular(!cellular)}
+            style={[styles.controlToggleCard, cellular && styles.controlToggleCardActive]}
+          >
+            <Text style={styles.controlToggleIcon}>📡</Text>
+            <Text style={styles.controlToggleLabel}>5G Ultra</Text>
+            <Text style={styles.controlToggleSubtext}>{cellular ? "Active" : "Off"}</Text>
+          </Pressable>
+        </View>
+
+        {/* OS Switcher Segment */}
+        <View style={styles.controlSection}>
+          <Text style={styles.controlSectionTitle}>OPERATING SYSTEM EMULATOR</Text>
+          <View style={styles.controlSegmentedRow}>
+            {(["ios", "android", "desktop"] as const).map((mode) => (
+              <Pressable
+                key={mode}
+                onPress={() => onSwitchOS(mode)}
+                style={[
+                  styles.controlSegmentBtn,
+                  osMode === mode && styles.controlSegmentBtnActive,
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.controlSegmentText,
+                    osMode === mode && styles.controlSegmentTextActive,
+                  ]}
+                >
+                  {mode === "ios" ? " iOS 18" : mode === "android" ? "🤖 Android 15" : "🖥 Desktop"}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
+        </View>
+
+        {/* Theme Switcher Segment */}
+        <View style={styles.controlSection}>
+          <Text style={styles.controlSectionTitle}>COLOR THEME</Text>
+          <View style={styles.controlSegmentedRow}>
+            {(["light", "dark", "cyberpunk"] as const).map((t) => (
+              <Pressable
+                key={t}
+                onPress={() => onSwitchTheme(t)}
+                style={[
+                  styles.controlSegmentBtn,
+                  theme === t && styles.controlSegmentBtnActive,
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.controlSegmentText,
+                    theme === t && styles.controlSegmentTextActive,
+                  ]}
+                >
+                  {t === "light" ? "☀️ Light" : t === "dark" ? "🌙 Dark OLED" : "⚡ Cyberpunk"}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
+        </View>
+
+        {/* System Telemetry */}
+        <View style={styles.controlTelemetryCard}>
+          <View style={styles.controlTelemetryItem}>
+            <Text style={styles.controlTelemetryLabel}>Uptime</Text>
+            <Text style={styles.controlTelemetryValue}>14h 34m</Text>
+          </View>
+          <View style={styles.controlTelemetryItem}>
+            <Text style={styles.controlTelemetryLabel}>RAM Load</Text>
+            <Text style={styles.controlTelemetryValue}>15.8 GB (49%)</Text>
+          </View>
+          <View style={styles.controlTelemetryItem}>
+            <Text style={styles.controlTelemetryLabel}>Battery</Text>
+            <Text style={styles.controlTelemetryValue}>88% [AC]</Text>
+          </View>
+          <View style={styles.controlTelemetryItem}>
+            <Text style={styles.controlTelemetryLabel}>Architecture</Text>
+            <Text style={styles.controlTelemetryValue}>x86_64 Core</Text>
+          </View>
+        </View>
+
+        {/* Dismiss Handle */}
+        <Pressable onPress={closeWithAnimation} style={styles.controlHandleZone}>
+          <View style={styles.controlDismissBar} />
+          <Text style={styles.controlDismissText}>Swipe up or tap to dismiss</Text>
+        </Pressable>
+      </Animated.View>
+    </View>
+  );
+}
+
+function RecentsModal({
+  visible,
+  onClose,
+  onOpenApp,
+}: {
+  visible: boolean;
+  onClose: () => void;
+  onOpenApp: (appId: string) => void;
+}) {
+  if (!visible) return null;
+
+  const apps = [
+    {
+      id: "projects",
+      name: "Projects & Architecture",
+      icon: "📁",
+      subtitle: "16 Projects across 4 Domains",
+      badge: "Running",
+      color: "#075CF5",
+    },
+    {
+      id: "terminal",
+      name: "Bash CLI Terminal",
+      icon: "💻",
+      subtitle: "visitor@zak-portfolio:~$ [Idle]",
+      badge: "Standby",
+      color: "#10B981",
+    },
+    {
+      id: "contact",
+      name: "Direct Transmission",
+      icon: "👤",
+      subtitle: "Zakarya Oukil • Email & Links",
+      badge: "Ready",
+      color: "#8E79F5",
+    },
+    {
+      id: "settings",
+      name: "System Configuration",
+      icon: "⚙",
+      subtitle: "OS Switcher & Display Modes",
+      badge: "Ready",
+      color: "#F59E0B",
+    },
+  ];
+
+  return (
+    <View style={[StyleSheet.absoluteFill, { zIndex: 9999 }]}>
+      <Pressable onPress={onClose} style={StyleSheet.absoluteFill}>
+        <View style={styles.modalBackdrop} />
+      </Pressable>
+
+      <View style={styles.recentsContainer}>
+        <View style={styles.recentsHeader}>
+          <Text style={styles.recentsTitle}>Active Applications</Text>
+          <Pressable onPress={onClose} style={styles.recentsCloseBtn}>
+            <Text style={styles.recentsCloseText}>Close All</Text>
+          </Pressable>
+        </View>
+
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.recentsScrollContent}
+        >
+          {apps.map((app) => (
+            <Pressable
+              key={app.id}
+              onPress={() => onOpenApp(app.id)}
+              style={({ pressed }) => [
+                styles.recentsCard,
+                pressed && { opacity: 0.85, transform: [{ scale: 0.97 }] },
+              ]}
+            >
+              <View style={[styles.recentsCardTop, { backgroundColor: app.color }]}>
+                <Text style={styles.recentsAppIcon}>{app.icon}</Text>
+                <Text style={styles.recentsCardBadge}>{app.badge}</Text>
+              </View>
+              <View style={styles.recentsCardBody}>
+                <Text numberOfLines={1} style={styles.recentsAppName}>
+                  {app.name}
+                </Text>
+                <Text numberOfLines={2} style={styles.recentsAppSubtitle}>
+                  {app.subtitle}
+                </Text>
+                <View style={styles.recentsOpenBtn}>
+                  <Text style={styles.recentsOpenBtnText}>Switch to App</Text>
+                </View>
+              </View>
+            </Pressable>
+          ))}
+        </ScrollView>
+      </View>
+    </View>
+  );
 }
 
 /* -------------------------------------------------------------------------- */
@@ -798,6 +1376,7 @@ function HomeScreen({
   onOpenTerminal,
   onOpenContact,
   onOpenSettings,
+  theme = "light",
 }: {
   onOpen: (item: any) => void;
   activeFilter: string;
@@ -809,6 +1388,7 @@ function HomeScreen({
   onOpenTerminal: () => void;
   onOpenContact: () => void;
   onOpenSettings: () => void;
+  theme?: "light" | "dark" | "cyberpunk";
 }) {
   const { width, height } = useWindowDimensions();
 
@@ -955,24 +1535,34 @@ function HomeScreen({
       ? "Android 15 • Material You"
       : "Desktop Web • macOS";
 
-  return (
-    <SafeAreaView style={styles.homeSafeArea}>
-      <StatusBar
-        barStyle="dark-content"
-        backgroundColor="#F5FAFD"
-        translucent={false}
-      />
+  const homeTopInset =
+    osMode === "ios" ? 44 : osMode === "android" ? 38 : 32;
+  const navBarBottom =
+    osMode === "android" ? 52 : osMode === "ios" ? 38 : 20;
 
-      {/* Dynamic Top System Chrome */}
-      <SystemTopChrome osMode={osMode} onSwitchOS={onSelectOS} />
+  return (
+    <SafeAreaView
+      style={[
+        styles.homeSafeArea,
+        theme === "dark" && styles.homeSafeAreaDark,
+        theme === "cyberpunk" && styles.homeSafeAreaCyberpunk,
+      ]}
+    >
+      <StatusBar
+        barStyle={theme === "light" ? "dark-content" : "light-content"}
+        backgroundColor="transparent"
+        translucent
+      />
 
       <View
         style={[
           styles.homeContainer,
           {
-            paddingTop: clamp(height * 0.012, 6, 14),
+            paddingTop: homeTopInset,
             paddingBottom: homeBottomPadding,
           },
+          theme === "dark" && styles.homeContainerDark,
+          theme === "cyberpunk" && styles.homeContainerCyberpunk,
         ]}
       >
         <View
@@ -1178,6 +1768,7 @@ function HomeScreen({
             styles.bottomNavigation,
             {
               marginHorizontal: horizontalPadding,
+              bottom: navBarBottom,
             },
           ]}
         >
@@ -1226,9 +1817,6 @@ function HomeScreen({
             <Text style={styles.navItemSubtext}>Config</Text>
           </Pressable>
         </View>
-
-        {/* Dynamic Bottom System Chrome */}
-        <SystemBottomChrome osMode={osMode} />
       </View>
     </SafeAreaView>
   );
@@ -2496,11 +3084,15 @@ function SettingsModal({
   onClose,
   osMode,
   onSwitchOS,
+  theme = "light",
+  onSwitchTheme,
 }: {
   visible: boolean;
   onClose: () => void;
   osMode: "ios" | "android" | "desktop";
   onSwitchOS: (m: "ios" | "android" | "desktop") => void;
+  theme?: "light" | "dark" | "cyberpunk";
+  onSwitchTheme?: (t: "light" | "dark" | "cyberpunk") => void;
 }) {
   if (!visible) return null;
 
@@ -2561,6 +3153,33 @@ function SettingsModal({
           })}
         </View>
 
+        {onSwitchTheme && (
+          <View style={{ marginTop: 16 }}>
+            <Text style={styles.controlSectionTitle}>THEME PALETTE</Text>
+            <View style={styles.controlSegmentedRow}>
+              {(["light", "dark", "cyberpunk"] as const).map((t) => (
+                <Pressable
+                  key={t}
+                  onPress={() => onSwitchTheme(t)}
+                  style={[
+                    styles.controlSegmentBtn,
+                    theme === t && styles.controlSegmentBtnActive,
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.controlSegmentText,
+                      theme === t && styles.controlSegmentTextActive,
+                    ]}
+                  >
+                    {t === "light" ? "☀️ Light" : t === "dark" ? "🌙 Dark" : "⚡ Cyber"}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+          </View>
+        )}
+
         <Pressable
           onPress={onClose}
           style={[styles.primaryButton, { marginTop: 20 }]}
@@ -2580,6 +3199,7 @@ export default function App() {
   const [osMode, setOSMode] = useState<"ios" | "android" | "desktop">(() =>
     detectInitialOS()
   );
+  const [theme, setTheme] = useState<"light" | "dark" | "cyberpunk">("light");
   const [activeFilter, setActiveFilter] = useState("Security & CTF");
   const [selectedDestination, setSelectedDestination] = useState<any>(null);
   const [savedIds, setSavedIds] = useState(["sec-nids", "fs-zakos"]);
@@ -2588,6 +3208,12 @@ export default function App() {
   const [terminalOpen, setTerminalOpen] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [controlCenterOpen, setControlCenterOpen] = useState(false);
+  const [recentsOpen, setRecentsOpen] = useState(false);
+  const [islandExpanded, setIslandExpanded] = useState(false);
+
+  // Home swipe up physics
+  const homeSwipeY = useRef(new Animated.Value(0)).current;
 
   const toggleSaved = (destinationId: string) => {
     setSavedIds((current) => {
@@ -2598,34 +3224,143 @@ export default function App() {
     });
   };
 
-  if (selectedDestination) {
-    return (
-      <View style={styles.app}>
-        <DetailScreen
-          destination={selectedDestination}
-          onClose={() => setSelectedDestination(null)}
-          onSelectDestination={setSelectedDestination}
-          savedIds={savedIds}
-          onToggleSave={toggleSaved}
-          osMode={osMode}
-        />
-      </View>
-    );
-  }
+  const handleHome = () => {
+    setControlCenterOpen(false);
+    setIslandExpanded(false);
+    setRecentsOpen(false);
+    setTerminalOpen(false);
+    setContactOpen(false);
+    setSettingsOpen(false);
+    setSelectedDestination(null);
+  };
+
+  const handleBack = () => {
+    if (controlCenterOpen) {
+      setControlCenterOpen(false);
+      return;
+    }
+    if (islandExpanded) {
+      setIslandExpanded(false);
+      return;
+    }
+    if (recentsOpen) {
+      setRecentsOpen(false);
+      return;
+    }
+    if (terminalOpen) {
+      setTerminalOpen(false);
+      return;
+    }
+    if (contactOpen) {
+      setContactOpen(false);
+      return;
+    }
+    if (settingsOpen) {
+      setSettingsOpen(false);
+      return;
+    }
+    if (selectedDestination) {
+      setSelectedDestination(null);
+      return;
+    }
+  };
 
   return (
-    <View style={styles.app}>
-      <HomeScreen
-        onOpen={setSelectedDestination}
-        activeFilter={activeFilter}
-        onFilterChange={setActiveFilter}
-        savedIds={savedIds}
-        onToggleSave={toggleSaved}
+    <View
+      style={[
+        styles.app,
+        theme === "dark" && styles.appDark,
+        theme === "cyberpunk" && styles.appCyberpunk,
+      ]}
+    >
+      {/* Dynamic Top System Chrome (Always on top with high zIndex) */}
+      <SystemTopChrome
         osMode={osMode}
-        onSelectOS={setOSMode}
-        onOpenTerminal={() => setTerminalOpen(true)}
-        onOpenContact={() => setContactOpen(true)}
-        onOpenSettings={() => setSettingsOpen(true)}
+        onSwitchOS={setOSMode}
+        onOpenControlCenter={() => setControlCenterOpen(true)}
+        isIslandExpanded={islandExpanded}
+        onToggleIsland={() => setIslandExpanded((v) => !v)}
+        isDark={theme !== "light" || !!selectedDestination}
+      />
+
+      {/* Dynamic Island Expanded Overlay (iOS) */}
+      {islandExpanded && osMode === "ios" && (
+        <DynamicIslandOverlay
+          onClose={() => setIslandExpanded(false)}
+          onOpenControlCenter={() => {
+            setIslandExpanded(false);
+            setControlCenterOpen(true);
+          }}
+          currentProject={selectedDestination}
+        />
+      )}
+
+      {/* Main Screen Content with swipe-up transition */}
+      <Animated.View
+        style={[
+          styles.mainContentContainer,
+          {
+            transform: [{ translateY: homeSwipeY }],
+          },
+        ]}
+      >
+        {selectedDestination ? (
+          <DetailScreen
+            destination={selectedDestination}
+            onClose={() => setSelectedDestination(null)}
+            onSelectDestination={setSelectedDestination}
+            savedIds={savedIds}
+            onToggleSave={toggleSaved}
+            osMode={osMode}
+          />
+        ) : (
+          <HomeScreen
+            onOpen={setSelectedDestination}
+            activeFilter={activeFilter}
+            onFilterChange={setActiveFilter}
+            savedIds={savedIds}
+            onToggleSave={toggleSaved}
+            osMode={osMode}
+            onSelectOS={setOSMode}
+            onOpenTerminal={() => setTerminalOpen(true)}
+            onOpenContact={() => setContactOpen(true)}
+            onOpenSettings={() => setSettingsOpen(true)}
+            theme={theme}
+          />
+        )}
+      </Animated.View>
+
+      {/* Persistent Bottom System Chrome (Always on top with zIndex: 9999) */}
+      <SystemBottomChrome
+        osMode={osMode}
+        onHome={handleHome}
+        onBack={handleBack}
+        onRecents={() => setRecentsOpen(true)}
+        isDark={theme !== "light" || !!selectedDestination}
+        homeSwipeY={homeSwipeY}
+      />
+
+      {/* Control Center Slide-Over */}
+      <ControlCenterModal
+        visible={controlCenterOpen}
+        onClose={() => setControlCenterOpen(false)}
+        osMode={osMode}
+        onSwitchOS={setOSMode}
+        theme={theme}
+        onSwitchTheme={setTheme}
+      />
+
+      {/* Recents Multitasking Switcher */}
+      <RecentsModal
+        visible={recentsOpen}
+        onClose={() => setRecentsOpen(false)}
+        onOpenApp={(appId) => {
+          setRecentsOpen(false);
+          if (appId === "projects") setSelectedDestination(null);
+          else if (appId === "terminal") setTerminalOpen(true);
+          else if (appId === "contact") setContactOpen(true);
+          else if (appId === "settings") setSettingsOpen(true);
+        }}
       />
 
       {/* Terminal CLI Modal */}
@@ -2648,6 +3383,8 @@ export default function App() {
         onClose={() => setSettingsOpen(false)}
         osMode={osMode}
         onSwitchOS={setOSMode}
+        theme={theme}
+        onSwitchTheme={setTheme}
       />
     </View>
   );
@@ -2661,16 +3398,40 @@ const styles = StyleSheet.create({
   app: {
     flex: 1,
     backgroundColor: "#F5FAFD",
+    position: "relative",
+    overflow: "hidden",
+  },
+  appDark: {
+    backgroundColor: "#0B0F17",
+  },
+  appCyberpunk: {
+    backgroundColor: "#070B12",
+  },
+  mainContentContainer: {
+    flex: 1,
+    position: "relative",
   },
 
   homeSafeArea: {
     flex: 1,
     backgroundColor: "#F5FAFD",
   },
+  homeSafeAreaDark: {
+    backgroundColor: "#0B0F17",
+  },
+  homeSafeAreaCyberpunk: {
+    backgroundColor: "#070B12",
+  },
 
   homeContainer: {
     flex: 1,
     backgroundColor: "#F5FAFD",
+  },
+  homeContainerDark: {
+    backgroundColor: "#0B0F17",
+  },
+  homeContainerCyberpunk: {
+    backgroundColor: "#070B12",
   },
 
   homeHeader: {
@@ -3626,13 +4387,23 @@ const styles = StyleSheet.create({
   },
 
   /* ---------------------- DYNAMIC OS CHROME STYLING --------------------- */
+  systemTopChromeWrapper: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 9000,
+    backgroundColor: "transparent",
+  },
   iosTopChrome: {
-    height: 38,
+    height: 40,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 22,
     backgroundColor: "transparent",
+    cursor: "grab",
+    userSelect: "none",
   },
   iosClockText: {
     fontSize: 13,
@@ -3640,14 +4411,19 @@ const styles = StyleSheet.create({
     color: "#111827",
   },
   dynamicIsland: {
-    width: 105,
-    height: 26,
+    width: 110,
+    height: 28,
     backgroundColor: "#000000",
-    borderRadius: 13,
+    borderRadius: 14,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "flex-end",
-    paddingHorizontal: 8,
+    justifyContent: "center",
+    paddingHorizontal: 10,
+    cursor: "pointer",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
   },
   dynamicIslandLens: {
     width: 9,
@@ -3668,6 +4444,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
+    cursor: "pointer",
   },
   iosStatusGlyph: {
     fontSize: 11,
@@ -3675,24 +4452,46 @@ const styles = StyleSheet.create({
     color: "#111827",
   },
   iosBottomBarArea: {
-    height: 24,
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 34,
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 9999,
+    pointerEvents: "box-none",
+  },
+  iosHomeIndicatorHitZone: {
+    paddingVertical: 12,
+    paddingHorizontal: 60,
     alignItems: "center",
     justifyContent: "center",
   },
+  iosHomeIndicatorTouchArea: {
+    cursor: "pointer",
+    padding: 6,
+  },
   iosHomeIndicator: {
-    width: 134,
+    width: 140,
     height: 5,
     borderRadius: 2.5,
     backgroundColor: "#111827",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
   },
 
   androidTopChrome: {
-    height: 32,
+    height: 36,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 16,
+    paddingHorizontal: 18,
     backgroundColor: "transparent",
+    cursor: "grab",
+    userSelect: "none",
   },
   androidLeftStatus: {
     flexDirection: "row",
@@ -3724,44 +4523,61 @@ const styles = StyleSheet.create({
     color: "#111827",
   },
   androidBottomBarArea: {
-    height: 38,
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 44,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-around",
-    paddingHorizontal: 30,
+    paddingHorizontal: 36,
+    backgroundColor: "rgba(15, 23, 42, 0.4)",
+    backdropFilter: "blur(12px)",
+    zIndex: 9999,
+    userSelect: "none",
   },
   androidNavBtn: {
-    padding: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 30,
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: "pointer",
+  },
+  androidNavBtnPressed: {
+    opacity: 0.45,
+    transform: [{ scale: 0.88 }],
   },
   androidNavIcon: {
-    fontSize: 13,
+    fontSize: 15,
     color: "#475569",
     fontWeight: "800",
   },
   androidHomeCircle: {
-    width: 14,
-    height: 14,
-    borderRadius: 7,
+    width: 15,
+    height: 15,
+    borderRadius: 7.5,
     borderWidth: 2,
     borderColor: "#475569",
   },
   androidRecentsSquare: {
-    width: 12,
-    height: 12,
-    borderRadius: 2,
+    width: 13,
+    height: 13,
+    borderRadius: 2.5,
     borderWidth: 2,
     borderColor: "#475569",
   },
 
   desktopTopChrome: {
-    height: 28,
-    backgroundColor: "rgba(255, 255, 255, 0.75)",
+    height: 30,
+    backgroundColor: "rgba(255, 255, 255, 0.85)",
     borderBottomWidth: 1,
     borderBottomColor: "#E2E8F0",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 12,
+    paddingHorizontal: 14,
+    userSelect: "none",
   },
   desktopWindowControls: {
     flexDirection: "row",
@@ -3790,6 +4606,344 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: "600",
     color: "#1E293B",
+  },
+
+  /* ----------------------- DYNAMIC ISLAND OVERLAY ----------------------- */
+  islandOverlayWrapper: {
+    position: "absolute",
+    top: 6,
+    left: 0,
+    right: 0,
+    alignItems: "center",
+    zIndex: 9500,
+    pointerEvents: "box-none",
+  },
+  islandExpandedContainer: {
+    width: 320,
+    backgroundColor: "#000000",
+    borderRadius: 24,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.5,
+    shadowRadius: 20,
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.12)",
+  },
+  islandExpandedLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    flex: 1,
+  },
+  islandPulseDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: "#10B981",
+    borderWidth: 2,
+    borderColor: "#065F46",
+  },
+  islandExpandedTitle: {
+    color: "#FFFFFF",
+    fontSize: 12,
+    fontWeight: "700",
+  },
+  islandExpandedSubtitle: {
+    color: "#94A3B8",
+    fontSize: 10,
+    fontWeight: "500",
+    marginTop: 1,
+  },
+  islandExpandedActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  islandActionPill: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 12,
+    backgroundColor: "#075CF5",
+    cursor: "pointer",
+  },
+  islandActionText: {
+    color: "#FFFFFF",
+    fontSize: 10.5,
+    fontWeight: "700",
+  },
+  islandCloseBtn: {
+    padding: 4,
+    cursor: "pointer",
+  },
+  islandCloseText: {
+    color: "#64748B",
+    fontSize: 13,
+    fontWeight: "700",
+  },
+
+  /* ------------------------ CONTROL CENTER MODAL ------------------------ */
+  controlCenterSheet: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    maxHeight: "85%",
+    backgroundColor: "#0B0F17",
+    borderBottomLeftRadius: 32,
+    borderBottomRightRadius: 32,
+    paddingHorizontal: 22,
+    paddingTop: 16,
+    paddingBottom: 24,
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.1)",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 18 },
+    shadowOpacity: 0.5,
+    shadowRadius: 30,
+    elevation: 32,
+  },
+  controlCenterHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 16,
+  },
+  controlCenterEyebrow: {
+    color: "#075CF5",
+    fontSize: 10,
+    fontWeight: "800",
+    letterSpacing: 1.2,
+  },
+  controlCenterTitle: {
+    color: "#F8FAFC",
+    fontSize: 22,
+    fontWeight: "800",
+    marginTop: 2,
+  },
+  controlTogglesGrid: {
+    flexDirection: "row",
+    gap: 10,
+    marginBottom: 16,
+  },
+  controlToggleCard: {
+    flex: 1,
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.08)",
+    borderRadius: 16,
+    padding: 10,
+    alignItems: "center",
+    cursor: "pointer",
+  },
+  controlToggleCardActive: {
+    backgroundColor: "rgba(7, 92, 245, 0.2)",
+    borderColor: "#075CF5",
+  },
+  controlToggleCardWarning: {
+    backgroundColor: "rgba(245, 158, 11, 0.2)",
+    borderColor: "#F59E0B",
+  },
+  controlToggleIcon: {
+    fontSize: 20,
+    marginBottom: 4,
+  },
+  controlToggleLabel: {
+    color: "#F1F5F9",
+    fontSize: 11,
+    fontWeight: "700",
+  },
+  controlToggleSubtext: {
+    color: "#94A3B8",
+    fontSize: 9.5,
+    marginTop: 2,
+  },
+  controlSection: {
+    marginBottom: 14,
+  },
+  controlSectionTitle: {
+    color: "#64748B",
+    fontSize: 10,
+    fontWeight: "800",
+    letterSpacing: 1,
+    marginBottom: 8,
+  },
+  controlSegmentedRow: {
+    flexDirection: "row",
+    gap: 8,
+  },
+  controlSegmentBtn: {
+    flex: 1,
+    paddingVertical: 9,
+    borderRadius: 12,
+    backgroundColor: "rgba(255, 255, 255, 0.06)",
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.06)",
+    cursor: "pointer",
+  },
+  controlSegmentBtnActive: {
+    backgroundColor: "#075CF5",
+    borderColor: "#38BDF8",
+  },
+  controlSegmentText: {
+    color: "#94A3B8",
+    fontSize: 11,
+    fontWeight: "700",
+  },
+  controlSegmentTextActive: {
+    color: "#FFFFFF",
+  },
+  controlTelemetryCard: {
+    flexDirection: "row",
+    backgroundColor: "rgba(255, 255, 255, 0.04)",
+    borderRadius: 16,
+    padding: 12,
+    justifyContent: "space-between",
+    marginBottom: 14,
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.06)",
+  },
+  controlTelemetryItem: {
+    alignItems: "center",
+    flex: 1,
+  },
+  controlTelemetryLabel: {
+    color: "#64748B",
+    fontSize: 9.5,
+    fontWeight: "600",
+  },
+  controlTelemetryValue: {
+    color: "#38BDF8",
+    fontSize: 11,
+    fontWeight: "800",
+    marginTop: 2,
+  },
+  controlHandleZone: {
+    alignItems: "center",
+    paddingTop: 8,
+    cursor: "pointer",
+  },
+  controlDismissBar: {
+    width: 44,
+    height: 5,
+    borderRadius: 2.5,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    marginBottom: 4,
+  },
+  controlDismissText: {
+    color: "#64748B",
+    fontSize: 9.5,
+    fontWeight: "600",
+  },
+
+  /* --------------------------- RECENTS MODAL --------------------------- */
+  recentsContainer: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    top: "18%",
+    backgroundColor: "#0A0E17",
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    paddingTop: 18,
+    paddingHorizontal: 20,
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.12)",
+  },
+  recentsHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 18,
+  },
+  recentsTitle: {
+    color: "#F8FAFC",
+    fontSize: 18,
+    fontWeight: "800",
+  },
+  recentsCloseBtn: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 10,
+    backgroundColor: "rgba(255, 255, 255, 0.08)",
+    cursor: "pointer",
+  },
+  recentsCloseText: {
+    color: "#94A3B8",
+    fontSize: 12,
+    fontWeight: "700",
+  },
+  recentsScrollContent: {
+    gap: 16,
+    paddingBottom: 24,
+    paddingRight: 20,
+  },
+  recentsCard: {
+    width: 210,
+    height: 290,
+    backgroundColor: "#131C2E",
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.1)",
+    overflow: "hidden",
+    cursor: "pointer",
+  },
+  recentsCardTop: {
+    height: 120,
+    alignItems: "center",
+    justifyContent: "center",
+    position: "relative",
+  },
+  recentsAppIcon: {
+    fontSize: 38,
+  },
+  recentsCardBadge: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+    color: "#FFFFFF",
+    fontSize: 9.5,
+    fontWeight: "700",
+  },
+  recentsCardBody: {
+    flex: 1,
+    padding: 14,
+    justifyContent: "space-between",
+  },
+  recentsAppName: {
+    color: "#F8FAFC",
+    fontSize: 14,
+    fontWeight: "800",
+  },
+  recentsAppSubtitle: {
+    color: "#94A3B8",
+    fontSize: 11,
+    lineHeight: 16,
+    marginTop: 4,
+  },
+  recentsOpenBtn: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 8,
+    borderRadius: 10,
+    backgroundColor: "rgba(255, 255, 255, 0.08)",
+    marginTop: 10,
+  },
+  recentsOpenBtnText: {
+    color: "#38BDF8",
+    fontSize: 11.5,
+    fontWeight: "700",
   },
 
   /* ---------------------------- MODALS --------------------------- */
