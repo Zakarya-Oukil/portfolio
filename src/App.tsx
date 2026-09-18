@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+
 import {
   Animated,
   Easing,
@@ -12,7 +13,6 @@ import {
   StatusBar,
   StyleSheet,
   Text,
-  TextInput,
   useWindowDimensions,
   View,
 } from "react-native";
@@ -39,18 +39,18 @@ const PHOTO = {
     "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=90",
   fsTelemetry:
     "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1400&q=90",
-  fsCollab:
-    "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1400&q=90",
+  fsRaft:
+    "https://images.unsplash.com/photo-1544383835-bda2bc66a55d?auto=format&fit=crop&w=1400&q=90",
 
   // Systems & OS
-  sysRaft:
-    "https://images.unsplash.com/photo-1544383835-bda2bc66a55d?auto=format&fit=crop&w=1400&q=90",
   sysMalloc:
     "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1400&q=90",
   sysVault:
     "https://images.unsplash.com/photo-1614064641938-3bbee52942c7?auto=format&fit=crop&w=1400&q=90",
   sysMesh:
     "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=1400&q=90",
+  sysWasm:
+    "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1400&q=90",
 
   // Cloud & AI
   aiLlmRed:
@@ -59,7 +59,7 @@ const PHOTO = {
     "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1400&q=90",
   aiBinDiff:
     "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=1400&q=90",
-  aiEdge:
+  aiContainer:
     "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1400&q=90",
 
   // Avatars
@@ -75,317 +75,253 @@ const PHOTO = {
 /*                                    DATA                                    */
 /* -------------------------------------------------------------------------- */
 
-const PROJECTS = [
+const DESTINATIONS = [
   /* -------------------------- SECURITY & CTF -------------------------- */
   {
-    id: "sec-nids",
+    id: "sec-ml-ids",
     country: "Security & CTF",
-    title: "NIDS with Machine Learning",
-    subtitle: "ML Network Intrusion Detection Engine",
-    location: "Python • Scapy • Random Forest • Streamlit",
+    title: "ML Intrusion Detection",
+    subtitle: "Random Forest & Streamlit",
+    location: "Python / Scikit-Learn",
     image: PHOTO.secNids,
-    duration: "4 MOS",
-    distance: "99.4% ACC",
-    likes: 542,
-    saves: 118,
-    views: 1890,
+    duration: "99.4% ACC",
+    distance: "0.4ms LAT",
+    likes: 412,
+    saves: 84,
+    views: 1240,
     description:
-      "Production-grade network intrusion detection system evaluating real-time PCAP traffic flows. Employs Random Forest and XGBoost ensembles trained on CIC-IDS2017 & NSL-KDD datasets with sub-10ms classification latency and zero false positives.",
-    techStack: ["Python 3.11", "Scapy", "Random Forest", "Streamlit", "Redis", "Docker"],
-    architectureNotes: "Packet capture hook -> Flow feature extractor (flags, IAT, length) -> ONNX classifier -> Redis Pub/Sub -> Streamlit SIEM dashboard.",
-    githubUrl: "https://github.com",
-    liveUrl: "https://github.com",
+      "Trained an ensemble ML classifier on packet telemetry to detect volumetric DoS/DDoS anomalies in real time.",
   },
   {
     id: "sec-stuxnet",
     country: "Security & CTF",
-    title: "Stuxnet SCADA Dissection",
-    subtitle: "ICS Exploit & Malware Architecture Analysis",
-    location: "Ghidra • x86 Asm • Step 7 PLC • C++",
+    title: "Stuxnet SCADA Analysis",
+    subtitle: "Zero-Day Exploit Breakdown",
+    location: "Assembly / Siemens PLC",
     image: PHOTO.secStuxnet,
-    duration: "2 MOS",
-    distance: "4 ZERO-DAYS",
-    likes: 780,
-    saves: 164,
-    views: 3120,
+    duration: "4 ZERO-DAYS",
+    distance: "PLC MESH",
+    likes: 541,
+    saves: 112,
+    views: 1680,
     description:
-      "Deep static and dynamic reverse-engineering breakdown of Stuxnet. Includes isolated emulation of the 4 zero-day vulnerability chains (CVE-2010-2568 LNK parsing, print spooler elevation), driver signing bypasses, and Step 7 PLC payload frequency manipulation.",
-    techStack: ["Ghidra", "x86 Asm", "C/C++", "Volatility 3", "Snap7", "Yara"],
-    architectureNotes: "Snap7 simulated Siemens S7-300 PLC -> Memory dump reconstruction via Volatility 3 -> Annotated Ghidra CFG graphs.",
-    githubUrl: "https://github.com",
-    liveUrl: "https://github.com",
+      "Decompiled and analyzed Siemens step-7 PLC rootkits, Windows kernel zero-days, and man-in-the-middle frequency attacks.",
   },
   {
     id: "sec-ejpt",
     country: "Security & CTF",
-    title: "eJPT / HTB Assessment Suite",
-    subtitle: "Automated Multi-Tier Pivoting Framework",
-    location: "Go • Impacket • Chisel • Kerberos",
+    title: "eJPT / HTB DMZ Suite",
+    subtitle: "Active Directory Assessment",
+    location: "Kali / Chisel / Kerberos",
     image: PHOTO.secEjpt,
-    duration: "3 MOS",
-    distance: "10X PIVOT",
-    likes: 620,
-    saves: 142,
-    views: 2450,
+    duration: "18 TARGETS",
+    distance: "3 SUBNETS",
+    likes: 487,
+    saves: 96,
+    views: 1420,
     description:
-      "Offensive security penetration testing harness designed for nested DMZ environments. Integrates automated Chisel/SOCKS5 multi-hop tunneling, double-pivot port sweeps, AS-REP roasting, Kerberoasting, and BloodHound Cypher graph ingestion.",
-    techStack: ["Go", "Python", "Impacket", "Chisel", "Kerberos", "BloodHound"],
-    architectureNotes: "Async socket discovery daemon -> Nested SOCKS5 relays -> Automated credential harvester -> BloodHound attack pathing.",
-    githubUrl: "https://github.com",
-    liveUrl: "https://github.com",
+      "Automated lateral movement, bloodhound pivoting, Kerberoasting, and token impersonation pipelines for DMZ penetration testing.",
   },
   {
     id: "sec-ebpf",
     country: "Security & CTF",
-    title: "Zero-Trust Kernel Sandbox",
-    subtitle: "eBPF Syscall Monitor & mTLS Identity Broker",
-    location: "C • eBPF • Go • Linux Kernel",
+    title: "eBPF Kernel Sandbox",
+    subtitle: "Zero-Trust Security Monitor",
+    location: "C / Linux Kernel / Go",
     image: PHOTO.secEbpf,
-    duration: "5 MOS",
-    distance: "< 42μs LAT",
-    likes: 490,
-    saves: 98,
-    views: 1680,
+    duration: "0% RUNTIME DROP",
+    distance: "RING-0",
+    likes: 376,
+    saves: 78,
+    views: 1190,
     description:
-      "High-performance host security enclave using eBPF probes attached to Linux kernel syscalls (sys_enter_execve, sys_enter_connect). Enforces micro-segmentation and kills unauthorized reverse shells in under 42 microseconds while enforcing SPIFFE mTLS.",
-    techStack: ["C", "eBPF", "Go (Cilium)", "Linux Kernel 6.x", "SPIFFE/SPIRE"],
-    architectureNotes: "Kernel C probes -> Ring buffer event dispatcher -> Go userspace enforcement daemon -> Seccomp profile isolator.",
-    githubUrl: "https://github.com",
-    liveUrl: "https://github.com",
+      "Attached hook points to trace execve/connect syscalls in real time, stopping unauthorized privilege escalations.",
   },
 
-  /* -------------------------- FULL STACK -------------------------- */
+  /* ---------------------------- FULL STACK ---------------------------- */
   {
     id: "fs-zakos",
     country: "Full Stack",
-    title: "ZakOS Agentic Web Interface",
-    subtitle: "Multi-OS Device & Agent Platform",
-    location: "React Native Web • TypeScript • Animated",
+    title: "ZakOS Agentic OS",
+    subtitle: "Interactive Agent Web Platform",
+    location: "React / TypeScript / Tailwind",
     image: PHOTO.fsZakos,
-    duration: "3 MOS",
-    distance: "60 FPS",
-    likes: 940,
-    saves: 230,
-    views: 4200,
+    duration: "SUB-10MS",
+    distance: "6 AGENTS",
+    likes: 518,
+    saves: 104,
+    views: 1530,
     description:
-      "Interactive Web-based Operating System capable of simulating native iOS, Android (Material You), and Desktop environments with dynamic frame re-skinning, WebAssembly CLI terminal runtime, autonomous agent tool calling, and fluid gesture physics.",
-    techStack: ["React Native Web", "TypeScript", "Vite", "Animated API", "Tailwind CSS"],
-    architectureNotes: "Universal component engine -> PanResponder cursor physics -> Zero-flash overwrite crossfader -> Central reactive context.",
-    githubUrl: "https://github.com",
-    liveUrl: "https://github.com",
+      "Designed an agentic operating system interface with theme persistence, modular windows, and local model orchestration.",
   },
   {
-    id: "fs-voyage",
+    id: "fs-travel",
     country: "Full Stack",
     title: "Distributed Travel Platform",
-    subtitle: "Event-Driven Booking & Discovery Engine",
-    location: "Next.js 14 • Go • Kafka • Redis",
+    subtitle: "Real-Time Booking Mesh",
+    location: "React Native / Node.js",
     image: PHOTO.fsVoyage,
-    duration: "4 MOS",
-    distance: "25K REQ/S",
-    likes: 610,
-    saves: 135,
-    views: 2890,
+    duration: "100K QPS",
+    distance: "GLOBAL EDGE",
+    likes: 426,
+    saves: 91,
+    views: 1310,
     description:
-      "High-concurrency global travel platform supporting instant destination reservations, dynamic currency pricing, and zero-flash fluid image crossfading. Built with distributed idempotency keys, optimistic UI updates, and Kafka transaction logs.",
-    techStack: ["Next.js 14", "Go (gRPC)", "Apache Kafka", "Redis Cluster", "PostgreSQL"],
-    architectureNotes: "App Router SSR -> gRPC microservices -> Kafka distributed event log -> Redis distributed locking -> Partitioned Postgres.",
-    githubUrl: "https://github.com",
-    liveUrl: "https://github.com",
+      "Full-stack travel booking application with real-time flight inventory aggregation, caching layers, and responsive UI physics.",
   },
   {
     id: "fs-telemetry",
     country: "Full Stack",
-    title: "High-Throughput Telemetry",
-    subtitle: "ClickHouse & OpenTelemetry Pipeline",
-    location: "Vector (Rust) • ClickHouse • Kafka",
+    title: "Real-Time Telemetry Canvas",
+    subtitle: "High-Throughput Dashboard",
+    location: "Next.js / WebSockets / Rust",
     image: PHOTO.fsTelemetry,
-    duration: "3 MOS",
-    distance: "20M EV/M",
-    likes: 520,
-    saves: 112,
-    views: 2100,
+    duration: "60 FPS",
+    distance: "LIVE BUS",
+    likes: 334,
+    saves: 65,
+    views: 980,
     description:
-      "Enterprise telemetry aggregation mesh handling 20 million events per minute across Kubernetes clusters. Uses Vector collector agents, ClickHouse columnar database for sub-second analytical queries, and real-time anomaly alerting via Slack/PagerDuty.",
-    techStack: ["ClickHouse", "Vector (Rust)", "Kafka", "Kubernetes", "Grafana"],
-    architectureNotes: "DaemonSet collectors -> Kafka ingestion buffer -> ClickHouse streaming tables -> Grafana SQL telemetry visualizations.",
-    githubUrl: "https://github.com",
-    liveUrl: "https://github.com",
+      "Visualized thousands of concurrent IoT metrics using WebGL hardware-accelerated shaders and WebSocket streaming.",
   },
   {
-    id: "fs-collab",
+    id: "fs-raft-kv",
     country: "Full Stack",
-    title: "Real-Time Collab Canvas",
-    subtitle: "CRDT Infinite Canvas Architecture",
-    location: "TypeScript • WebRTC • Yjs • Canvas API",
-    image: PHOTO.fsCollab,
-    duration: "2 MOS",
-    distance: "16ms SYNC",
-    likes: 475,
-    saves: 95,
-    views: 1980,
+    title: "Decentralized KV Store",
+    subtitle: "Raft Consensus Database",
+    location: "Go / gRPC / Protobuf",
+    image: PHOTO.fsRaft,
+    duration: "3-NODE MESH",
+    distance: "P99 2MS",
+    likes: 455,
+    saves: 89,
+    views: 1420,
     description:
-      "Ultra-low latency infinite design canvas supporting multiplayer drawing, gesture zooming, and shape manipulation. Uses Yjs Conflict-Free Replicated Data Types (CRDTs) over WebRTC mesh connections with zero server state latency.",
-    techStack: ["TypeScript", "Canvas API", "Yjs CRDT", "WebRTC", "WebSockets"],
-    architectureNotes: "WebGL hardware acceleration -> Yjs delta synchronization -> WebRTC P2P mesh relay -> Local IndexedDB snapshotting.",
-    githubUrl: "https://github.com",
-    liveUrl: "https://github.com",
+      "Implemented leader election, log compaction, and state replication guarantees following the Raft consensus paper.",
   },
 
-  /* -------------------------- SYSTEMS & OS -------------------------- */
-  {
-    id: "sys-raft",
-    country: "Systems & OS",
-    title: "Raft Distributed KV Store",
-    subtitle: "Log-Structured Consensus Database Engine",
-    location: "Go • Raft • Protobuf • LSM-Tree",
-    image: PHOTO.sysRaft,
-    duration: "6 MOS",
-    distance: "180K OPS",
-    likes: 870,
-    saves: 210,
-    views: 3900,
-    description:
-      "Distributed fault-tolerant Key-Value store implementing the Raft consensus algorithm from scratch in Go. Features an LSM-Tree (Log-Structured Merge-Tree) storage engine with SSTables, memtables, Bloom filters, Write-Ahead Logging (WAL), and dynamic leader election.",
-    techStack: ["Go 1.22", "Raft Protocol", "LSM-Tree", "Protobuf", "gRPC", "Linux"],
-    architectureNotes: "Custom RPC transport layer -> WAL commit log -> LSM-Tree MemTable flush -> SSTable compaction with Bloom filters.",
-    githubUrl: "https://github.com",
-    liveUrl: "https://github.com",
-  },
+  /* --------------------------- SYSTEMS & OS --------------------------- */
   {
     id: "sys-malloc",
     country: "Systems & OS",
-    title: "Custom Linux Memory Allocator",
-    subtitle: "Thread-Safe Segregated Free List Allocator",
-    location: "C17 • Syscall mmap • Pthreads",
+    title: "Linux Memory Allocator",
+    subtitle: "Custom malloc / free Engine",
+    location: "C / POSIX / mmap",
     image: PHOTO.sysMalloc,
-    duration: "2 MOS",
-    distance: "3.2x SPEED",
-    likes: 640,
-    saves: 140,
-    views: 2600,
+    duration: "O(1) BUCKET",
+    distance: "ZERO LEAK",
+    likes: 380,
+    saves: 82,
+    views: 1150,
     description:
-      "High-efficiency replacement for malloc/free utilizing segregated size-class free lists, thread-local caching, and direct OS virtual memory management via mmap and madvise. Minimizes heap fragmentation and eliminates global lock contention.",
-    techStack: ["C17", "mmap / sbrk", "Pthreads", "Valgrind", "GDB", "Benchmarking"],
-    architectureNotes: "Thread-local arenas -> Segregated size bins -> Coalescing boundary tags -> Syscall virtual memory paging.",
-    githubUrl: "https://github.com",
-    liveUrl: "https://github.com",
+      "Segregated-fit explicit free-list memory allocator outperforming glibc on micro-allocations with custom coalescing and heap fragmentation prevention.",
   },
   {
     id: "sys-vault",
     country: "Systems & OS",
-    title: "Hardware Biometric Vault",
-    subtitle: "Secure Enclave & StrongBox Password Manager",
-    location: "React Native • Swift • Kotlin • AES-256",
+    title: "Hardware Vault",
+    subtitle: "Secure Element Cryptography",
+    location: "C++ / ARM Cortex-M",
     image: PHOTO.sysVault,
-    duration: "3 MOS",
-    distance: "QUANTUM RES",
-    likes: 710,
-    saves: 175,
-    views: 2980,
+    duration: "AES-256-GCM",
+    distance: "HARDWARE RNG",
+    likes: 298,
+    saves: 64,
+    views: 920,
     description:
-      "Zero-knowledge encrypted mobile credential manager. Leverages Apple Secure Enclave (FaceID) on iOS and Android KeyStore StrongBox (Fingerprint) hardware to derive ephemeral AES-256-GCM keys. Master keys never touch RAM in plaintext.",
-    techStack: ["React Native", "Swift", "Kotlin", "Secure Enclave", "AES-256-GCM", "Argon2id"],
-    architectureNotes: "Argon2id key derivation -> Hardware-backed biometric signing -> Encrypted SQLite storage -> Zero-knowledge sync.",
-    githubUrl: "https://github.com",
-    liveUrl: "https://github.com",
+      "Firmware implementation for an isolated cryptographic hardware security module managing ECDSA keypairs and air-gapped signature verification.",
   },
   {
     id: "sys-mesh",
     country: "Systems & OS",
-    title: "Tactical P2P Field Mesh",
-    subtitle: "CRDT Offline Tactical Field Network",
-    location: "React Native • BLE • WebRTC • SQLite",
+    title: "BLE Tactical Radio",
+    subtitle: "Low-Power Mesh Protocol",
+    location: "Embedded C / Nordic nRF52",
     image: PHOTO.sysMesh,
-    duration: "4 MOS",
-    distance: "120M MESH",
-    likes: 670,
-    saves: 155,
-    views: 2750,
+    duration: "2.4 GHz MESH",
+    distance: "1.2 KM RANGE",
+    likes: 345,
+    saves: 71,
+    views: 1040,
     description:
-      "Tactical mobile communication application engineered for zero-connectivity environments. Synchronizes geospatial maps, tactical pins, and mission logs across devices using Yjs Conflict-Free Replicated Data Types (CRDTs) over Bluetooth Low Energy (BLE) and Wi-Fi Direct.",
-    techStack: ["React Native", "TypeScript", "CRDTs", "BLE Peripheral", "WebRTC", "SQLite"],
-    architectureNotes: "WatermelonDB local SQLite -> Yjs CRDT synchronization -> Bluetooth Central/Peripheral mesh routing.",
-    githubUrl: "https://github.com",
-    liveUrl: "https://github.com",
+      "Decentralized peer-to-peer radio communication mesh enabling encrypted text message broadcast across off-grid emergency sensor nodes.",
+  },
+  {
+    id: "sys-wasm",
+    country: "Systems & OS",
+    title: "WASM Edge Runtime",
+    subtitle: "Sandboxed Function Engine",
+    location: "Rust / WebAssembly",
+    image: PHOTO.sysWasm,
+    duration: "1.2MS COLD",
+    distance: "ISOLATED MEM",
+    likes: 512,
+    saves: 115,
+    views: 1610,
+    description:
+      "Ultra-lightweight WebAssembly micro-runtime for executing untrusted serverless functions with strict memory and CPU instruction quotas.",
   },
 
-  /* -------------------------- CLOUD & AI -------------------------- */
+  /* ---------------------------- CLOUD & AI ---------------------------- */
   {
-    id: "ai-llmred",
+    id: "ai-llm-red",
     country: "Cloud & AI",
-    title: "LLM Red-Team Benchmark",
-    subtitle: "Automated Adversarial Security Harness",
-    location: "Python • PyTorch • vLLM • LangChain",
+    title: "LLM Red-Teaming Engine",
+    subtitle: "Automated Jailbreak Scanner",
+    location: "Python / PyTorch / Transformers",
     image: PHOTO.aiLlmRed,
-    duration: "3 MOS",
-    distance: "3.8K ATTACKS",
-    likes: 890,
-    saves: 245,
-    views: 3800,
+    duration: "98% BYPASS",
+    distance: "MULTI-MODEL",
+    likes: 720,
+    saves: 168,
+    views: 2450,
     description:
-      "Autonomous red-teaming harness testing LLMs and multi-agent frameworks against prompt injections, token smuggling, jailbreaks, data exfiltration via indirect injections, and RAG poisoning. Automated fuzzing generates thousands of semantic payload variations.",
-    techStack: ["Python", "PyTorch", "vLLM", "LangChain", "pgvector", "Docker"],
-    architectureNotes: "Genetic prompt mutator -> Multi-vector judge evaluation -> OWASP LLM Top 10 scoring -> Vulnerability report export.",
-    githubUrl: "https://github.com",
-    liveUrl: "https://github.com",
+      "Adversarial prompt injection suite employing genetic algorithms and automated gradient-guided mutations to evaluate LLM alignment guardrails.",
   },
   {
-    id: "ai-soc",
+    id: "ai-soc-triager",
     country: "Cloud & AI",
-    title: "Autonomous SOC Triager",
-    subtitle: "Graph Neural Network for SIEM Anomalies",
-    location: "PyTorch Geometric • Neo4j • FastAPI",
+    title: "Autonomous SOC Alert Triager",
+    subtitle: "Multi-Agent Threat Classifier",
+    location: "LangChain / FastAPI / Qdrant",
     image: PHOTO.aiSoc,
-    duration: "4 MOS",
-    distance: "88% FEWER PINGS",
-    likes: 760,
-    saves: 180,
-    views: 3100,
+    duration: "85% AUTO-CLOSE",
+    distance: "2.1S EVAL",
+    likes: 604,
+    saves: 142,
+    views: 1980,
     description:
-      "Autonomous Tier-1 Security Operations Center triage bot. Parses millions of Windows Event Logs, Sysmon telemetry, and Zeek network traces, structuring them into a heterogeneous attack graph. Graph Convolutional Networks (GCN) identify lateral movement chains in minutes.",
-    techStack: ["PyTorch Geometric", "Neo4j", "FastAPI", "Elasticsearch", "MITRE ATT&CK"],
-    architectureNotes: "Sysmon log parser -> Heterogeneous attack graph in Neo4j -> GCN lateral movement classifier -> Sigma rule generator.",
-    githubUrl: "https://github.com",
-    liveUrl: "https://github.com",
+      "Agentic pipeline integrating SIEM alerts with vector memory to correlate multi-stage intrusion attempts and draft contextual incident reports.",
   },
   {
-    id: "ai-bindiff",
+    id: "ai-bin-diff",
     country: "Cloud & AI",
-    title: "Neural Binary Diffing Engine",
-    subtitle: "Embedding-Based Vulnerability Matcher",
-    location: "Ghidra • Python • PyTorch • FAISS",
+    title: "Neural Binary Differ",
+    subtitle: "Assembly Code Embedding Matcher",
+    location: "PyTorch / Ghidra / Python",
     image: PHOTO.aiBinDiff,
-    duration: "3 MOS",
-    distance: "94.2% ACC",
-    likes: 640,
-    saves: 138,
-    views: 2600,
+    duration: "GNN EMBED",
+    distance: "CROSS-ARCH",
+    likes: 440,
+    saves: 98,
+    views: 1390,
     description:
-      "Deep-learning based cross-architecture binary diffing tool. Extracts Control Flow Graphs (CFGs) from compiled binaries (ELF/PE) across x86, ARM, and MIPS, generating dense vector embeddings with Graph Attention Networks (GAT) to identify 1-day vulnerabilities across architectures.",
-    techStack: ["Ghidra Headless", "Python", "PyTorch", "FAISS", "Assembly", "C"],
-    architectureNotes: "Headless Ghidra P-Code extractor -> Graph Attention Network embedding model -> FAISS cosine similarity index.",
-    githubUrl: "https://github.com",
-    liveUrl: "https://github.com",
+      "Graph neural network mapping disassembled control flow graphs into geometric latent embeddings to detect identical patched vulnerabilities across x86 and ARM.",
   },
   {
-    id: "ai-edge",
+    id: "ai-sandbox",
     country: "Cloud & AI",
-    title: "Edge WASM Image Synthesizer",
-    subtitle: "Sub-Millisecond Asset Compression at Edge",
-    location: "Rust • WebAssembly • Cloudflare Workers",
-    image: PHOTO.aiEdge,
-    duration: "2 MOS",
-    distance: "14ms TTFB",
-    likes: 580,
-    saves: 124,
-    views: 2200,
+    title: "Container Sandbox",
+    subtitle: "Rootless Isolation Daemon",
+    location: "Go / Linux Namespaces / cgroups v2",
+    image: PHOTO.aiContainer,
+    duration: "OCI COMPLIANT",
+    distance: "GVISOR LEVEL",
+    likes: 529,
+    saves: 120,
+    views: 1720,
     description:
-      "Cloudflare Workers edge service executing WebAssembly-compiled image optimization libraries (libvips / mozjpeg / libwebp). Dynamically detects client device capabilities, screen DPR, and network speed to transcode assets into AVIF/WebP on the fly.",
-    techStack: ["Rust", "WebAssembly", "Cloudflare Workers", "AVIF", "HTTP/3"],
-    architectureNotes: "Rust wasm32 compilation -> V8 isolate binding -> Dynamic DPR/format negotiation -> Anycast edge caching.",
-    githubUrl: "https://github.com",
-    liveUrl: "https://github.com",
+      "Lightweight container runtime leveraging user namespaces, seccomp filters, and cgroups v2 to execute untrusted binaries without root privileges.",
   },
 ];
 
@@ -399,18 +335,6 @@ function clamp(value: number, minimum: number, maximum: number) {
   return Math.min(Math.max(value, minimum), maximum);
 }
 
-function detectInitialOS(): "ios" | "android" | "desktop" {
-  if (typeof window === "undefined") return "desktop";
-  const ua = window.navigator.userAgent || "";
-  const isIOS =
-    /iPad|iPhone|iPod/.test(ua) ||
-    (window.navigator.platform === "MacIntel" && window.navigator.maxTouchPoints > 1);
-  if (isIOS) return "ios";
-  if (/Android/i.test(ua)) return "android";
-  if (window.innerWidth <= 768) return "ios";
-  return "desktop";
-}
-
 function Glyph({
   children,
   size = 18,
@@ -418,7 +342,7 @@ function Glyph({
   weight = "600",
   style,
 }: {
-  children: React.ReactNode;
+  children?: any;
   size?: number;
   color?: string;
   weight?: any;
@@ -447,11 +371,6 @@ function ImageWithFallback({
   style,
   resizeMode = "cover",
   children,
-}: {
-  source: string;
-  style?: any;
-  resizeMode?: any;
-  children?: React.ReactNode;
 }) {
   const [failed, setFailed] = useState(false);
 
@@ -489,12 +408,6 @@ function SoftIconButton({
   size = 42,
   style,
   accessibilityLabel,
-}: {
-  children: React.ReactNode;
-  onPress?: () => void;
-  size?: number;
-  style?: any;
-  accessibilityLabel?: string;
 }) {
   return (
     <Pressable
@@ -520,697 +433,6 @@ function SoftIconButton({
 }
 
 /* -------------------------------------------------------------------------- */
-/*                            DYNAMIC SYSTEM CHROME                           */
-/* -------------------------------------------------------------------------- */
-
-function SystemTopChrome({
-  osMode,
-  onSwitchOS,
-  onOpenControlCenter,
-  isIslandExpanded,
-  onToggleIsland,
-  isDark,
-}: {
-  osMode: "ios" | "android" | "desktop";
-  onSwitchOS: (mode: "ios" | "android" | "desktop") => void;
-  onOpenControlCenter: () => void;
-  isIslandExpanded: boolean;
-  onToggleIsland: () => void;
-  isDark?: boolean;
-}) {
-  const [time, setTime] = useState("09:41");
-
-  useEffect(() => {
-    const update = () => {
-      const now = new Date();
-      setTime(
-        `${now.getHours().toString().padStart(2, "0")}:${now
-          .getMinutes()
-          .toString()
-          .padStart(2, "0")}`
-      );
-    };
-    update();
-    const iv = setInterval(update, 10000);
-    return () => clearInterval(iv);
-  }, []);
-
-  const topPanResponder = useMemo(() => {
-    return PanResponder.create({
-      onStartShouldSetPanResponder: () => false,
-      onMoveShouldSetPanResponder: (_, gs) => {
-        return gs.dy > 12 && gs.dy > Math.abs(gs.dx);
-      },
-      onPanResponderRelease: (_, gs) => {
-        if (gs.dy > 25 || gs.vy > 0.35) {
-          onOpenControlCenter();
-        }
-      },
-    });
-  }, [onOpenControlCenter]);
-
-  if (osMode === "ios") {
-    return (
-      <View style={styles.systemTopChromeWrapper} pointerEvents="box-none">
-        <View {...topPanResponder.panHandlers} style={styles.iosTopChrome}>
-          <Pressable onPress={onOpenControlCenter} style={{ cursor: "pointer" }}>
-            <Text style={[styles.iosClockText, isDark && { color: "#FFFFFF" }]}>
-              {time}
-            </Text>
-          </Pressable>
-
-          <Pressable
-            onPress={onToggleIsland}
-            onLongPress={onOpenControlCenter}
-            accessibilityRole="button"
-            accessibilityLabel="Dynamic Island - Tap to expand, drag down for Control Center"
-            style={styles.dynamicIsland}
-          >
-            <View style={styles.dynamicIslandLens} />
-            <View style={styles.dynamicIslandDot} />
-          </Pressable>
-
-          <Pressable
-            onPress={onOpenControlCenter}
-            style={[styles.iosRightStatus, { cursor: "pointer" }]}
-            hitSlop={10}
-          >
-            <Text style={[styles.iosStatusGlyph, isDark && { color: "#FFFFFF" }]}>
-              5G
-            </Text>
-            <Text style={[styles.iosStatusGlyph, isDark && { color: "#FFFFFF" }]}>
-              🔋
-            </Text>
-          </Pressable>
-        </View>
-      </View>
-    );
-  }
-
-  if (osMode === "android") {
-    return (
-      <View style={styles.systemTopChromeWrapper} pointerEvents="box-none">
-        <View {...topPanResponder.panHandlers} style={styles.androidTopChrome}>
-          <Pressable onPress={onOpenControlCenter} style={[styles.androidLeftStatus, { cursor: "pointer" }]}>
-            <Text style={[styles.androidClockText, isDark && { color: "#FFFFFF" }]}>
-              {time}
-            </Text>
-            <Text style={styles.androidNotifGlyph}>🛡</Text>
-            <Text style={styles.androidNotifGlyph}>⚡</Text>
-          </Pressable>
-
-          <Pressable onPress={onOpenControlCenter} style={[styles.punchHoleCutout, { cursor: "pointer" }]} />
-
-          <Pressable onPress={onOpenControlCenter} style={[styles.androidRightStatus, { cursor: "pointer" }]}>
-            <Text style={[styles.androidStatusGlyph, isDark && { color: "#FFFFFF" }]}>
-              📶
-            </Text>
-            <Text style={[styles.androidStatusGlyph, isDark && { color: "#FFFFFF" }]}>
-              88%
-            </Text>
-          </Pressable>
-        </View>
-      </View>
-    );
-  }
-
-  // Desktop Ribbon
-  return (
-    <View style={styles.systemTopChromeWrapper} pointerEvents="box-none">
-      <View style={styles.desktopTopChrome}>
-        <View style={styles.desktopWindowControls}>
-          <Pressable
-            onPress={onOpenControlCenter}
-            accessibilityLabel="Control Center"
-            style={[styles.windowDot, { backgroundColor: "#EF4444", cursor: "pointer" }]}
-          />
-          <Pressable
-            onPress={() => onSwitchOS("ios")}
-            accessibilityLabel="Toggle Mobile Mode"
-            style={[styles.windowDot, { backgroundColor: "#F59E0B", cursor: "pointer" }]}
-          />
-          <Pressable
-            onPress={onOpenControlCenter}
-            accessibilityLabel="Maximize System"
-            style={[styles.windowDot, { backgroundColor: "#10B981", cursor: "pointer" }]}
-          />
-        </View>
-        <Text style={styles.desktopTitleText}>ZakOS Desktop Web • Portfolio</Text>
-        <Pressable
-          onPress={onOpenControlCenter}
-          style={[styles.desktopRightStatus, { cursor: "pointer" }]}
-        >
-          <Text style={styles.desktopStatusGlyph}>⚡ 88%</Text>
-          <Text style={styles.desktopStatusGlyph}>📶</Text>
-          <Text style={styles.desktopStatusTime}>{time}</Text>
-          <Text style={[styles.desktopStatusGlyph, { marginLeft: 4 }]}>⚙ Control</Text>
-        </Pressable>
-      </View>
-    </View>
-  );
-}
-
-function DynamicIslandOverlay({
-  onClose,
-  onOpenControlCenter,
-  currentProject,
-}: {
-  onClose: () => void;
-  onOpenControlCenter: () => void;
-  currentProject?: any;
-}) {
-  const expandAnim = useRef(new Animated.Value(0)).current;
-
-  useEffect(() => {
-    Animated.spring(expandAnim, {
-      toValue: 1,
-      friction: 7,
-      tension: 65,
-      useNativeDriver: true,
-    }).start();
-  }, [expandAnim]);
-
-  return (
-    <View style={styles.islandOverlayWrapper} pointerEvents="box-none">
-      <Animated.View
-        style={[
-          styles.islandExpandedContainer,
-          {
-            transform: [
-              {
-                scale: expandAnim.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [0.6, 1],
-                }),
-              },
-              {
-                translateY: expandAnim.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [-15, 0],
-                }),
-              },
-            ],
-            opacity: expandAnim,
-          },
-        ]}
-      >
-        <View style={styles.islandExpandedLeft}>
-          <View style={styles.islandPulseDot} />
-          <View>
-            <Text style={styles.islandExpandedTitle}>
-              {currentProject ? currentProject.title : "ZakOS Sentinel Active"}
-            </Text>
-            <Text style={styles.islandExpandedSubtitle}>
-              {currentProject
-                ? currentProject.distance
-                : "Real-time NIDS Engine • 99.4% Accuracy"}
-            </Text>
-          </View>
-        </View>
-
-        <View style={styles.islandExpandedActions}>
-          <Pressable
-            onPress={onOpenControlCenter}
-            style={styles.islandActionPill}
-          >
-            <Text style={styles.islandActionText}>Control</Text>
-          </Pressable>
-          <Pressable onPress={onClose} style={styles.islandCloseBtn}>
-            <Text style={styles.islandCloseText}>✕</Text>
-          </Pressable>
-        </View>
-      </Animated.View>
-    </View>
-  );
-}
-
-function SystemBottomChrome({
-  osMode,
-  onHome,
-  onBack,
-  onRecents,
-  isDark,
-  homeSwipeY,
-}: {
-  osMode: "ios" | "android" | "desktop";
-  onHome: () => void;
-  onBack: () => void;
-  onRecents: () => void;
-  isDark?: boolean;
-  homeSwipeY?: Animated.Value;
-}) {
-  const panResponder = useMemo(() => {
-    return PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onStartShouldSetPanResponderCapture: () => false,
-      onMoveShouldSetPanResponder: (_, gs) => {
-        return Math.abs(gs.dy) > 4 && Math.abs(gs.dy) > Math.abs(gs.dx);
-      },
-      onMoveShouldSetPanResponderCapture: (_, gs) => {
-        return Math.abs(gs.dy) > 4 && Math.abs(gs.dy) > Math.abs(gs.dx);
-      },
-      onPanResponderGrant: () => {
-        if (homeSwipeY) {
-          homeSwipeY.stopAnimation();
-        }
-      },
-      onPanResponderMove: (_, gs) => {
-        if (gs.dy < 0 && homeSwipeY) {
-          homeSwipeY.setValue(gs.dy);
-        }
-      },
-      onPanResponderRelease: (_, gs) => {
-        if (gs.dy < -40 || gs.vy < -0.4) {
-          if (homeSwipeY) {
-            Animated.timing(homeSwipeY, {
-              toValue: -180,
-              duration: 160,
-              easing: Easing.out(Easing.cubic),
-              useNativeDriver: true,
-            }).start(() => {
-              onHome();
-              homeSwipeY.setValue(0);
-            });
-          } else {
-            onHome();
-          }
-        } else if (Math.abs(gs.dy) < 5 && Math.abs(gs.dx) < 5) {
-          // Single tap/click
-          onHome();
-        } else {
-          if (homeSwipeY) {
-            Animated.spring(homeSwipeY, {
-              toValue: 0,
-              friction: 6,
-              tension: 60,
-              useNativeDriver: true,
-            }).start();
-          }
-        }
-      },
-      onPanResponderTerminate: () => {
-        if (homeSwipeY) {
-          Animated.spring(homeSwipeY, {
-            toValue: 0,
-            friction: 6,
-            useNativeDriver: true,
-          }).start();
-        }
-      },
-    });
-  }, [onHome, homeSwipeY]);
-
-  if (osMode === "ios") {
-    return (
-      <View style={styles.iosBottomBarArea} pointerEvents="box-none">
-        <View
-          {...panResponder.panHandlers}
-          style={styles.iosHomeIndicatorHitZone}
-        >
-          <Pressable
-            onPress={onHome}
-            accessibilityRole="button"
-            accessibilityLabel="iOS Home Bar - Return to Home"
-            hitSlop={{ top: 25, bottom: 25, left: 80, right: 80 }}
-            style={({ pressed }) => [
-              styles.iosHomeIndicatorTouchArea,
-              pressed && { opacity: 0.7 },
-            ]}
-          >
-            <View
-              style={[
-                styles.iosHomeIndicator,
-                isDark && { backgroundColor: "#FFFFFF" },
-              ]}
-            />
-          </Pressable>
-        </View>
-      </View>
-    );
-  }
-
-  if (osMode === "android") {
-    return (
-      <View style={styles.androidBottomBarArea} pointerEvents="auto">
-        <Pressable
-          onPress={onBack}
-          accessibilityRole="button"
-          accessibilityLabel="Android Back Button"
-          hitSlop={{ top: 12, bottom: 12, left: 18, right: 18 }}
-          style={({ pressed }) => [
-            styles.androidNavBtn,
-            pressed && styles.androidNavBtnPressed,
-          ]}
-        >
-          <Text style={[styles.androidNavIcon, isDark && { color: "#F1F5F9" }]}>◀</Text>
-        </Pressable>
-
-        <Pressable
-          onPress={onHome}
-          accessibilityRole="button"
-          accessibilityLabel="Android Home Button"
-          hitSlop={{ top: 12, bottom: 12, left: 18, right: 18 }}
-          style={({ pressed }) => [
-            styles.androidNavBtn,
-            pressed && styles.androidNavBtnPressed,
-          ]}
-        >
-          <View
-            style={[
-              styles.androidHomeCircle,
-              isDark && { borderColor: "#F1F5F9" },
-            ]}
-          />
-        </Pressable>
-
-        <Pressable
-          onPress={onRecents}
-          accessibilityRole="button"
-          accessibilityLabel="Android Recents Button"
-          hitSlop={{ top: 12, bottom: 12, left: 18, right: 18 }}
-          style={({ pressed }) => [
-            styles.androidNavBtn,
-            pressed && styles.androidNavBtnPressed,
-          ]}
-        >
-          <View
-            style={[
-              styles.androidRecentsSquare,
-              isDark && { borderColor: "#F1F5F9" },
-            ]}
-          />
-        </Pressable>
-      </View>
-    );
-  }
-
-  return null;
-}
-
-function ControlCenterModal({
-  visible,
-  onClose,
-  osMode,
-  onSwitchOS,
-  theme,
-  onSwitchTheme,
-}: {
-  visible: boolean;
-  onClose: () => void;
-  osMode: "ios" | "android" | "desktop";
-  onSwitchOS: (m: "ios" | "android" | "desktop") => void;
-  theme: "light" | "dark" | "cyberpunk";
-  onSwitchTheme: (t: "light" | "dark" | "cyberpunk") => void;
-}) {
-  const slideAnim = useRef(new Animated.Value(-600)).current;
-  const [wifi, setWifi] = useState(true);
-  const [bluetooth, setBluetooth] = useState(true);
-  const [airplane, setAirplane] = useState(false);
-  const [cellular, setCellular] = useState(true);
-
-  useEffect(() => {
-    if (visible) {
-      Animated.spring(slideAnim, {
-        toValue: 0,
-        friction: 8,
-        tension: 50,
-        useNativeDriver: true,
-      }).start();
-    } else {
-      slideAnim.setValue(-600);
-    }
-  }, [visible, slideAnim]);
-
-  const closeWithAnimation = () => {
-    Animated.timing(slideAnim, {
-      toValue: -600,
-      duration: 200,
-      easing: Easing.in(Easing.cubic),
-      useNativeDriver: true,
-    }).start(onClose);
-  };
-
-  const panResponder = useMemo(() => {
-    return PanResponder.create({
-      onStartShouldSetPanResponder: () => false,
-      onMoveShouldSetPanResponder: (_, gs) => {
-        return gs.dy < -12 && Math.abs(gs.dy) > Math.abs(gs.dx);
-      },
-      onPanResponderRelease: (_, gs) => {
-        if (gs.dy < -25 || gs.vy < -0.35) {
-          closeWithAnimation();
-        }
-      },
-    });
-  }, []);
-
-  if (!visible) return null;
-
-  return (
-    <View style={[StyleSheet.absoluteFill, { zIndex: 10000 }]}>
-      <Pressable onPress={closeWithAnimation} style={StyleSheet.absoluteFill}>
-        <View style={styles.modalBackdrop} />
-      </Pressable>
-
-      <Animated.View
-        style={[
-          styles.controlCenterSheet,
-          {
-            transform: [{ translateY: slideAnim }],
-          },
-        ]}
-        {...panResponder.panHandlers}
-      >
-        {/* Header */}
-        <View style={styles.controlCenterHeader}>
-          <View>
-            <Text style={styles.controlCenterEyebrow}>SYSTEM CONTROL & NOTIFICATIONS</Text>
-            <Text style={styles.controlCenterTitle}>Control Center</Text>
-          </View>
-          <Pressable onPress={closeWithAnimation} style={styles.bookingCloseButton}>
-            <Text style={{ fontSize: 18, color: "#94A3B8" }}>✕</Text>
-          </Pressable>
-        </View>
-
-        {/* Connectivity Toggles Row */}
-        <View style={styles.controlTogglesGrid}>
-          <Pressable
-            onPress={() => setWifi(!wifi)}
-            style={[styles.controlToggleCard, wifi && styles.controlToggleCardActive]}
-          >
-            <Text style={styles.controlToggleIcon}>📶</Text>
-            <Text style={styles.controlToggleLabel}>Wi-Fi</Text>
-            <Text style={styles.controlToggleSubtext}>{wifi ? "ZakOS-Net" : "Off"}</Text>
-          </Pressable>
-
-          <Pressable
-            onPress={() => setBluetooth(!bluetooth)}
-            style={[styles.controlToggleCard, bluetooth && styles.controlToggleCardActive]}
-          >
-            <Text style={styles.controlToggleIcon}>🎧</Text>
-            <Text style={styles.controlToggleLabel}>Bluetooth</Text>
-            <Text style={styles.controlToggleSubtext}>{bluetooth ? "Connected" : "Off"}</Text>
-          </Pressable>
-
-          <Pressable
-            onPress={() => setAirplane(!airplane)}
-            style={[styles.controlToggleCard, airplane && styles.controlToggleCardWarning]}
-          >
-            <Text style={styles.controlToggleIcon}>✈</Text>
-            <Text style={styles.controlToggleLabel}>Airplane</Text>
-            <Text style={styles.controlToggleSubtext}>{airplane ? "On" : "Off"}</Text>
-          </Pressable>
-
-          <Pressable
-            onPress={() => setCellular(!cellular)}
-            style={[styles.controlToggleCard, cellular && styles.controlToggleCardActive]}
-          >
-            <Text style={styles.controlToggleIcon}>📡</Text>
-            <Text style={styles.controlToggleLabel}>5G Ultra</Text>
-            <Text style={styles.controlToggleSubtext}>{cellular ? "Active" : "Off"}</Text>
-          </Pressable>
-        </View>
-
-        {/* OS Switcher Segment */}
-        <View style={styles.controlSection}>
-          <Text style={styles.controlSectionTitle}>OPERATING SYSTEM EMULATOR</Text>
-          <View style={styles.controlSegmentedRow}>
-            {(["ios", "android", "desktop"] as const).map((mode) => (
-              <Pressable
-                key={mode}
-                onPress={() => onSwitchOS(mode)}
-                style={[
-                  styles.controlSegmentBtn,
-                  osMode === mode && styles.controlSegmentBtnActive,
-                ]}
-              >
-                <Text
-                  style={[
-                    styles.controlSegmentText,
-                    osMode === mode && styles.controlSegmentTextActive,
-                  ]}
-                >
-                  {mode === "ios" ? " iOS 18" : mode === "android" ? "🤖 Android 15" : "🖥 Desktop"}
-                </Text>
-              </Pressable>
-            ))}
-          </View>
-        </View>
-
-        {/* Theme Switcher Segment */}
-        <View style={styles.controlSection}>
-          <Text style={styles.controlSectionTitle}>COLOR THEME</Text>
-          <View style={styles.controlSegmentedRow}>
-            {(["light", "dark", "cyberpunk"] as const).map((t) => (
-              <Pressable
-                key={t}
-                onPress={() => onSwitchTheme(t)}
-                style={[
-                  styles.controlSegmentBtn,
-                  theme === t && styles.controlSegmentBtnActive,
-                ]}
-              >
-                <Text
-                  style={[
-                    styles.controlSegmentText,
-                    theme === t && styles.controlSegmentTextActive,
-                  ]}
-                >
-                  {t === "light" ? "☀️ Light" : t === "dark" ? "🌙 Dark OLED" : "⚡ Cyberpunk"}
-                </Text>
-              </Pressable>
-            ))}
-          </View>
-        </View>
-
-        {/* System Telemetry */}
-        <View style={styles.controlTelemetryCard}>
-          <View style={styles.controlTelemetryItem}>
-            <Text style={styles.controlTelemetryLabel}>Uptime</Text>
-            <Text style={styles.controlTelemetryValue}>14h 34m</Text>
-          </View>
-          <View style={styles.controlTelemetryItem}>
-            <Text style={styles.controlTelemetryLabel}>RAM Load</Text>
-            <Text style={styles.controlTelemetryValue}>15.8 GB (49%)</Text>
-          </View>
-          <View style={styles.controlTelemetryItem}>
-            <Text style={styles.controlTelemetryLabel}>Battery</Text>
-            <Text style={styles.controlTelemetryValue}>88% [AC]</Text>
-          </View>
-          <View style={styles.controlTelemetryItem}>
-            <Text style={styles.controlTelemetryLabel}>Architecture</Text>
-            <Text style={styles.controlTelemetryValue}>x86_64 Core</Text>
-          </View>
-        </View>
-
-        {/* Dismiss Handle */}
-        <Pressable onPress={closeWithAnimation} style={styles.controlHandleZone}>
-          <View style={styles.controlDismissBar} />
-          <Text style={styles.controlDismissText}>Swipe up or tap to dismiss</Text>
-        </Pressable>
-      </Animated.View>
-    </View>
-  );
-}
-
-function RecentsModal({
-  visible,
-  onClose,
-  onOpenApp,
-}: {
-  visible: boolean;
-  onClose: () => void;
-  onOpenApp: (appId: string) => void;
-}) {
-  if (!visible) return null;
-
-  const apps = [
-    {
-      id: "projects",
-      name: "Projects & Architecture",
-      icon: "📁",
-      subtitle: "16 Projects across 4 Domains",
-      badge: "Running",
-      color: "#075CF5",
-    },
-    {
-      id: "terminal",
-      name: "Bash CLI Terminal",
-      icon: "💻",
-      subtitle: "visitor@zak-portfolio:~$ [Idle]",
-      badge: "Standby",
-      color: "#10B981",
-    },
-    {
-      id: "contact",
-      name: "Direct Transmission",
-      icon: "👤",
-      subtitle: "Zakarya Oukil • Email & Links",
-      badge: "Ready",
-      color: "#8E79F5",
-    },
-    {
-      id: "settings",
-      name: "System Configuration",
-      icon: "⚙",
-      subtitle: "OS Switcher & Display Modes",
-      badge: "Ready",
-      color: "#F59E0B",
-    },
-  ];
-
-  return (
-    <View style={[StyleSheet.absoluteFill, { zIndex: 9999 }]}>
-      <Pressable onPress={onClose} style={StyleSheet.absoluteFill}>
-        <View style={styles.modalBackdrop} />
-      </Pressable>
-
-      <View style={styles.recentsContainer}>
-        <View style={styles.recentsHeader}>
-          <Text style={styles.recentsTitle}>Active Applications</Text>
-          <Pressable onPress={onClose} style={styles.recentsCloseBtn}>
-            <Text style={styles.recentsCloseText}>Close All</Text>
-          </Pressable>
-        </View>
-
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.recentsScrollContent}
-        >
-          {apps.map((app) => (
-            <Pressable
-              key={app.id}
-              onPress={() => onOpenApp(app.id)}
-              style={({ pressed }) => [
-                styles.recentsCard,
-                pressed && { opacity: 0.85, transform: [{ scale: 0.97 }] },
-              ]}
-            >
-              <View style={[styles.recentsCardTop, { backgroundColor: app.color }]}>
-                <Text style={styles.recentsAppIcon}>{app.icon}</Text>
-                <Text style={styles.recentsCardBadge}>{app.badge}</Text>
-              </View>
-              <View style={styles.recentsCardBody}>
-                <Text numberOfLines={1} style={styles.recentsAppName}>
-                  {app.name}
-                </Text>
-                <Text numberOfLines={2} style={styles.recentsAppSubtitle}>
-                  {app.subtitle}
-                </Text>
-                <View style={styles.recentsOpenBtn}>
-                  <Text style={styles.recentsOpenBtnText}>Switch to App</Text>
-                </View>
-              </View>
-            </Pressable>
-          ))}
-        </ScrollView>
-      </View>
-    </View>
-  );
-}
-
-/* -------------------------------------------------------------------------- */
 /*                              DESTINATION CARD                              */
 /* -------------------------------------------------------------------------- */
 
@@ -1224,18 +446,6 @@ function DestinationCard({
   onOpen,
   saved,
   onSave,
-  didDragRef,
-}: {
-  item: any;
-  index: number;
-  scrollX: Animated.Value;
-  cardWidth: number;
-  cardHeight: number;
-  spacing: number;
-  onOpen: (item: any) => void;
-  saved: boolean;
-  onSave: (id: string) => void;
-  didDragRef: React.MutableRefObject<boolean>;
 }) {
   const itemSize = cardWidth + spacing;
 
@@ -1269,11 +479,6 @@ function DestinationCard({
     extrapolate: "clamp",
   });
 
-  const handlePress = () => {
-    if (didDragRef.current) return;
-    onOpen(item);
-  };
-
   return (
     <Animated.View
       style={{
@@ -1297,7 +502,7 @@ function DestinationCard({
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={`Open ${item.title}`}
-          onPress={handlePress}
+          onPress={() => onOpen(item)}
           style={({ pressed }) => [
             styles.destinationCard,
             {
@@ -1317,7 +522,9 @@ function DestinationCard({
             <Pressable
               accessibilityRole="button"
               accessibilityLabel={
-                saved ? `Remove ${item.title} from saved` : `Save ${item.title}`
+                saved
+                  ? `Remove ${item.title} from saved`
+                  : `Save ${item.title}`
               }
               hitSlop={10}
               onPress={(event) => {
@@ -1371,48 +578,33 @@ function HomeScreen({
   onFilterChange,
   savedIds,
   onToggleSave,
-  osMode,
-  onSelectOS,
-  onOpenTerminal,
-  onOpenContact,
-  onOpenSettings,
-  theme = "light",
-}: {
-  onOpen: (item: any) => void;
-  activeFilter: string;
-  onFilterChange: (f: string) => void;
-  savedIds: string[];
-  onToggleSave: (id: string) => void;
-  osMode: "ios" | "android" | "desktop";
-  onSelectOS: (m: "ios" | "android" | "desktop") => void;
-  onOpenTerminal: () => void;
-  onOpenContact: () => void;
-  onOpenSettings: () => void;
-  theme?: "light" | "dark" | "cyberpunk";
 }) {
   const { width, height } = useWindowDimensions();
 
   const horizontalPadding = clamp(width * 0.055, 18, 26);
   const spacing = clamp(width * 0.045, 14, 20);
   const cardWidth = clamp(width * 0.72, 250, 338);
-  const cardHeight = clamp(height - 255, 380, 520);
+  const cardHeight = clamp(height - 245, 390, 530);
   const sideInset = Math.max((width - cardWidth) / 2, horizontalPadding);
 
   const homeBottomPadding =
-    Platform.OS === "ios" ? 10 : Platform.OS === "android" ? 18 : 8;
+    Platform.OS === "ios"
+      ? 10
+      : Platform.OS === "android"
+        ? 18
+        : 8;
 
   const scrollX = useRef(new Animated.Value(0)).current;
-  const listRef = useRef<any>(null);
+  const listRef = useRef(null);
   const currentScrollOffset = useRef(0);
   const dragStartOffset = useRef(0);
-  const dragStartTimestamp = useRef(0);
   const didDragRef = useRef(false);
 
   const [menuVisible, setMenuVisible] = useState(false);
   const menuAnimation = useRef(new Animated.Value(0)).current;
 
   const filteredDestinations = useMemo(
-    () => PROJECTS.filter((item) => item.country === activeFilter),
+    () => DESTINATIONS.filter((item) => item.country === activeFilter),
     [activeFilter]
   );
 
@@ -1427,20 +619,14 @@ function HomeScreen({
       return {};
     }
 
-    const shouldStartDragging = (_: any, gestureState: any) => {
+    const shouldStartDragging = (_, gestureState) => {
       const horizontalDistance = Math.abs(gestureState.dx);
       const verticalDistance = Math.abs(gestureState.dy);
+
       return horizontalDistance > 5 && horizontalDistance > verticalDistance;
     };
 
-    const finishDragging = (_: any, gestureState: any) => {
-      const duration = Date.now() - dragStartTimestamp.current;
-      const totalDx = Math.abs(gestureState.dx);
-
-      if (totalDx > 5 || duration < 180) {
-        didDragRef.current = true;
-      }
-
+    const finishDragging = (_, gestureState) => {
       const projectedOffset = clamp(
         dragStartOffset.current - gestureState.dx - gestureState.vx * 150,
         0,
@@ -1468,11 +654,10 @@ function HomeScreen({
 
       onPanResponderGrant: () => {
         dragStartOffset.current = currentScrollOffset.current;
-        dragStartTimestamp.current = Date.now();
         didDragRef.current = false;
       },
 
-      onPanResponderMove: (_: any, gestureState: any) => {
+      onPanResponderMove: (_, gestureState) => {
         if (Math.abs(gestureState.dx) > 5) {
           didDragRef.current = true;
         }
@@ -1508,7 +693,7 @@ function HomeScreen({
     }).start();
   };
 
-  const changeFilter = (filter: string) => {
+  const changeFilter = (filter) => {
     onFilterChange(filter);
     currentScrollOffset.current = 0;
     scrollX.setValue(0);
@@ -1521,48 +706,29 @@ function HomeScreen({
     });
   };
 
-  const openDestination = (item: any) => {
+  const openDestination = (item) => {
     if (didDragRef.current) {
       return;
     }
+
     onOpen(item);
   };
 
-  const osBadge =
-    osMode === "ios"
-      ? "iOS 18 • iPhone"
-      : osMode === "android"
-      ? "Android 15 • Material You"
-      : "Desktop Web • macOS";
-
-  const homeTopInset =
-    osMode === "ios" ? 44 : osMode === "android" ? 38 : 32;
-  const navBarBottom =
-    osMode === "android" ? 52 : osMode === "ios" ? 38 : 20;
-
   return (
-    <SafeAreaView
-      style={[
-        styles.homeSafeArea,
-        theme === "dark" && styles.homeSafeAreaDark,
-        theme === "cyberpunk" && styles.homeSafeAreaCyberpunk,
-      ]}
-    >
+    <SafeAreaView style={styles.homeSafeArea}>
       <StatusBar
-        barStyle={theme === "light" ? "dark-content" : "light-content"}
-        backgroundColor="transparent"
-        translucent
+        barStyle="dark-content"
+        backgroundColor="#F5FAFD"
+        translucent={false}
       />
 
       <View
         style={[
           styles.homeContainer,
           {
-            paddingTop: homeTopInset,
+            paddingTop: clamp(height * 0.018, 8, 18),
             paddingBottom: homeBottomPadding,
           },
-          theme === "dark" && styles.homeContainerDark,
-          theme === "cyberpunk" && styles.homeContainerCyberpunk,
         ]}
       >
         <View
@@ -1574,13 +740,13 @@ function HomeScreen({
           ]}
         >
           <View>
-            <Text style={styles.homeEyebrow}>DEVELOPER PORTFOLIO • {osBadge}</Text>
+            <Text style={styles.homeEyebrow}>Developer Portfolio</Text>
             <Text style={styles.homeTitle}>Zakarya</Text>
           </View>
 
           <SoftIconButton
             onPress={toggleMenu}
-            accessibilityLabel="Open OS Switcher"
+            accessibilityLabel="Open navigation menu"
             style={styles.gridButton}
           >
             <View style={styles.gridIcon}>
@@ -1591,7 +757,6 @@ function HomeScreen({
           </SoftIconButton>
         </View>
 
-        {/* Dynamic OS Selector Dropdown */}
         <Animated.View
           pointerEvents={menuVisible ? "auto" : "none"}
           style={[
@@ -1616,54 +781,29 @@ function HomeScreen({
             },
           ]}
         >
-          <Text style={styles.quickMenuHeading}>SWITCH OPERATING SYSTEM</Text>
           <Pressable
-            onPress={() => {
-              onSelectOS("ios");
-              toggleMenu();
-            }}
+            onPress={toggleMenu}
             style={({ pressed }) => [
               styles.quickMenuItem,
-              osMode === "ios" && styles.quickMenuItemActive,
               pressed && styles.quickMenuItemPressed,
             ]}
           >
-            <Glyph size={15}></Glyph>
-            <Text style={styles.quickMenuText}>iOS 18 (iPhone Layout)</Text>
+            <Glyph size={16}>⌕</Glyph>
+            <Text style={styles.quickMenuText}>Explore places</Text>
           </Pressable>
 
           <Pressable
-            onPress={() => {
-              onSelectOS("android");
-              toggleMenu();
-            }}
+            onPress={toggleMenu}
             style={({ pressed }) => [
               styles.quickMenuItem,
-              osMode === "android" && styles.quickMenuItemActive,
               pressed && styles.quickMenuItemPressed,
             ]}
           >
-            <Glyph size={14}>🤖</Glyph>
-            <Text style={styles.quickMenuText}>Android 15 (Material You)</Text>
-          </Pressable>
-
-          <Pressable
-            onPress={() => {
-              onSelectOS("desktop");
-              toggleMenu();
-            }}
-            style={({ pressed }) => [
-              styles.quickMenuItem,
-              osMode === "desktop" && styles.quickMenuItemActive,
-              pressed && styles.quickMenuItemPressed,
-            ]}
-          >
-            <Glyph size={15}>🖥</Glyph>
-            <Text style={styles.quickMenuText}>Desktop Web (macOS)</Text>
+            <Glyph size={15}>♡</Glyph>
+            <Text style={styles.quickMenuText}>Saved tours</Text>
           </Pressable>
         </Animated.View>
 
-        {/* Tech Domain Filter Bar */}
         <View style={styles.filterArea}>
           <ScrollView
             horizontal
@@ -1705,14 +845,13 @@ function HomeScreen({
           </ScrollView>
         </View>
 
-        {/* Project Card Carousel */}
         <View style={styles.carouselArea}>
           <Animated.FlatList
             ref={listRef}
             {...desktopDragHandlers}
             horizontal
             data={filteredDestinations}
-            keyExtractor={(item: any) => item.id}
+            keyExtractor={(item) => item.id}
             showsHorizontalScrollIndicator={false}
             snapToInterval={snapInterval}
             snapToAlignment="start"
@@ -1737,15 +876,17 @@ function HomeScreen({
               ],
               {
                 useNativeDriver: true,
-                listener: (event: any) => {
-                  currentScrollOffset.current = event.nativeEvent.contentOffset.x;
+                listener: (event) => {
+                  currentScrollOffset.current =
+                    event.nativeEvent.contentOffset.x;
                 },
               }
             )}
-            onMomentumScrollEnd={(event: any) => {
-              currentScrollOffset.current = event.nativeEvent.contentOffset.x;
+            onMomentumScrollEnd={(event) => {
+              currentScrollOffset.current =
+                event.nativeEvent.contentOffset.x;
             }}
-            renderItem={({ item, index }: any) => (
+            renderItem={({ item, index }) => (
               <DestinationCard
                 item={item}
                 index={index}
@@ -1756,65 +897,40 @@ function HomeScreen({
                 onOpen={openDestination}
                 saved={savedIds.includes(item.id)}
                 onSave={onToggleSave}
-                didDragRef={didDragRef}
               />
             )}
           />
         </View>
 
-        {/* Floating Bottom Navigation Bar */}
         <View
           style={[
             styles.bottomNavigation,
             {
               marginHorizontal: horizontalPadding,
-              bottom: navBarBottom,
             },
           ]}
         >
-          {/* Item 1: Projects (Active) */}
           <Pressable style={styles.navItem}>
             <Text style={styles.navLabelActive}>Projects</Text>
             <View style={styles.navActiveDot} />
           </Pressable>
 
-          {/* Item 2: Terminal */}
-          <Pressable
-            onPress={onOpenTerminal}
-            accessibilityRole="button"
-            accessibilityLabel="Open Terminal"
-            style={styles.navItem}
-          >
-            <Glyph color="#8A95A5" size={20}>
-              ⌨
+          <Pressable style={styles.navItem}>
+            <Glyph color="#A8B0BA" size={22}>
+              ◎
             </Glyph>
-            <Text style={styles.navItemSubtext}>CLI</Text>
           </Pressable>
 
-          {/* Item 3: Contact */}
-          <Pressable
-            onPress={onOpenContact}
-            accessibilityRole="button"
-            accessibilityLabel="Open Contact & Resume"
-            style={styles.navItem}
-          >
-            <Glyph color="#8A95A5" size={19}>
-              👤
+          <Pressable style={styles.navItem}>
+            <Glyph color="#A8B0BA" size={21}>
+              ▢
             </Glyph>
-            <Text style={styles.navItemSubtext}>Contact</Text>
           </Pressable>
 
-          {/* Item 4: Settings */}
-          <Pressable
-            onPress={onOpenSettings}
-            accessibilityRole="button"
-            accessibilityLabel="Open Settings"
-            style={styles.navItem}
-          >
-            <Glyph color="#8A95A5" size={20}>
-              ⚙
+          <Pressable style={styles.navItem}>
+            <Glyph color="#A8B0BA" size={23}>
+              ♙
             </Glyph>
-            <Text style={styles.navItemSubtext}>Config</Text>
           </Pressable>
         </View>
       </View>
@@ -1832,12 +948,6 @@ function RelatedDestinationCard({
   height,
   onPress,
   isActive,
-}: {
-  item: any;
-  width: number;
-  height: number;
-  onPress: () => void;
-  isActive: boolean;
 }) {
   return (
     <Pressable
@@ -1888,14 +998,6 @@ function DetailScreen({
   onSelectDestination,
   savedIds,
   onToggleSave,
-  osMode,
-}: {
-  destination: any;
-  onClose: () => void;
-  onSelectDestination: (d: any) => void;
-  savedIds: string[];
-  onToggleSave: (id: string) => void;
-  osMode: "ios" | "android" | "desktop";
 }) {
   const { width, height } = useWindowDimensions();
 
@@ -1905,8 +1007,8 @@ function DetailScreen({
   const heartScale = useRef(new Animated.Value(1)).current;
   const switchProgress = useRef(new Animated.Value(1)).current;
   const switchingRef = useRef(false);
-  const detailScrollRef = useRef<any>(null);
-  const relatedScrollRef = useRef<any>(null);
+  const detailScrollRef = useRef(null);
+  const relatedScrollRef = useRef(null);
   const relatedScrollOffsetRef = useRef(0);
   const relatedDragStartOffsetRef = useRef(0);
   const relatedDidDragRef = useRef(false);
@@ -1914,10 +1016,10 @@ function DetailScreen({
   const [bookingOpen, setBookingOpen] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [booked, setBooked] = useState(false);
-  const [outgoingDestination, setOutgoingDestination] = useState<any>(null);
+  const [outgoingDestination, setOutgoingDestination] = useState(null);
   const [selectedCardId, setSelectedCardId] = useState(destination.id);
 
-  const heroHeight = clamp(height * 0.65, 470, 660);
+  const heroHeight = clamp(height * 0.67, 490, 670);
   const relatedCardWidth = clamp(width * 0.3, 112, 142);
   const relatedCardHeight = clamp(heroHeight * 0.19, 116, 146);
   const relatedCardSpacing = 12;
@@ -1925,16 +1027,29 @@ function DetailScreen({
   const relatedRightPadding = 34;
 
   const androidStatusBarInset =
-    Platform.OS === "android" ? (StatusBar.currentHeight || 24) + 8 : 0;
+    Platform.OS === "android"
+      ? (StatusBar.currentHeight || 24) + 8
+      : 0;
 
   const bottomSafePadding =
-    Platform.OS === "ios" ? 44 : Platform.OS === "android" ? 38 : 24;
+    Platform.OS === "ios"
+      ? 44
+      : Platform.OS === "android"
+        ? 38
+        : 24;
 
   const bookingBottomPadding =
-    Platform.OS === "ios" ? 44 : Platform.OS === "android" ? 38 : 26;
+    Platform.OS === "ios"
+      ? 44
+      : Platform.OS === "android"
+        ? 38
+        : 26;
 
   const relatedDestinations = useMemo(
-    () => PROJECTS.filter((item) => item.country === destination.country),
+    () =>
+      DESTINATIONS.filter(
+        (item) => item.country === destination.country
+      ),
     [destination.country]
   );
 
@@ -1952,13 +1067,14 @@ function DetailScreen({
       return {};
     }
 
-    const shouldStartDragging = (_: any, gestureState: any) => {
+    const shouldStartDragging = (_, gestureState) => {
       const horizontalDistance = Math.abs(gestureState.dx);
       const verticalDistance = Math.abs(gestureState.dy);
+
       return horizontalDistance > 5 && horizontalDistance > verticalDistance;
     };
 
-    const finishDragging = (_: any, gestureState: any) => {
+    const finishDragging = (_, gestureState) => {
       const projectedOffset = clamp(
         relatedDragStartOffsetRef.current -
           gestureState.dx -
@@ -1968,7 +1084,8 @@ function DetailScreen({
       );
 
       const snappedOffset = clamp(
-        Math.round(projectedOffset / relatedSnapInterval) * relatedSnapInterval,
+        Math.round(projectedOffset / relatedSnapInterval) *
+          relatedSnapInterval,
         0,
         relatedMaxScrollOffset
       );
@@ -1990,11 +1107,12 @@ function DetailScreen({
       onMoveShouldSetPanResponderCapture: shouldStartDragging,
 
       onPanResponderGrant: () => {
-        relatedDragStartOffsetRef.current = relatedScrollOffsetRef.current;
+        relatedDragStartOffsetRef.current =
+          relatedScrollOffsetRef.current;
         relatedDidDragRef.current = false;
       },
 
-      onPanResponderMove: (_: any, gestureState: any) => {
+      onPanResponderMove: (_, gestureState) => {
         if (Math.abs(gestureState.dx) > 5) {
           relatedDidDragRef.current = true;
         }
@@ -2067,7 +1185,7 @@ function DetailScreen({
     ]).start(onClose);
   };
 
-  const switchDestination = (nextDestination: any) => {
+  const switchDestination = (nextDestination) => {
     if (
       switchingRef.current ||
       !nextDestination ||
@@ -2151,6 +1269,8 @@ function DetailScreen({
   const confirmBooking = () => {
     setBooked(true);
   };
+
+  const estimatedTotal = quantity * 1240;
 
   const switchContentOpacity = switchProgress.interpolate({
     inputRange: [0, 1],
@@ -2281,17 +1401,17 @@ function DetailScreen({
                 </SoftIconButton>
 
                 <SoftIconButton
-                  onPress={() => window.open(destination.githubUrl, "_blank")}
-                  accessibilityLabel="GitHub Source Repository"
+                  onPress={() => {}}
+                  accessibilityLabel="More options"
                   style={styles.glassButton}
                 >
                   <Glyph
                     color="#FFFFFF"
-                    size={20}
+                    size={22}
                     weight="500"
-                    style={{ marginTop: 0 }}
+                    style={{ marginTop: -7 }}
                   >
-                    🐙
+                    ⋮
                   </Glyph>
                 </SoftIconButton>
               </View>
@@ -2379,7 +1499,7 @@ function DetailScreen({
 
                 <View style={styles.floatingCounter}>
                   <Glyph color="#FFFFFF" size={17}>
-                    ★
+                    ♡
                   </Glyph>
                   <Text style={styles.floatingCounterText}>
                     {destination.likes}
@@ -2403,7 +1523,7 @@ function DetailScreen({
                   },
                 ]}
               >
-                <Text style={styles.relatedHeading}>MORE IN THIS DOMAIN</Text>
+                <Text style={styles.relatedHeading}>Explore this country</Text>
 
                 <ScrollView
                   ref={relatedScrollRef}
@@ -2434,6 +1554,7 @@ function DetailScreen({
                           if (relatedDidDragRef.current || isActive) {
                             return;
                           }
+
                           switchDestination(item);
                         }}
                       />
@@ -2469,140 +1590,138 @@ function DetailScreen({
               <View style={styles.detailPanelHandle} />
 
               <View style={styles.detailPanelHeader}>
-                <View style={styles.detailPanelTitleArea}>
-                  <Text style={styles.panelTitle}>{destination.subtitle}</Text>
-                  <Text style={styles.panelSubheading}>
-                    Architecture & Stack: {destination.location}
-                  </Text>
-                </View>
-
-                <Animated.View
-                  style={{
-                    transform: [{ scale: heartScale }],
-                  }}
-                >
-                  <Pressable
-                    accessibilityRole="button"
-                    accessibilityLabel={
-                      saved ? "Remove project from favourites" : "Save project"
-                    }
-                    onPress={animateSave}
-                    style={({ pressed }) => [
-                      styles.sendButton,
-                      {
-                        opacity: pressed ? 0.7 : 1,
-                        transform: [{ scale: pressed ? 0.94 : 1 }],
-                      },
-                    ]}
-                  >
-                    <Glyph color={saved ? "#FF2945" : "#06A88B"} size={22}>
-                      {saved ? "★" : "☆"}
-                    </Glyph>
-                  </Pressable>
-                </Animated.View>
+              <View style={styles.detailPanelTitleArea}>
+                <Text style={styles.panelTitle}>{destination.subtitle}</Text>
+                <Text style={styles.panelSubheading}>
+                  A premium route through {destination.location}
+                </Text>
               </View>
 
-              <Text style={styles.panelDescription}>
-                {destination.description}
-              </Text>
-
-              <View style={styles.statisticsRow}>
-                <View style={styles.statistic}>
-                  <Glyph size={18}>○</Glyph>
-                  <Text style={styles.statisticText}>16 Contribs</Text>
-                </View>
-
-                <View style={styles.statistic}>
-                  <Glyph size={18} color="#EF4770">
-                    ♥
-                  </Glyph>
-                  <Text style={styles.statisticText}>{destination.likes}</Text>
-                </View>
-
-                <View style={styles.statistic}>
-                  <Glyph size={18}>☆</Glyph>
-                  <Text style={styles.statisticText}>{destination.saves}</Text>
-                </View>
-
-                <View style={styles.statistic}>
-                  <Glyph size={17}>◴</Glyph>
-                  <Text style={styles.statisticText}>99.9% Up</Text>
-                </View>
-              </View>
-
-              <View style={styles.peopleRow}>
-                <View style={styles.avatarStack}>
-                  {[PHOTO.avatarOne, PHOTO.avatarTwo, PHOTO.avatarThree].map(
-                    (avatar, index) => (
-                      <Image
-                        key={avatar}
-                        source={{ uri: avatar }}
-                        style={[
-                          styles.avatar,
-                          {
-                            marginLeft: index === 0 ? 0 : -9,
-                            zIndex: 4 - index,
-                          },
-                        ]}
-                      />
-                    )
-                  )}
-                </View>
-
+              <Animated.View
+                style={{
+                  transform: [{ scale: heartScale }],
+                }}
+              >
                 <Pressable
                   accessibilityRole="button"
-                  accessibilityLabel="Tech stack tags"
+                  accessibilityLabel={
+                    saved
+                      ? "Remove tour from favourites"
+                      : "Save tour"
+                  }
+                  onPress={animateSave}
                   style={({ pressed }) => [
-                    styles.morePeopleButton,
+                    styles.sendButton,
                     {
-                      opacity: pressed ? 0.65 : 1,
+                      opacity: pressed ? 0.7 : 1,
+                      transform: [{ scale: pressed ? 0.94 : 1 }],
                     },
                   ]}
                 >
-                  <Glyph size={14} color="#728096">
-                    {destination.techStack?.length || 4}+
+                  <Glyph color={saved ? "#FF2945" : "#06A88B"} size={22}>
+                    {saved ? "♥" : "➤"}
                   </Glyph>
                 </Pressable>
+              </Animated.View>
+            </View>
+
+            <Text style={styles.panelDescription}>
+              {destination.description}
+            </Text>
+
+            <View style={styles.statisticsRow}>
+              <View style={styles.statistic}>
+                <Glyph size={18}>○</Glyph>
+                <Text style={styles.statisticText}>24</Text>
               </View>
 
-              <View style={styles.routeCard}>
-                <View style={styles.routePointIcon}>
-                  <Glyph color="#8E79F5" size={17}>
-                    ⊙
-                  </Glyph>
-                </View>
+              <View style={styles.statistic}>
+                <Glyph size={18} color="#EF4770">
+                  ♥
+                </Glyph>
+                <Text style={styles.statisticText}>65</Text>
+              </View>
 
-                <View style={styles.routeColumn}>
-                  <Text style={styles.routeLabel}>Runtime / Engine</Text>
-                  <Text numberOfLines={1} style={styles.routeValue}>
-                    {destination.location}
-                  </Text>
-                </View>
+              <View style={styles.statistic}>
+                <Glyph size={18}>☆</Glyph>
+                <Text style={styles.statisticText}>17</Text>
+              </View>
 
-                <View style={styles.routeDivider} />
+              <View style={styles.statistic}>
+                <Glyph size={17}>◴</Glyph>
+                <Text style={styles.statisticText}>80</Text>
+              </View>
+            </View>
 
-                <View style={styles.routeColumn}>
-                  <Text style={styles.routeLabel}>Core Benchmark</Text>
-                  <Text style={styles.routeValue}>{destination.distance}</Text>
-                </View>
+            <View style={styles.peopleRow}>
+              <View style={styles.avatarStack}>
+                {[PHOTO.avatarOne, PHOTO.avatarTwo, PHOTO.avatarThree].map(
+                  (avatar, index) => (
+                    <Image
+                      key={avatar}
+                      source={{ uri: avatar }}
+                      style={[
+                        styles.avatar,
+                        {
+                          marginLeft: index === 0 ? 0 : -9,
+                          zIndex: 4 - index,
+                        },
+                      ]}
+                    />
+                  )
+                )}
               </View>
 
               <Pressable
                 accessibilityRole="button"
-                accessibilityLabel="Inspect architecture and demo"
-                onPress={openBooking}
+                accessibilityLabel="View more participants"
                 style={({ pressed }) => [
-                  styles.primaryButton,
+                  styles.morePeopleButton,
                   {
-                    opacity: pressed ? 0.82 : 1,
-                    transform: [{ scale: pressed ? 0.985 : 1 }],
+                    opacity: pressed ? 0.65 : 1,
                   },
                 ]}
               >
-                <Text style={styles.primaryButtonText}>
-                  Inspect Architecture & Demo
-                </Text>
+                <Glyph size={21} color="#728096">
+                  …
+                </Glyph>
               </Pressable>
+            </View>
+
+            <View style={styles.routeCard}>
+              <View style={styles.routePointIcon}>
+                <Glyph color="#8E79F5" size={17}>
+                  ⊙
+                </Glyph>
+              </View>
+
+              <View style={styles.routeColumn}>
+                <Text style={styles.routeLabel}>From</Text>
+                <Text style={styles.routeValue}>Your hotel</Text>
+              </View>
+
+              <View style={styles.routeDivider} />
+
+              <View style={styles.routeColumn}>
+                <Text style={styles.routeLabel}>To</Text>
+                <Text style={styles.routeValue}>{destination.location}</Text>
+              </View>
+            </View>
+
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Commence the tour"
+              onPress={openBooking}
+              style={({ pressed }) => [
+                styles.primaryButton,
+                {
+                  opacity: pressed ? 0.82 : 1,
+                  transform: [{ scale: pressed ? 0.985 : 1 }],
+                },
+              ]}
+            >
+              <Text style={styles.primaryButtonText}>Inspect GitHub & Demo</Text>
+            </Pressable>
             </Animated.View>
           </Animated.View>
         </Animated.ScrollView>
@@ -2621,7 +1740,7 @@ function DetailScreen({
         <View style={StyleSheet.absoluteFill}>
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Close architecture panel"
+            accessibilityLabel="Close booking panel"
             onPress={closeBooking}
             style={StyleSheet.absoluteFill}
           >
@@ -2661,8 +1780,8 @@ function DetailScreen({
               <>
                 <View style={styles.bookingHeader}>
                   <View>
-                    <Text style={styles.bookingEyebrow}>SYSTEM BLUEPRINT</Text>
-                    <Text style={styles.bookingTitle}>Architecture Specs</Text>
+                    <Text style={styles.bookingEyebrow}>SOURCE CODE & ARCHITECTURE</Text>
+                    <Text style={styles.bookingTitle}>Technical Overview</Text>
                   </View>
 
                   <Pressable
@@ -2682,14 +1801,15 @@ function DetailScreen({
                 </View>
 
                 <Text style={styles.bookingDescription}>
-                  Pipeline: {destination.architectureNotes}
+                  Reserve a place for the {destination.title} experience.
+                  Adjust the number of travellers before continuing.
                 </Text>
 
                 <View style={styles.bookingOptionCard}>
-                  <View style={{ flex: 1 }}>
-                    <Text style={styles.bookingOptionLabel}>Stack Components</Text>
-                    <Text numberOfLines={1} style={styles.bookingOptionValue}>
-                      {destination.techStack?.join(" • ") || "Production Microservices"}
+                  <View>
+                    <Text style={styles.bookingOptionLabel}>Architecture Spec</Text>
+                    <Text style={styles.bookingOptionValue}>
+                      {quantity} {quantity === 1 ? "person" : "people"}
                     </Text>
                   </View>
 
@@ -2706,7 +1826,7 @@ function DetailScreen({
                       <Glyph size={23}>−</Glyph>
                     </Pressable>
 
-                    <Text style={styles.quantityText}>{quantity}x</Text>
+                    <Text style={styles.quantityText}>{quantity}</Text>
 
                     <Pressable
                       onPress={() =>
@@ -2724,20 +1844,22 @@ function DetailScreen({
 
                 <View style={styles.bookingTotalRow}>
                   <View>
-                    <Text style={styles.bookingTotalLabel}>Benchmark Latency</Text>
+                    <Text style={styles.bookingTotalLabel}>
+                      Estimated total
+                    </Text>
                     <Text style={styles.bookingTotalNote}>
-                      Sub-millisecond P99 response time
+                      Taxes and flights not included
                     </Text>
                   </View>
 
                   <Text style={styles.bookingTotalValue}>
-                    {destination.distance}
+                    ${estimatedTotal.toLocaleString()}
                   </Text>
                 </View>
 
                 <Pressable
                   accessibilityRole="button"
-                  accessibilityLabel="Confirm inspection"
+                  accessibilityLabel="Confirm booking"
                   onPress={confirmBooking}
                   style={({ pressed }) => [
                     styles.primaryButton,
@@ -2749,7 +1871,7 @@ function DetailScreen({
                   ]}
                 >
                   <Text style={styles.primaryButtonText}>
-                    Launch Live Demo / GitHub
+                    Continue Reservation
                   </Text>
                 </Pressable>
               </>
@@ -2761,18 +1883,15 @@ function DetailScreen({
                   </Glyph>
                 </View>
 
-                <Text style={styles.confirmationTitle}>Instance Connected</Text>
+                <Text style={styles.confirmationTitle}>Repository Access Granted</Text>
 
                 <Text style={styles.confirmationText}>
-                  The {destination.title} repository and architecture artifacts
-                  are live and ready for inspection.
+                  The {destination.title} tour has been prepared for {quantity}{" "}
+                  {quantity === 1 ? "traveller" : "travellers"}.
                 </Text>
 
                 <Pressable
-                  onPress={() => {
-                    window.open(destination.githubUrl, "_blank");
-                    closeBooking();
-                  }}
+                  onPress={closeBooking}
                   style={({ pressed }) => [
                     styles.primaryButton,
                     {
@@ -2782,9 +1901,7 @@ function DetailScreen({
                     },
                   ]}
                 >
-                  <Text style={styles.primaryButtonText}>
-                    Open GitHub Repository ↗
-                  </Text>
+                  <Text style={styles.primaryButtonText}>Done</Text>
                 </Pressable>
               </View>
             )}
@@ -2796,595 +1913,46 @@ function DetailScreen({
 }
 
 /* -------------------------------------------------------------------------- */
-/*                               TERMINAL MODAL                               */
-/* -------------------------------------------------------------------------- */
-
-function TerminalModal({
-  visible,
-  onClose,
-  onSwitchOS,
-  osMode,
-}: {
-  visible: boolean;
-  onClose: () => void;
-  onSwitchOS: (m: "ios" | "android" | "desktop") => void;
-  osMode: "ios" | "android" | "desktop";
-}) {
-  const [cmdInput, setCmdInput] = useState("");
-  const [log, setLog] = useState<string[]>([
-    "ZakOS Bash Lab Terminal v2.4.0-hardened",
-    "Type 'help' to list available cybersecurity & system commands.",
-  ]);
-  const scrollRef = useRef<any>(null);
-
-  useEffect(() => {
-    scrollRef.current?.scrollToEnd?.({ animated: true });
-  }, [log]);
-
-  if (!visible) return null;
-
-  const handleCommand = (raw: string) => {
-    const text = raw.trim();
-    if (!text) return;
-    const parts = text.split(" ");
-    const cmd = parts[0].toLowerCase();
-    const arg = parts[1]?.toLowerCase();
-
-    let output = "";
-    if (cmd === "help") {
-      output =
-        "Available commands:\n" +
-        "  whoami       - Developer background, role & certifications\n" +
-        "  tools        - Offensive security & infrastructure tooling\n" +
-        "  skills       - Technical competencies matrix\n" +
-        "  projects     - 16 production systems & CTF research labs\n" +
-        "  os [mode]    - Switch OS frame (ios | android | desktop)\n" +
-        "  clear        - Clear terminal log\n" +
-        "  exit         - Close terminal";
-    } else if (cmd === "whoami") {
-      output =
-        "Zakarya (Zakar) — Cybersecurity Specialist & Full-Stack Systems Engineer\n" +
-        "Specializing in network intrusion detection, SCADA/ICS analysis, and distributed systems.";
-    } else if (cmd === "tools") {
-      output =
-        "[+] Security: Nmap, Wireshark, Scapy, Burp Suite Pro, Metasploit, Ghidra, Volatility 3\n" +
-        "[+] Systems: Kali Linux, Arch Linux, Docker, Kubernetes, AWS, PostgreSQL, Kafka, Redis";
-    } else if (cmd === "skills") {
-      output =
-        "• Network Intrusion Detection (NIDS / ML): 94%\n" +
-        "• Penetration Testing (eJPT Track): 92%\n" +
-        "• Python / FastAPI / Scapy: 96%\n" +
-        "• TypeScript / React Native Web: 95%\n" +
-        "• Go / Raft Systems: 88%\n" +
-        "• C / Linux Kernel (eBPF): 84%";
-    } else if (cmd === "projects") {
-      output =
-        "16 Verified Projects across 4 domains:\n" +
-        "  [Security & CTF] NIDS ML, Stuxnet SCADA, eJPT DMZ, eBPF Sandbox\n" +
-        "  [Full Stack] ZakOS Web, Voyage Platform, Telemetry Mesh, Collab Canvas\n" +
-        "  [Systems & OS] Raft KV Store, Linux Malloc, Hardware Vault, Tactical Mesh\n" +
-        "  [Cloud & AI] LLM Red-Team, Autonomous SOC, Neural BinDiff, Edge WASM";
-    } else if (cmd === "os") {
-      if (arg && ["ios", "android", "desktop"].includes(arg)) {
-        onSwitchOS(arg as any);
-        output = `[+] System OS skin changed to: ${arg.toUpperCase()}`;
-      } else {
-        output = `Current OS: ${osMode}. Usage: os <ios | android | desktop>`;
-      }
-    } else if (cmd === "clear") {
-      setLog([]);
-      setCmdInput("");
-      return;
-    } else if (cmd === "exit") {
-      onClose();
-      return;
-    } else {
-      output = `bash: command not found: ${cmd}. Type 'help' for options.`;
-    }
-
-    setLog((prev) => [...prev, `visitor@zak-portfolio:~$ ${text}`, output]);
-    setCmdInput("");
-  };
-
-  return (
-    <View style={StyleSheet.absoluteFill}>
-      <Pressable onPress={onClose} style={StyleSheet.absoluteFill}>
-        <View style={styles.modalBackdrop} />
-      </Pressable>
-
-      <View style={styles.terminalContainer}>
-        <View style={styles.terminalHeader}>
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-            <View style={[styles.terminalDot, { backgroundColor: "#EF4444" }]} />
-            <View style={[styles.terminalDot, { backgroundColor: "#F59E0B" }]} />
-            <View style={[styles.terminalDot, { backgroundColor: "#10B981" }]} />
-            <Text style={styles.terminalTitleText}>bash — zak-terminal</Text>
-          </View>
-
-          <Pressable onPress={onClose} hitSlop={10}>
-            <Text style={styles.terminalCloseText}>✕</Text>
-          </Pressable>
-        </View>
-
-        <ScrollView
-          ref={scrollRef}
-          style={styles.terminalBody}
-          contentContainerStyle={{ paddingBottom: 16 }}
-        >
-          {log.map((line, idx) => (
-            <Text key={idx} style={styles.terminalLogLine}>
-              {line}
-            </Text>
-          ))}
-        </ScrollView>
-
-        {/* Quick Commands Bar */}
-        <View style={styles.terminalQuickRow}>
-          {["help", "whoami", "tools", "skills", "projects", "clear"].map((c) => (
-            <Pressable
-              key={c}
-              onPress={() => handleCommand(c)}
-              style={styles.terminalQuickPill}
-            >
-              <Text style={styles.terminalQuickPillText}>{c}</Text>
-            </Pressable>
-          ))}
-        </View>
-
-        <View style={styles.terminalInputRow}>
-          <Text style={styles.terminalPromptText}>$</Text>
-          <TextInput
-            value={cmdInput}
-            onChangeText={setCmdInput}
-            onSubmitEditing={() => handleCommand(cmdInput)}
-            placeholder="type command (e.g. whoami)..."
-            placeholderTextColor="#64748B"
-            autoCapitalize="none"
-            autoCorrect={false}
-            style={styles.terminalTextInput}
-          />
-        </View>
-      </View>
-    </View>
-  );
-}
-
-/* -------------------------------------------------------------------------- */
-/*                                CONTACT MODAL                               */
-/* -------------------------------------------------------------------------- */
-
-function ContactModal({
-  visible,
-  onClose,
-}: {
-  visible: boolean;
-  onClose: () => void;
-}) {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [msg, setMsg] = useState("");
-  const [sent, setSent] = useState(false);
-
-  if (!visible) return null;
-
-  const handleSend = () => {
-    if (!name || !email || !msg) return;
-    setSent(true);
-    setTimeout(() => {
-      setSent(false);
-      setName("");
-      setEmail("");
-      setMsg("");
-      onClose();
-    }, 1200);
-  };
-
-  return (
-    <View style={StyleSheet.absoluteFill}>
-      <Pressable onPress={onClose} style={StyleSheet.absoluteFill}>
-        <View style={styles.modalBackdrop} />
-      </Pressable>
-
-      <View style={styles.contactSheet}>
-        <View style={styles.bookingHandle} />
-        <View style={styles.bookingHeader}>
-          <View>
-            <Text style={styles.bookingEyebrow}>CONNECT WITH ME</Text>
-            <Text style={styles.bookingTitle}>Zakarya</Text>
-          </View>
-          <Pressable onPress={onClose} style={styles.bookingCloseButton}>
-            <Glyph size={24} color="#4B5563">
-              ×
-            </Glyph>
-          </Pressable>
-        </View>
-
-        <Text style={styles.bookingDescription}>
-          Cybersecurity Specialist & Full-Stack Systems Engineer based in Casablanca / Remote.
-        </Text>
-
-        <View style={styles.contactActionsRow}>
-          <Pressable
-            onPress={() => window.open("mailto:contact@zakar.dev", "_blank")}
-            style={styles.contactActionBtn}
-          >
-            <Text style={styles.contactActionIcon}>✉</Text>
-            <Text style={styles.contactActionText}>Email</Text>
-          </Pressable>
-
-          <Pressable
-            onPress={() => window.open("https://github.com", "_blank")}
-            style={styles.contactActionBtn}
-          >
-            <Text style={styles.contactActionIcon}>🐙</Text>
-            <Text style={styles.contactActionText}>GitHub</Text>
-          </Pressable>
-
-          <Pressable
-            onPress={() => window.open("https://linkedin.com", "_blank")}
-            style={styles.contactActionBtn}
-          >
-            <Text style={styles.contactActionIcon}>💼</Text>
-            <Text style={styles.contactActionText}>LinkedIn</Text>
-          </Pressable>
-        </View>
-
-        {!sent ? (
-          <View style={{ gap: 8, marginTop: 14 }}>
-            <TextInput
-              value={name}
-              onChangeText={setName}
-              placeholder="Your Name"
-              placeholderTextColor="#94A3B8"
-              style={styles.contactInput}
-            />
-            <TextInput
-              value={email}
-              onChangeText={setEmail}
-              placeholder="Your Email"
-              placeholderTextColor="#94A3B8"
-              keyboardType="email-address"
-              autoCapitalize="none"
-              style={styles.contactInput}
-            />
-            <TextInput
-              value={msg}
-              onChangeText={setMsg}
-              placeholder="Your Message..."
-              placeholderTextColor="#94A3B8"
-              multiline
-              numberOfLines={3}
-              style={[styles.contactInput, { height: 60 }]}
-            />
-            <Pressable
-              onPress={handleSend}
-              style={[styles.primaryButton, { marginTop: 10 }]}
-            >
-              <Text style={styles.primaryButtonText}>Dispatch Message</Text>
-            </Pressable>
-          </View>
-        ) : (
-          <View style={{ alignItems: "center", paddingVertical: 20 }}>
-            <Text style={{ fontSize: 24, color: "#08AB88", fontWeight: "800" }}>
-              ✓ Transmission Sent
-            </Text>
-          </View>
-        )}
-      </View>
-    </View>
-  );
-}
-
-/* -------------------------------------------------------------------------- */
-/*                               SETTINGS MODAL                               */
-/* -------------------------------------------------------------------------- */
-
-function SettingsModal({
-  visible,
-  onClose,
-  osMode,
-  onSwitchOS,
-  theme = "light",
-  onSwitchTheme,
-}: {
-  visible: boolean;
-  onClose: () => void;
-  osMode: "ios" | "android" | "desktop";
-  onSwitchOS: (m: "ios" | "android" | "desktop") => void;
-  theme?: "light" | "dark" | "cyberpunk";
-  onSwitchTheme?: (t: "light" | "dark" | "cyberpunk") => void;
-}) {
-  if (!visible) return null;
-
-  return (
-    <View style={StyleSheet.absoluteFill}>
-      <Pressable onPress={onClose} style={StyleSheet.absoluteFill}>
-        <View style={styles.modalBackdrop} />
-      </Pressable>
-
-      <View style={styles.contactSheet}>
-        <View style={styles.bookingHandle} />
-        <View style={styles.bookingHeader}>
-          <View>
-            <Text style={styles.bookingEyebrow}>SYSTEM CONTROL</Text>
-            <Text style={styles.bookingTitle}>OS & Preferences</Text>
-          </View>
-          <Pressable onPress={onClose} style={styles.bookingCloseButton}>
-            <Glyph size={24} color="#4B5563">
-              ×
-            </Glyph>
-          </Pressable>
-        </View>
-
-        <Text style={styles.bookingDescription}>
-          Select your virtual device environment to re-skin status bars, system gestures, and layout accents.
-        </Text>
-
-        <View style={{ gap: 10, marginTop: 14 }}>
-          {(
-            [
-              { id: "ios", label: "iOS 18 (iPhone Mockup / Dynamic Island)", icon: "" },
-              { id: "android", label: "Android 15 (Material You / 3-Button Nav)", icon: "🤖" },
-              { id: "desktop", label: "Desktop Web (macOS / Portfolio View)", icon: "🖥" },
-            ] as const
-          ).map((item) => {
-            const active = osMode === item.id;
-            return (
-              <Pressable
-                key={item.id}
-                onPress={() => onSwitchOS(item.id)}
-                style={[
-                  styles.settingsOSOption,
-                  active && styles.settingsOSOptionActive,
-                ]}
-              >
-                <Text style={styles.settingsOSIcon}>{item.icon}</Text>
-                <Text
-                  style={[
-                    styles.settingsOSLabel,
-                    active && styles.settingsOSLabelActive,
-                  ]}
-                >
-                  {item.label}
-                </Text>
-                {active && <Text style={styles.settingsOSCheck}>✓</Text>}
-              </Pressable>
-            );
-          })}
-        </View>
-
-        {onSwitchTheme && (
-          <View style={{ marginTop: 16 }}>
-            <Text style={styles.controlSectionTitle}>THEME PALETTE</Text>
-            <View style={styles.controlSegmentedRow}>
-              {(["light", "dark", "cyberpunk"] as const).map((t) => (
-                <Pressable
-                  key={t}
-                  onPress={() => onSwitchTheme(t)}
-                  style={[
-                    styles.controlSegmentBtn,
-                    theme === t && styles.controlSegmentBtnActive,
-                  ]}
-                >
-                  <Text
-                    style={[
-                      styles.controlSegmentText,
-                      theme === t && styles.controlSegmentTextActive,
-                    ]}
-                  >
-                    {t === "light" ? "☀️ Light" : t === "dark" ? "🌙 Dark" : "⚡ Cyber"}
-                  </Text>
-                </Pressable>
-              ))}
-            </View>
-          </View>
-        )}
-
-        <Pressable
-          onPress={onClose}
-          style={[styles.primaryButton, { marginTop: 20 }]}
-        >
-          <Text style={styles.primaryButtonText}>Done</Text>
-        </Pressable>
-      </View>
-    </View>
-  );
-}
-
-/* -------------------------------------------------------------------------- */
 /*                                    APP                                     */
 /* -------------------------------------------------------------------------- */
 
 export default function App() {
-  const [osMode, setOSMode] = useState<"ios" | "android" | "desktop">(() =>
-    detectInitialOS()
-  );
-  const [theme, setTheme] = useState<"light" | "dark" | "cyberpunk">("light");
   const [activeFilter, setActiveFilter] = useState("Security & CTF");
-  const [selectedDestination, setSelectedDestination] = useState<any>(null);
-  const [savedIds, setSavedIds] = useState(["sec-nids", "fs-zakos"]);
+  const [selectedDestination, setSelectedDestination] = useState(null);
+  const [savedIds, setSavedIds] = useState(["sec-ml-ids"]);
 
-  // Modals
-  const [terminalOpen, setTerminalOpen] = useState(false);
-  const [contactOpen, setContactOpen] = useState(false);
-  const [settingsOpen, setSettingsOpen] = useState(false);
-  const [controlCenterOpen, setControlCenterOpen] = useState(false);
-  const [recentsOpen, setRecentsOpen] = useState(false);
-  const [islandExpanded, setIslandExpanded] = useState(false);
-
-  // Home swipe up physics
-  const homeSwipeY = useRef(new Animated.Value(0)).current;
-
-  const toggleSaved = (destinationId: string) => {
+  const toggleSaved = (destinationId) => {
     setSavedIds((current) => {
       if (current.includes(destinationId)) {
         return current.filter((id) => id !== destinationId);
       }
+
       return [...current, destinationId];
     });
   };
 
-  const handleHome = () => {
-    setControlCenterOpen(false);
-    setIslandExpanded(false);
-    setRecentsOpen(false);
-    setTerminalOpen(false);
-    setContactOpen(false);
-    setSettingsOpen(false);
-    setSelectedDestination(null);
-  };
-
-  const handleBack = () => {
-    if (controlCenterOpen) {
-      setControlCenterOpen(false);
-      return;
-    }
-    if (islandExpanded) {
-      setIslandExpanded(false);
-      return;
-    }
-    if (recentsOpen) {
-      setRecentsOpen(false);
-      return;
-    }
-    if (terminalOpen) {
-      setTerminalOpen(false);
-      return;
-    }
-    if (contactOpen) {
-      setContactOpen(false);
-      return;
-    }
-    if (settingsOpen) {
-      setSettingsOpen(false);
-      return;
-    }
-    if (selectedDestination) {
-      setSelectedDestination(null);
-      return;
-    }
-  };
+  if (selectedDestination) {
+    return (
+      <View style={styles.app}>
+        <DetailScreen
+          destination={selectedDestination}
+          onClose={() => setSelectedDestination(null)}
+          onSelectDestination={setSelectedDestination}
+          savedIds={savedIds}
+          onToggleSave={toggleSaved}
+        />
+      </View>
+    );
+  }
 
   return (
-    <View
-      style={[
-        styles.app,
-        theme === "dark" && styles.appDark,
-        theme === "cyberpunk" && styles.appCyberpunk,
-      ]}
-    >
-      {/* Dynamic Top System Chrome (Always on top with high zIndex) */}
-      <SystemTopChrome
-        osMode={osMode}
-        onSwitchOS={setOSMode}
-        onOpenControlCenter={() => setControlCenterOpen(true)}
-        isIslandExpanded={islandExpanded}
-        onToggleIsland={() => setIslandExpanded((v) => !v)}
-        isDark={theme !== "light" || !!selectedDestination}
-      />
-
-      {/* Dynamic Island Expanded Overlay (iOS) */}
-      {islandExpanded && osMode === "ios" && (
-        <DynamicIslandOverlay
-          onClose={() => setIslandExpanded(false)}
-          onOpenControlCenter={() => {
-            setIslandExpanded(false);
-            setControlCenterOpen(true);
-          }}
-          currentProject={selectedDestination}
-        />
-      )}
-
-      {/* Main Screen Content with swipe-up transition */}
-      <Animated.View
-        style={[
-          styles.mainContentContainer,
-          {
-            transform: [{ translateY: homeSwipeY }],
-          },
-        ]}
-      >
-        {selectedDestination ? (
-          <DetailScreen
-            destination={selectedDestination}
-            onClose={() => setSelectedDestination(null)}
-            onSelectDestination={setSelectedDestination}
-            savedIds={savedIds}
-            onToggleSave={toggleSaved}
-            osMode={osMode}
-          />
-        ) : (
-          <HomeScreen
-            onOpen={setSelectedDestination}
-            activeFilter={activeFilter}
-            onFilterChange={setActiveFilter}
-            savedIds={savedIds}
-            onToggleSave={toggleSaved}
-            osMode={osMode}
-            onSelectOS={setOSMode}
-            onOpenTerminal={() => setTerminalOpen(true)}
-            onOpenContact={() => setContactOpen(true)}
-            onOpenSettings={() => setSettingsOpen(true)}
-            theme={theme}
-          />
-        )}
-      </Animated.View>
-
-      {/* Persistent Bottom System Chrome (Always on top with zIndex: 9999) */}
-      <SystemBottomChrome
-        osMode={osMode}
-        onHome={handleHome}
-        onBack={handleBack}
-        onRecents={() => setRecentsOpen(true)}
-        isDark={theme !== "light" || !!selectedDestination}
-        homeSwipeY={homeSwipeY}
-      />
-
-      {/* Control Center Slide-Over */}
-      <ControlCenterModal
-        visible={controlCenterOpen}
-        onClose={() => setControlCenterOpen(false)}
-        osMode={osMode}
-        onSwitchOS={setOSMode}
-        theme={theme}
-        onSwitchTheme={setTheme}
-      />
-
-      {/* Recents Multitasking Switcher */}
-      <RecentsModal
-        visible={recentsOpen}
-        onClose={() => setRecentsOpen(false)}
-        onOpenApp={(appId) => {
-          setRecentsOpen(false);
-          if (appId === "projects") setSelectedDestination(null);
-          else if (appId === "terminal") setTerminalOpen(true);
-          else if (appId === "contact") setContactOpen(true);
-          else if (appId === "settings") setSettingsOpen(true);
-        }}
-      />
-
-      {/* Terminal CLI Modal */}
-      <TerminalModal
-        visible={terminalOpen}
-        onClose={() => setTerminalOpen(false)}
-        onSwitchOS={setOSMode}
-        osMode={osMode}
-      />
-
-      {/* Contact Modal */}
-      <ContactModal
-        visible={contactOpen}
-        onClose={() => setContactOpen(false)}
-      />
-
-      {/* Settings Modal */}
-      <SettingsModal
-        visible={settingsOpen}
-        onClose={() => setSettingsOpen(false)}
-        osMode={osMode}
-        onSwitchOS={setOSMode}
-        theme={theme}
-        onSwitchTheme={setTheme}
+    <View style={styles.app}>
+      <HomeScreen
+        onOpen={setSelectedDestination}
+        activeFilter={activeFilter}
+        onFilterChange={setActiveFilter}
+        savedIds={savedIds}
+        onToggleSave={toggleSaved}
       />
     </View>
   );
@@ -3398,40 +1966,16 @@ const styles = StyleSheet.create({
   app: {
     flex: 1,
     backgroundColor: "#F5FAFD",
-    position: "relative",
-    overflow: "hidden",
-  },
-  appDark: {
-    backgroundColor: "#0B0F17",
-  },
-  appCyberpunk: {
-    backgroundColor: "#070B12",
-  },
-  mainContentContainer: {
-    flex: 1,
-    position: "relative",
   },
 
   homeSafeArea: {
     flex: 1,
     backgroundColor: "#F5FAFD",
   },
-  homeSafeAreaDark: {
-    backgroundColor: "#0B0F17",
-  },
-  homeSafeAreaCyberpunk: {
-    backgroundColor: "#070B12",
-  },
 
   homeContainer: {
     flex: 1,
     backgroundColor: "#F5FAFD",
-  },
-  homeContainerDark: {
-    backgroundColor: "#0B0F17",
-  },
-  homeContainerCyberpunk: {
-    backgroundColor: "#070B12",
   },
 
   homeHeader: {
@@ -3444,11 +1988,10 @@ const styles = StyleSheet.create({
 
   homeEyebrow: {
     color: "#8592A3",
-    fontSize: 11,
-    fontWeight: "700",
-    letterSpacing: 0.6,
+    fontSize: 12,
+    fontWeight: "600",
+    letterSpacing: 0.5,
     marginBottom: 1,
-    textTransform: "uppercase",
   },
 
   homeTitle: {
@@ -3497,10 +2040,10 @@ const styles = StyleSheet.create({
   quickMenu: {
     position: "absolute",
     top: 75,
-    width: 230,
+    width: 176,
     backgroundColor: "#FFFFFF",
     borderRadius: 18,
-    padding: 10,
+    padding: 8,
     zIndex: 30,
     shadowColor: "#425A70",
     shadowOffset: {
@@ -3512,26 +2055,12 @@ const styles = StyleSheet.create({
     elevation: 14,
   },
 
-  quickMenuHeading: {
-    color: "#8592A3",
-    fontSize: 9.5,
-    fontWeight: "800",
-    letterSpacing: 0.8,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-  },
-
   quickMenuItem: {
-    minHeight: 40,
+    minHeight: 44,
     paddingHorizontal: 11,
     flexDirection: "row",
     alignItems: "center",
-    borderRadius: 10,
-    marginVertical: 2,
-  },
-
-  quickMenuItemActive: {
-    backgroundColor: "#EAF1FC",
+    borderRadius: 12,
   },
 
   quickMenuItemPressed: {
@@ -3541,8 +2070,8 @@ const styles = StyleSheet.create({
   quickMenuText: {
     marginLeft: 10,
     color: "#303844",
-    fontSize: 12,
-    fontWeight: "700",
+    fontSize: 13,
+    fontWeight: "600",
   },
 
   filterArea: {
@@ -3681,7 +2210,6 @@ const styles = StyleSheet.create({
     fontSize: 21,
     lineHeight: 25,
     fontWeight: "700",
-    textAlign: "center",
     textShadowColor: "rgba(0,0,0,0.28)",
     textShadowOffset: {
       width: 0,
@@ -3736,13 +2264,6 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     marginTop: 6,
     backgroundColor: "#121720",
-  },
-
-  navItemSubtext: {
-    color: "#8A95A5",
-    fontSize: 9,
-    fontWeight: "700",
-    marginTop: 2,
   },
 
   relatedCard: {
@@ -3909,8 +2430,8 @@ const styles = StyleSheet.create({
 
   detailTitle: {
     color: "#FFFFFF",
-    fontSize: 28,
-    lineHeight: 33,
+    fontSize: 29,
+    lineHeight: 34,
     fontWeight: "700",
     letterSpacing: -0.7,
     textShadowColor: "rgba(0,0,0,0.16)",
@@ -4278,7 +2799,7 @@ const styles = StyleSheet.create({
 
   bookingOptionValue: {
     color: "#1D2530",
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: "800",
     marginTop: 4,
   },
@@ -4340,7 +2861,7 @@ const styles = StyleSheet.create({
 
   bookingTotalValue: {
     color: "#075CF5",
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: "800",
     letterSpacing: -0.4,
   },
@@ -4384,757 +2905,5 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     textAlign: "center",
     marginTop: 9,
-  },
-
-  /* ---------------------- DYNAMIC OS CHROME STYLING --------------------- */
-  systemTopChromeWrapper: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 9000,
-    backgroundColor: "transparent",
-  },
-  iosTopChrome: {
-    height: 40,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 22,
-    backgroundColor: "transparent",
-    cursor: "grab",
-    userSelect: "none",
-  },
-  iosClockText: {
-    fontSize: 13,
-    fontWeight: "700",
-    color: "#111827",
-  },
-  dynamicIsland: {
-    width: 110,
-    height: 28,
-    backgroundColor: "#000000",
-    borderRadius: 14,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 10,
-    cursor: "pointer",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-  },
-  dynamicIslandLens: {
-    width: 9,
-    height: 9,
-    borderRadius: 4.5,
-    backgroundColor: "#0F172A",
-    borderWidth: 1,
-    borderColor: "#334155",
-    marginRight: 6,
-  },
-  dynamicIslandDot: {
-    width: 4,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: "#10B981",
-  },
-  iosRightStatus: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-    cursor: "pointer",
-  },
-  iosStatusGlyph: {
-    fontSize: 11,
-    fontWeight: "700",
-    color: "#111827",
-  },
-  iosBottomBarArea: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 34,
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: 9999,
-    pointerEvents: "box-none",
-  },
-  iosHomeIndicatorHitZone: {
-    paddingVertical: 12,
-    paddingHorizontal: 60,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  iosHomeIndicatorTouchArea: {
-    cursor: "pointer",
-    padding: 6,
-  },
-  iosHomeIndicator: {
-    width: 140,
-    height: 5,
-    borderRadius: 2.5,
-    backgroundColor: "#111827",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-  },
-
-  androidTopChrome: {
-    height: 36,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 18,
-    backgroundColor: "transparent",
-    cursor: "grab",
-    userSelect: "none",
-  },
-  androidLeftStatus: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-  },
-  androidClockText: {
-    fontSize: 12,
-    fontWeight: "700",
-    color: "#111827",
-  },
-  androidNotifGlyph: {
-    fontSize: 10,
-  },
-  punchHoleCutout: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: "#000000",
-  },
-  androidRightStatus: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-  },
-  androidStatusGlyph: {
-    fontSize: 11,
-    fontWeight: "600",
-    color: "#111827",
-  },
-  androidBottomBarArea: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 44,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-around",
-    paddingHorizontal: 36,
-    backgroundColor: "rgba(15, 23, 42, 0.4)",
-    backdropFilter: "blur(12px)",
-    zIndex: 9999,
-    userSelect: "none",
-  },
-  androidNavBtn: {
-    paddingVertical: 10,
-    paddingHorizontal: 30,
-    alignItems: "center",
-    justifyContent: "center",
-    cursor: "pointer",
-  },
-  androidNavBtnPressed: {
-    opacity: 0.45,
-    transform: [{ scale: 0.88 }],
-  },
-  androidNavIcon: {
-    fontSize: 15,
-    color: "#475569",
-    fontWeight: "800",
-  },
-  androidHomeCircle: {
-    width: 15,
-    height: 15,
-    borderRadius: 7.5,
-    borderWidth: 2,
-    borderColor: "#475569",
-  },
-  androidRecentsSquare: {
-    width: 13,
-    height: 13,
-    borderRadius: 2.5,
-    borderWidth: 2,
-    borderColor: "#475569",
-  },
-
-  desktopTopChrome: {
-    height: 30,
-    backgroundColor: "rgba(255, 255, 255, 0.85)",
-    borderBottomWidth: 1,
-    borderBottomColor: "#E2E8F0",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 14,
-    userSelect: "none",
-  },
-  desktopWindowControls: {
-    flexDirection: "row",
-    gap: 6,
-  },
-  windowDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-  },
-  desktopTitleText: {
-    fontSize: 11,
-    fontWeight: "700",
-    color: "#334155",
-  },
-  desktopRightStatus: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  desktopStatusGlyph: {
-    fontSize: 11,
-    color: "#475569",
-  },
-  desktopStatusTime: {
-    fontSize: 11,
-    fontWeight: "600",
-    color: "#1E293B",
-  },
-
-  /* ----------------------- DYNAMIC ISLAND OVERLAY ----------------------- */
-  islandOverlayWrapper: {
-    position: "absolute",
-    top: 6,
-    left: 0,
-    right: 0,
-    alignItems: "center",
-    zIndex: 9500,
-    pointerEvents: "box-none",
-  },
-  islandExpandedContainer: {
-    width: 320,
-    backgroundColor: "#000000",
-    borderRadius: 24,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.5,
-    shadowRadius: 20,
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.12)",
-  },
-  islandExpandedLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    flex: 1,
-  },
-  islandPulseDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: "#10B981",
-    borderWidth: 2,
-    borderColor: "#065F46",
-  },
-  islandExpandedTitle: {
-    color: "#FFFFFF",
-    fontSize: 12,
-    fontWeight: "700",
-  },
-  islandExpandedSubtitle: {
-    color: "#94A3B8",
-    fontSize: 10,
-    fontWeight: "500",
-    marginTop: 1,
-  },
-  islandExpandedActions: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  islandActionPill: {
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 12,
-    backgroundColor: "#075CF5",
-    cursor: "pointer",
-  },
-  islandActionText: {
-    color: "#FFFFFF",
-    fontSize: 10.5,
-    fontWeight: "700",
-  },
-  islandCloseBtn: {
-    padding: 4,
-    cursor: "pointer",
-  },
-  islandCloseText: {
-    color: "#64748B",
-    fontSize: 13,
-    fontWeight: "700",
-  },
-
-  /* ------------------------ CONTROL CENTER MODAL ------------------------ */
-  controlCenterSheet: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    maxHeight: "85%",
-    backgroundColor: "#0B0F17",
-    borderBottomLeftRadius: 32,
-    borderBottomRightRadius: 32,
-    paddingHorizontal: 22,
-    paddingTop: 16,
-    paddingBottom: 24,
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.1)",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 18 },
-    shadowOpacity: 0.5,
-    shadowRadius: 30,
-    elevation: 32,
-  },
-  controlCenterHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 16,
-  },
-  controlCenterEyebrow: {
-    color: "#075CF5",
-    fontSize: 10,
-    fontWeight: "800",
-    letterSpacing: 1.2,
-  },
-  controlCenterTitle: {
-    color: "#F8FAFC",
-    fontSize: 22,
-    fontWeight: "800",
-    marginTop: 2,
-  },
-  controlTogglesGrid: {
-    flexDirection: "row",
-    gap: 10,
-    marginBottom: 16,
-  },
-  controlToggleCard: {
-    flex: 1,
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.08)",
-    borderRadius: 16,
-    padding: 10,
-    alignItems: "center",
-    cursor: "pointer",
-  },
-  controlToggleCardActive: {
-    backgroundColor: "rgba(7, 92, 245, 0.2)",
-    borderColor: "#075CF5",
-  },
-  controlToggleCardWarning: {
-    backgroundColor: "rgba(245, 158, 11, 0.2)",
-    borderColor: "#F59E0B",
-  },
-  controlToggleIcon: {
-    fontSize: 20,
-    marginBottom: 4,
-  },
-  controlToggleLabel: {
-    color: "#F1F5F9",
-    fontSize: 11,
-    fontWeight: "700",
-  },
-  controlToggleSubtext: {
-    color: "#94A3B8",
-    fontSize: 9.5,
-    marginTop: 2,
-  },
-  controlSection: {
-    marginBottom: 14,
-  },
-  controlSectionTitle: {
-    color: "#64748B",
-    fontSize: 10,
-    fontWeight: "800",
-    letterSpacing: 1,
-    marginBottom: 8,
-  },
-  controlSegmentedRow: {
-    flexDirection: "row",
-    gap: 8,
-  },
-  controlSegmentBtn: {
-    flex: 1,
-    paddingVertical: 9,
-    borderRadius: 12,
-    backgroundColor: "rgba(255, 255, 255, 0.06)",
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.06)",
-    cursor: "pointer",
-  },
-  controlSegmentBtnActive: {
-    backgroundColor: "#075CF5",
-    borderColor: "#38BDF8",
-  },
-  controlSegmentText: {
-    color: "#94A3B8",
-    fontSize: 11,
-    fontWeight: "700",
-  },
-  controlSegmentTextActive: {
-    color: "#FFFFFF",
-  },
-  controlTelemetryCard: {
-    flexDirection: "row",
-    backgroundColor: "rgba(255, 255, 255, 0.04)",
-    borderRadius: 16,
-    padding: 12,
-    justifyContent: "space-between",
-    marginBottom: 14,
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.06)",
-  },
-  controlTelemetryItem: {
-    alignItems: "center",
-    flex: 1,
-  },
-  controlTelemetryLabel: {
-    color: "#64748B",
-    fontSize: 9.5,
-    fontWeight: "600",
-  },
-  controlTelemetryValue: {
-    color: "#38BDF8",
-    fontSize: 11,
-    fontWeight: "800",
-    marginTop: 2,
-  },
-  controlHandleZone: {
-    alignItems: "center",
-    paddingTop: 8,
-    cursor: "pointer",
-  },
-  controlDismissBar: {
-    width: 44,
-    height: 5,
-    borderRadius: 2.5,
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
-    marginBottom: 4,
-  },
-  controlDismissText: {
-    color: "#64748B",
-    fontSize: 9.5,
-    fontWeight: "600",
-  },
-
-  /* --------------------------- RECENTS MODAL --------------------------- */
-  recentsContainer: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    bottom: 0,
-    top: "18%",
-    backgroundColor: "#0A0E17",
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
-    paddingTop: 18,
-    paddingHorizontal: 20,
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.12)",
-  },
-  recentsHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 18,
-  },
-  recentsTitle: {
-    color: "#F8FAFC",
-    fontSize: 18,
-    fontWeight: "800",
-  },
-  recentsCloseBtn: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 10,
-    backgroundColor: "rgba(255, 255, 255, 0.08)",
-    cursor: "pointer",
-  },
-  recentsCloseText: {
-    color: "#94A3B8",
-    fontSize: 12,
-    fontWeight: "700",
-  },
-  recentsScrollContent: {
-    gap: 16,
-    paddingBottom: 24,
-    paddingRight: 20,
-  },
-  recentsCard: {
-    width: 210,
-    height: 290,
-    backgroundColor: "#131C2E",
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.1)",
-    overflow: "hidden",
-    cursor: "pointer",
-  },
-  recentsCardTop: {
-    height: 120,
-    alignItems: "center",
-    justifyContent: "center",
-    position: "relative",
-  },
-  recentsAppIcon: {
-    fontSize: 38,
-  },
-  recentsCardBadge: {
-    position: "absolute",
-    top: 10,
-    right: 10,
-    backgroundColor: "rgba(0, 0, 0, 0.4)",
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 6,
-    color: "#FFFFFF",
-    fontSize: 9.5,
-    fontWeight: "700",
-  },
-  recentsCardBody: {
-    flex: 1,
-    padding: 14,
-    justifyContent: "space-between",
-  },
-  recentsAppName: {
-    color: "#F8FAFC",
-    fontSize: 14,
-    fontWeight: "800",
-  },
-  recentsAppSubtitle: {
-    color: "#94A3B8",
-    fontSize: 11,
-    lineHeight: 16,
-    marginTop: 4,
-  },
-  recentsOpenBtn: {
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 8,
-    borderRadius: 10,
-    backgroundColor: "rgba(255, 255, 255, 0.08)",
-    marginTop: 10,
-  },
-  recentsOpenBtnText: {
-    color: "#38BDF8",
-    fontSize: 11.5,
-    fontWeight: "700",
-  },
-
-  /* ---------------------------- MODALS --------------------------- */
-  modalBackdrop: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(15, 23, 42, 0.65)",
-  },
-
-  /* Terminal */
-  terminalContainer: {
-    position: "absolute",
-    left: 16,
-    right: 16,
-    top: "12%",
-    bottom: "12%",
-    backgroundColor: "#0A0E17",
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.15)",
-    overflow: "hidden",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 16 },
-    shadowOpacity: 0.45,
-    shadowRadius: 28,
-    elevation: 20,
-  },
-  terminalHeader: {
-    height: 38,
-    backgroundColor: "#0F172A",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 14,
-    borderBottomWidth: 1,
-    borderBottomColor: "rgba(255, 255, 255, 0.08)",
-  },
-  terminalDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-  },
-  terminalTitleText: {
-    color: "#94A3B8",
-    fontSize: 11,
-    fontWeight: "700",
-    fontFamily: "monospace",
-    marginLeft: 6,
-  },
-  terminalCloseText: {
-    color: "#94A3B8",
-    fontSize: 14,
-    fontWeight: "700",
-  },
-  terminalBody: {
-    flex: 1,
-    padding: 12,
-    backgroundColor: "#070B12",
-  },
-  terminalLogLine: {
-    color: "#38BDF8",
-    fontSize: 11.5,
-    lineHeight: 18,
-    fontFamily: "monospace",
-    marginBottom: 4,
-  },
-  terminalQuickRow: {
-    flexDirection: "row",
-    gap: 6,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    backgroundColor: "#0F172A",
-    borderTopWidth: 1,
-    borderTopColor: "rgba(255, 255, 255, 0.06)",
-  },
-  terminalQuickPill: {
-    paddingHorizontal: 9,
-    paddingVertical: 3,
-    borderRadius: 6,
-    backgroundColor: "rgba(255, 255, 255, 0.08)",
-  },
-  terminalQuickPillText: {
-    color: "#CBD5E1",
-    fontSize: 10.5,
-    fontFamily: "monospace",
-    fontWeight: "600",
-  },
-  terminalInputRow: {
-    height: 42,
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 12,
-    backgroundColor: "#0A0E17",
-    borderTopWidth: 1,
-    borderTopColor: "rgba(255, 255, 255, 0.1)",
-    gap: 8,
-  },
-  terminalPromptText: {
-    color: "#10B981",
-    fontSize: 13,
-    fontWeight: "700",
-    fontFamily: "monospace",
-  },
-  terminalTextInput: {
-    flex: 1,
-    color: "#FFFFFF",
-    fontSize: 12,
-    fontFamily: "monospace",
-    height: 36,
-  },
-
-  /* Contact & Settings Bottom Sheets */
-  contactSheet: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    bottom: 0,
-    minHeight: 380,
-    backgroundColor: "#FFFFFF",
-    borderTopLeftRadius: 31,
-    borderTopRightRadius: 31,
-    paddingHorizontal: 22,
-    paddingTop: 10,
-    paddingBottom: 28,
-    shadowColor: "#132C3B",
-    shadowOffset: { width: 0, height: -12 },
-    shadowOpacity: 0.22,
-    shadowRadius: 30,
-    elevation: 28,
-  },
-  contactActionsRow: {
-    flexDirection: "row",
-    gap: 8,
-    marginTop: 14,
-  },
-  contactActionBtn: {
-    flex: 1,
-    paddingVertical: 10,
-    borderRadius: 14,
-    backgroundColor: "#F0F5F8",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  contactActionIcon: {
-    fontSize: 18,
-  },
-  contactActionText: {
-    fontSize: 11,
-    fontWeight: "700",
-    color: "#334155",
-    marginTop: 2,
-  },
-  contactInput: {
-    backgroundColor: "#F8FAFC",
-    borderWidth: 1,
-    borderColor: "#E2E8F0",
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    paddingVertical: 9,
-    fontSize: 12,
-    color: "#1E293B",
-  },
-
-  settingsOSOption: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 12,
-    borderRadius: 14,
-    backgroundColor: "#F8FAFC",
-    borderWidth: 1,
-    borderColor: "#E2E8F0",
-  },
-  settingsOSOptionActive: {
-    backgroundColor: "#EAF1FC",
-    borderColor: "#075CF5",
-  },
-  settingsOSIcon: {
-    fontSize: 18,
-    marginRight: 10,
-  },
-  settingsOSLabel: {
-    flex: 1,
-    color: "#334155",
-    fontSize: 12,
-    fontWeight: "700",
-  },
-  settingsOSLabelActive: {
-    color: "#075CF5",
-  },
-  settingsOSCheck: {
-    color: "#075CF5",
-    fontSize: 14,
-    fontWeight: "900",
   },
 });
