@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
+import Spline from '@splinetool/react-spline';
 import { Icon } from './Icon';
 import { useSystemContext } from './state';
 
 interface IPhonePreviewCardProps {
   isSelected: boolean;
   onSelect: () => void;
+  splineUrl?: string;
 }
 
-export function IPhonePreviewCard({ isSelected, onSelect }: IPhonePreviewCardProps) {
+export function IPhonePreviewCard({ isSelected, onSelect, splineUrl }: IPhonePreviewCardProps) {
+  const activeSplineUrl = splineUrl || localStorage.getItem('zak.spline.iphone') || '';
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
 
@@ -46,18 +49,24 @@ export function IPhonePreviewCard({ isSelected, onSelect }: IPhonePreviewCardPro
     >
       {/* 3D Viewport Stage */}
       <div className="iphone-3d-stage">
-        {/* Ambient Glow behind phones */}
-        <div className={`iphone-stage-glow ${isHovered ? 'active' : ''}`} />
+        {activeSplineUrl ? (
+          <Suspense fallback={<div className="spline-loading-spinner"><span className="mini-island-cam" /> Loading 3D Spline…</div>}>
+            <Spline scene={activeSplineUrl} />
+          </Suspense>
+        ) : (
+          <>
+            {/* Ambient Glow behind phones */}
+            <div className={`iphone-stage-glow ${isHovered ? 'active' : ''}`} />
 
-        <div
-          className="iphone-dual-group"
-          style={{
-            transform: `perspective(1000px) rotateX(${tilt.y}deg) rotateY(${tilt.x}deg)`
-          }}
-        >
-          {/* Phone 2: Background Right (Projects Screen) */}
-          <div className="iphone-3d-device phone-bg">
-            <div className="iphone-frame-outer">
+            <div
+              className="iphone-dual-group"
+              style={{
+                transform: `perspective(1000px) rotateX(${tilt.y}deg) rotateY(${tilt.x}deg)`
+              }}
+            >
+              {/* Phone 2: Background Right (Projects Screen) */}
+              <div className="iphone-3d-device phone-bg">
+                <div className="iphone-frame-outer">
               <div className="iphone-titanium-rim" />
               <div className="iphone-screen-chassis">
                 {/* Dynamic Island */}
@@ -101,6 +110,8 @@ export function IPhonePreviewCard({ isSelected, onSelect }: IPhonePreviewCardPro
             <div className="iphone-device-shadow phone-fg-shadow" />
           </div>
         </div>
+        </>
+        )}
       </div>
 
       {/* Meta details & Select state */}

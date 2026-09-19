@@ -1038,6 +1038,38 @@
   animation: fadeIn 0.4s ease-out;
 }
 
+.spline-3d-wrapper {
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.spline-3d-wrapper canvas {
+  width: 100% !important;
+  height: 100% !important;
+  outline: none;
+}
+
+.iphone-3d-stage canvas {
+  width: 100% !important;
+  height: 100% !important;
+  outline: none;
+}
+
+.spline-loading-spinner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #94a3b8;
+}
+
 .intro-aurora-bg {
   position: absolute;
   inset: 0;

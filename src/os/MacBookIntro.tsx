@@ -1,8 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, Suspense } from 'react';
+import Spline from '@splinetool/react-spline';
 import { useSystemContext } from './state';
 
 interface MacBookIntroProps {
   onComplete: () => void;
+  splineUrl?: string;
 }
 
 // Authentic Apple F# Major Startup Chord synthesized via Web Audio API
@@ -41,8 +43,10 @@ function playMacStartupChime() {
   }
 }
 
-export function MacBookIntro({ onComplete }: MacBookIntroProps) {
+export function MacBookIntro({ onComplete, splineUrl }: MacBookIntroProps) {
   const s = useSystemContext();
+  const activeSplineUrl = splineUrl || localStorage.getItem('zak.spline.macbook') || '';
+  const [splineLoaded, setSplineLoaded] = useState(false);
   const [lidOpen, setLidOpen] = useState(false);
   const [screenPowered, setScreenPowered] = useState(false);
   const [zooming, setZooming] = useState(false);
@@ -137,13 +141,27 @@ export function MacBookIntro({ onComplete }: MacBookIntroProps) {
         Skip ↗
       </button>
 
-      {/* 3D Scene Wrapper with Dynamic Parallax */}
-      <div
-        className="macbook-3d-scene"
-        style={{
-          transform: `perspective(1800px) rotateX(${18 + mouseTilt.y}deg) rotateY(${mouseTilt.x}deg)`
-        }}
-      >
+      {/* If Spline Scene URL is configured, render live Spline canvas */}
+      {activeSplineUrl ? (
+        <div className="spline-3d-wrapper">
+          <Suspense fallback={<div className="spline-loading-spinner"><span className="welcome-pulse" /> Loading 3D Spline Scene…</div>}>
+            <Spline
+              scene={activeSplineUrl}
+              onLoad={() => {
+                setSplineLoaded(true);
+                setReadyToEnter(true);
+              }}
+            />
+          </Suspense>
+        </div>
+      ) : (
+        /* Native 3D Scene Wrapper with Dynamic Parallax */
+        <div
+          className="macbook-3d-scene"
+          style={{
+            transform: `perspective(1800px) rotateX(${18 + mouseTilt.y}deg) rotateY(${mouseTilt.x}deg)`
+          }}
+        >
         {/* Tabletop Reflection & Floor Shadow */}
         <div className={`laptop-floor-shadow ${lidOpen ? 'lid-open-shadow' : ''}`} />
         <div className={`laptop-reflection ${screenPowered ? 'screen-glow-active' : ''}`} />
@@ -368,6 +386,7 @@ export function MacBookIntro({ onComplete }: MacBookIntroProps) {
           </div>
         </div>
       </div>
+      )}
 
       {/* Welcoming Interactive CTA Banner */}
       <div className={`intro-welcome-cta ${readyToEnter ? 'visible' : ''}`}>
