@@ -9,8 +9,11 @@ interface IPhonePreviewCardProps {
   splineUrl?: string;
 }
 
+const DEFAULT_IPHONE_SPLINE = 'https://prod.spline.design/r0Ksz7wmOKmQlkyZ/scene.splinecode';
+
 export function IPhonePreviewCard({ isSelected, onSelect, splineUrl }: IPhonePreviewCardProps) {
-  const activeSplineUrl = splineUrl || localStorage.getItem('zak.spline.iphone') || '';
+  const activeSplineUrl = splineUrl || localStorage.getItem('zak.spline.iphone') || DEFAULT_IPHONE_SPLINE;
+  const [splineError, setSplineError] = useState(false);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
 
@@ -49,9 +52,12 @@ export function IPhonePreviewCard({ isSelected, onSelect, splineUrl }: IPhonePre
     >
       {/* 3D Viewport Stage */}
       <div className="iphone-3d-stage">
-        {activeSplineUrl ? (
+        {activeSplineUrl && !splineError ? (
           <Suspense fallback={<div className="spline-loading-spinner"><span className="mini-island-cam" /> Loading 3D Spline…</div>}>
-            <Spline scene={activeSplineUrl} />
+            <Spline
+              scene={activeSplineUrl}
+              onError={() => setSplineError(true)}
+            />
           </Suspense>
         ) : (
           <>

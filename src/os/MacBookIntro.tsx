@@ -43,10 +43,13 @@ function playMacStartupChime() {
   }
 }
 
+const DEFAULT_MACBOOK_SPLINE = 'https://prod.spline.design/wRHKdC7uOSyj7il9/scene.splinecode';
+
 export function MacBookIntro({ onComplete, splineUrl }: MacBookIntroProps) {
   const s = useSystemContext();
-  const activeSplineUrl = splineUrl || localStorage.getItem('zak.spline.macbook') || '';
+  const activeSplineUrl = splineUrl || localStorage.getItem('zak.spline.macbook') || DEFAULT_MACBOOK_SPLINE;
   const [splineLoaded, setSplineLoaded] = useState(false);
+  const [splineError, setSplineError] = useState(false);
   const [lidOpen, setLidOpen] = useState(false);
   const [screenPowered, setScreenPowered] = useState(false);
   const [zooming, setZooming] = useState(false);
@@ -142,7 +145,7 @@ export function MacBookIntro({ onComplete, splineUrl }: MacBookIntroProps) {
       </button>
 
       {/* If Spline Scene URL is configured, render live Spline canvas */}
-      {activeSplineUrl ? (
+      {activeSplineUrl && !splineError ? (
         <div className="spline-3d-wrapper">
           <Suspense fallback={<div className="spline-loading-spinner"><span className="welcome-pulse" /> Loading 3D Spline Scene…</div>}>
             <Spline
@@ -150,6 +153,10 @@ export function MacBookIntro({ onComplete, splineUrl }: MacBookIntroProps) {
               onLoad={() => {
                 setSplineLoaded(true);
                 setReadyToEnter(true);
+                playMacStartupChime();
+              }}
+              onError={() => {
+                setSplineError(true);
               }}
             />
           </Suspense>
