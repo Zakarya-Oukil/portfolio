@@ -725,4 +725,101 @@
   75% { transform: translateX(6px); }
 }
 
+/* ==========================================================================
+   ADMIN DESKTOP WIDGETS CONTROL STYLES
+   ========================================================================== */
+
+.admin-widgets-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 12px;
+}
+
+.admin-widget-toggle-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.2s ease;
+}
+
+.admin-widget-toggle-card.active {
+  background: rgba(16, 185, 129, 0.06);
+  border-color: rgba(16, 185, 129, 0.28);
+}
+
+.admin-widget-toggle-info strong {
+  display: block;
+  font-size: 13px;
+  color: #f8fafc;
+  margin-bottom: 3px;
+}
+
+.admin-widget-toggle-info p {
+  margin: 0;
+  font-size: 11px;
+  color: #94a3b8;
+  line-height: 1.35;
+}
+
+.admin-toggle-switch {
+  position: relative;
+  width: 58px;
+  height: 28px;
+  border-radius: 14px;
+  border: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  flex-shrink: 0;
+  transition: background 0.2s ease;
+}
+
+.admin-toggle-switch.on {
+  background: #10b981;
+}
+
+.admin-toggle-switch.off {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.admin-toggle-switch .switch-handle {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease;
+}
+
+.admin-toggle-switch.on .switch-handle {
+  transform: translateX(28px);
+}
+
+.admin-toggle-switch.off .switch-handle {
+  transform: translateX(0);
+}
+
+.admin-toggle-switch .switch-label {
+  position: absolute;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #ffffff;
+}
+
+.admin-toggle-switch.on .switch-label {
+  left: 8px;
+}
+
+.admin-toggle-switch.off .switch-label {
+  right: 8px;
+  color: #94a3b8;
+}
+
 

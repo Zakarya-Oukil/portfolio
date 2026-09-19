@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { AppIcon, Icon } from './Icon';
 import { AppId, appNames, apps, Mode, useSystemContext, WindowState } from './state';
 import { Application, Dock } from './Shell';
-import { ClockWidget, GithubWidget, NotesWidget, TelemetryWidget } from './Widgets';
+import { AboutMeWidget, CertificationsWidget, ClockWidget, GithubWidget, NeofetchWidget, NotesWidget, TelemetryWidget } from './Widgets';
 
 function Apple() { return <svg width="16" height="19" viewBox="0 0 24 28" fill="currentColor" aria-hidden="true"><path d="M17 1c.2 3-2.2 5.6-5 5.5C11.8 4 14 1.4 17 1ZM20 16c0 4 3 5 3 5s-2.2 6-5.7 6c-1.6 0-2.4-1-4.3-1s-3 1-4.5 1C5.1 27 1 20.6 1 15.2 1 10.7 3.6 8 7 8c2 0 3.5 1.2 5 1.2S15.2 8 17.4 8c2.3 0 4.3 1.2 5.6 3-2.2 1.2-3 3-3 5Z"/></svg>; }
 function MenuBar() {
@@ -25,5 +25,15 @@ function Window({ state }: { state: WindowState }) {
 }
 export function Desktop() {
   const s = useSystemContext();
-  return <><MenuBar/><div className="desktop-label"><span className="desktop-brand">z<span>.</span></span><span>PERSONAL WORKSPACE <i/> MADE TO EXPLORE</span></div><div className="desktop-mode-switch">{(['macos', 'ios', 'android'] as Mode[]).map(m => <button key={m} className={s.mode === m ? 'selected' : ''} onClick={() => s.setMode(m)}><Icon name={m === 'macos' ? 'monitor' : 'phone'} size={14}/>{m === 'macos' ? 'macOS' : m === 'ios' ? 'iOS' : 'Android'}</button>)}</div><div className="desktop-widgets"><ClockWidget/><TelemetryWidget/><GithubWidget/><NotesWidget/></div><div className="desktop-shortcuts">{(['projects', 'terminal', 'settings', 'mail'] as AppId[]).map(id => <button key={id} onClick={() => s.open(id)}><AppIcon id={id}/><span>{appNames[id]}</span></button>)}</div>{s.windows.map(w => <Window key={w.id} state={w}/>)}<div className="desktop-signature"><i className="status-dot"/> Available for what's next<span>Built with intention.</span></div><Dock/></>;
+  const visibility = s.config?.widgets?.visibility || {
+    about: true,
+    certs: true,
+    github: true,
+    neofetch: true,
+    telemetry: false,
+    clock: false,
+    notes: false
+  };
+
+  return <><MenuBar/><div className="desktop-label"><span className="desktop-brand">z<span>.</span></span><span>PERSONAL WORKSPACE <i/> MADE TO EXPLORE</span></div><div className="desktop-mode-switch">{(['macos', 'ios', 'android'] as Mode[]).map(m => <button key={m} className={s.mode === m ? 'selected' : ''} onClick={() => s.setMode(m)}><Icon name={m === 'macos' ? 'monitor' : 'phone'} size={14}/>{m === 'macos' ? 'macOS' : m === 'ios' ? 'iOS' : 'Android'}</button>)}</div><div className="desktop-widgets">{visibility.about && <AboutMeWidget/>}{visibility.certs && <CertificationsWidget/>}{visibility.github && <GithubWidget/>}{visibility.neofetch && <NeofetchWidget/>}{visibility.clock && <ClockWidget/>}{visibility.telemetry && <TelemetryWidget/>}{visibility.notes && <NotesWidget/>}</div><div className="desktop-shortcuts">{(['projects', 'terminal', 'settings', 'mail'] as AppId[]).map(id => <button key={id} onClick={() => s.open(id)}><AppIcon id={id}/><span>{appNames[id]}</span></button>)}</div>{s.windows.map(w => <Window key={w.id} state={w}/>)}<div className="desktop-signature"><i className="status-dot"/> Available for what's next<span>Built with intention.</span></div><Dock/></>;
 }

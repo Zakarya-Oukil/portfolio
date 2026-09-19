@@ -34,6 +34,55 @@ interface CustomWallpaper {
   url: string;
 }
 
+interface WidgetVisibility {
+  about: boolean;
+  certs: boolean;
+  github: boolean;
+  neofetch: boolean;
+  telemetry: boolean;
+  clock: boolean;
+  notes: boolean;
+}
+
+interface AboutWidgetData {
+  avatar?: string;
+  name: string;
+  role: string;
+  statusText: string;
+  statusType: 'available' | 'busy' | 'open';
+  location: string;
+  specialties: string[];
+  bio: string;
+  resumeUrl?: string;
+}
+
+interface CertItem {
+  id: string;
+  title: string;
+  badge: string;
+  issuer: string;
+  date: string;
+  verifyUrl?: string;
+  accent?: string;
+}
+
+interface NeofetchData {
+  os: string;
+  host: string;
+  kernel: string;
+  shell: string;
+  uptime: string;
+  cipher: string;
+  memory: string;
+}
+
+interface WidgetsConfig {
+  visibility: WidgetVisibility;
+  about: AboutWidgetData;
+  certs: CertItem[];
+  neofetch: NeofetchData;
+}
+
 interface PortfolioConfig {
   defaultTheme: 'light' | 'dark' | 'oled';
   defaultWallpaper: 'sonoma' | 'sequoia' | 'neon' | 'oled';
@@ -50,6 +99,7 @@ interface PortfolioConfig {
     ios?: Record<string, string>;
     android?: Record<string, string>;
   };
+  widgets?: WidgetsConfig;
 }
 
 interface PortfolioData {
@@ -69,7 +119,7 @@ interface MessageItem {
   read?: boolean;
 }
 
-type AdminSection = 'tabs' | 'projects' | 'icons' | 'appearance' | 'inbox';
+type AdminSection = 'tabs' | 'projects' | 'icons' | 'appearance' | 'widgets' | 'inbox';
 
 const SYSTEM_APPS = [
   { id: 'projects', name: 'Projects', desc: 'Central showcase of engineering systems and CTF work' },
@@ -421,6 +471,149 @@ export function AdminDashboard() {
     });
   };
 
+  // --- WIDGET MODIFIERS ---
+  const handleToggleWidget = (key: keyof WidgetVisibility) => {
+    if (!data) return;
+    const currentWidgets = data.config.widgets || {
+      visibility: { about: true, certs: true, github: true, neofetch: true, telemetry: false, clock: false, notes: false },
+      about: { name: 'Zakarya Oukil', role: 'Security Researcher & Systems Architect', statusText: 'Available for Hire', statusType: 'available', location: 'Algiers / Remote', specialties: ['Zero-Trust', 'Reverse Eng', 'High-Concurrency', 'Kernel'], bio: '', resumeUrl: '', avatar: '' },
+      certs: [],
+      neofetch: { os: '', host: '', kernel: '', shell: '', uptime: '', cipher: '', memory: '' }
+    };
+    const nextVis = {
+      ...currentWidgets.visibility,
+      [key]: !currentWidgets.visibility[key]
+    };
+    setData({
+      ...data,
+      config: {
+        ...data.config,
+        widgets: {
+          ...currentWidgets,
+          visibility: nextVis
+        }
+      }
+    });
+    triggerToast(`Desktop Widget "${key}" set to ${nextVis[key] ? 'VISIBLE' : 'HIDDEN'}.`);
+  };
+
+  const handleUpdateAbout = (field: keyof AboutWidgetData, value: any) => {
+    if (!data) return;
+    const currentWidgets = data.config.widgets || {
+      visibility: { about: true, certs: true, github: true, neofetch: true, telemetry: false, clock: false, notes: false },
+      about: { name: 'Zakarya Oukil', role: 'Security Researcher & Systems Architect', statusText: 'Available for Hire', statusType: 'available', location: 'Algiers / Remote', specialties: ['Zero-Trust', 'Reverse Eng', 'High-Concurrency', 'Kernel'], bio: '', resumeUrl: '', avatar: '' },
+      certs: [],
+      neofetch: { os: '', host: '', kernel: '', shell: '', uptime: '', cipher: '', memory: '' }
+    };
+    setData({
+      ...data,
+      config: {
+        ...data.config,
+        widgets: {
+          ...currentWidgets,
+          about: {
+            ...currentWidgets.about,
+            [field]: value
+          }
+        }
+      }
+    });
+  };
+
+  const handleUpdateCert = (id: string, field: keyof CertItem, value: string) => {
+    if (!data) return;
+    const currentWidgets = data.config.widgets || {
+      visibility: { about: true, certs: true, github: true, neofetch: true, telemetry: false, clock: false, notes: false },
+      about: { name: 'Zakarya Oukil', role: 'Security Researcher & Systems Architect', statusText: 'Available for Hire', statusType: 'available', location: 'Algiers / Remote', specialties: ['Zero-Trust', 'Reverse Eng', 'High-Concurrency', 'Kernel'], bio: '', resumeUrl: '', avatar: '' },
+      certs: [],
+      neofetch: { os: '', host: '', kernel: '', shell: '', uptime: '', cipher: '', memory: '' }
+    };
+    setData({
+      ...data,
+      config: {
+        ...data.config,
+        widgets: {
+          ...currentWidgets,
+          certs: currentWidgets.certs.map(c => c.id === id ? { ...c, [field]: value } : c)
+        }
+      }
+    });
+  };
+
+  const handleAddCert = () => {
+    if (!data) return;
+    const currentWidgets = data.config.widgets || {
+      visibility: { about: true, certs: true, github: true, neofetch: true, telemetry: false, clock: false, notes: false },
+      about: { name: 'Zakarya Oukil', role: 'Security Researcher & Systems Architect', statusText: 'Available for Hire', statusType: 'available', location: 'Algiers / Remote', specialties: ['Zero-Trust', 'Reverse Eng', 'High-Concurrency', 'Kernel'], bio: '', resumeUrl: '', avatar: '' },
+      certs: [],
+      neofetch: { os: '', host: '', kernel: '', shell: '', uptime: '', cipher: '', memory: '' }
+    };
+    const newCert: CertItem = {
+      id: `cert-${Date.now()}`,
+      title: 'New Credential',
+      badge: 'Certified',
+      issuer: 'Security Authority',
+      date: '2024',
+      verifyUrl: '',
+      accent: '#38bdf8'
+    };
+    setData({
+      ...data,
+      config: {
+        ...data.config,
+        widgets: {
+          ...currentWidgets,
+          certs: [...currentWidgets.certs, newCert]
+        }
+      }
+    });
+    triggerToast('Added new certification trophy slot.');
+  };
+
+  const handleDeleteCert = (id: string) => {
+    if (!data) return;
+    const currentWidgets = data.config.widgets || {
+      visibility: { about: true, certs: true, github: true, neofetch: true, telemetry: false, clock: false, notes: false },
+      about: { name: 'Zakarya Oukil', role: 'Security Researcher & Systems Architect', statusText: 'Available for Hire', statusType: 'available', location: 'Algiers / Remote', specialties: ['Zero-Trust', 'Reverse Eng', 'High-Concurrency', 'Kernel'], bio: '', resumeUrl: '', avatar: '' },
+      certs: [],
+      neofetch: { os: '', host: '', kernel: '', shell: '', uptime: '', cipher: '', memory: '' }
+    };
+    setData({
+      ...data,
+      config: {
+        ...data.config,
+        widgets: {
+          ...currentWidgets,
+          certs: currentWidgets.certs.filter(c => c.id !== id)
+        }
+      }
+    });
+    triggerToast('Deleted certification trophy.');
+  };
+
+  const handleUpdateNeofetch = (field: keyof NeofetchData, value: string) => {
+    if (!data) return;
+    const currentWidgets = data.config.widgets || {
+      visibility: { about: true, certs: true, github: true, neofetch: true, telemetry: false, clock: false, notes: false },
+      about: { name: 'Zakarya Oukil', role: 'Security Researcher & Systems Architect', statusText: 'Available for Hire', statusType: 'available', location: 'Algiers / Remote', specialties: ['Zero-Trust', 'Reverse Eng', 'High-Concurrency', 'Kernel'], bio: '', resumeUrl: '', avatar: '' },
+      certs: [],
+      neofetch: { os: '', host: '', kernel: '', shell: '', uptime: '', cipher: '', memory: '' }
+    };
+    setData({
+      ...data,
+      config: {
+        ...data.config,
+        widgets: {
+          ...currentWidgets,
+          neofetch: {
+            ...currentWidgets.neofetch,
+            [field]: value
+          }
+        }
+      }
+    });
+  };
+
   // Login Screen if not authenticated
   if (!isAuthenticated) {
     return (
@@ -594,6 +787,14 @@ export function AdminDashboard() {
             onClick={() => setActiveSection('appearance')}
           >
             <span>🎨</span> Themes & Profile
+          </button>
+
+          <button
+            className={`admin-nav-item ${activeSection === 'widgets' ? 'active' : ''}`}
+            onClick={() => setActiveSection('widgets')}
+          >
+            <span>🎛️</span> Desktop Widgets
+            <span className="admin-nav-badge" style={{ background: '#10b981', color: '#fff' }}>Live</span>
           </button>
 
           <button
@@ -1119,6 +1320,377 @@ export function AdminDashboard() {
                       className="admin-input"
                       value={data.config.bio.slogan}
                       onChange={e => handleUpdateConfig('slogan', e.target.value)}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* SECTION: DESKTOP WIDGETS */}
+          {activeSection === 'widgets' && (
+            <div>
+              <div className="admin-view-header">
+                <div>
+                  <h2>Desktop Widgets Control Center</h2>
+                  <p>Manage high-impact bento widgets pinned to the macOS desktop for recruiters, CTOs, and visitors.</p>
+                </div>
+              </div>
+
+              {/* 1. VISIBILITY SWITCHBOARD */}
+              <div className="admin-card">
+                <div className="admin-card-header">
+                  <h3>🎚️ Widget Visibility Switchboard</h3>
+                  <span style={{ fontSize: 11, color: '#94a3b8' }}>Toggle widgets visible on the public desktop</span>
+                </div>
+                <div className="admin-widgets-grid">
+                  {[
+                    { key: 'about', title: 'Executive About Me & CV', desc: 'Face, title, availability badge, specialties & 1-click resume CTA' },
+                    { key: 'certs', title: 'CTF & Certifications Bento', desc: 'HackTheBox rank, TryHackMe, eJPTv2, CVE hall of fame' },
+                    { key: 'github', title: 'Live GitHub Heatmap', desc: 'Real-time public commit activity stream for @' + (data.config.githubUsername || 'Zakarya-Oukil') },
+                    { key: 'neofetch', title: 'Hardened Neofetch / Specs', desc: 'Unix systems spec sheet, architecture, uptime, and AES-256 cipher' },
+                    { key: 'clock', title: 'Digital & Analog Clock', desc: 'Real-time dual time dials with timezone indicators' },
+                    { key: 'telemetry', title: 'System Telemetry Monitor', desc: 'Live browser memory telemetry and animated network meters' },
+                    { key: 'notes', title: 'Sticky Notes to Self', desc: 'Local interactive notepad for visitors' },
+                  ].map(w => {
+                    const isVisible = data.config.widgets?.visibility?.[w.key as keyof WidgetVisibility] ?? false;
+                    return (
+                      <div className={`admin-widget-toggle-card ${isVisible ? 'active' : ''}`} key={w.key}>
+                        <div className="admin-widget-toggle-info">
+                          <strong>{w.title}</strong>
+                          <p>{w.desc}</p>
+                        </div>
+                        <button
+                          type="button"
+                          className={`admin-toggle-switch ${isVisible ? 'on' : 'off'}`}
+                          onClick={() => handleToggleWidget(w.key as keyof WidgetVisibility)}
+                        >
+                          <span className="switch-handle" />
+                          <span className="switch-label">{isVisible ? 'ON' : 'OFF'}</span>
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* 2. EXECUTIVE ABOUT ME WIDGET EDITOR */}
+              <div className="admin-card">
+                <div className="admin-card-header">
+                  <h3>👤 Executive About Me Card</h3>
+                  <span style={{ fontSize: 11, color: '#10b981' }}>Top conversion widget for recruiters</span>
+                </div>
+                <div className="admin-form-grid">
+                  <div className="admin-field" style={{ gridColumn: 'span 2' }}>
+                    <label>Profile Avatar</label>
+                    <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+                      <div className="about-avatar-preview">
+                        {data.config.widgets?.about?.avatar ? (
+                          <img src={data.config.widgets.about.avatar} alt="Avatar" style={{ width: 56, height: 56, borderRadius: '50%', objectFit: 'cover', border: '2px solid #10b981' }} />
+                        ) : (
+                          <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'linear-gradient(135deg, #10b981, #047857)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: 18 }}>ZO</div>
+                        )}
+                      </div>
+                      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                        <input
+                          type="text"
+                          className="admin-input"
+                          placeholder="Image URL (e.g. https://... or /avatar.jpg)"
+                          value={data.config.widgets?.about?.avatar || ''}
+                          onChange={e => handleUpdateAbout('avatar', e.target.value)}
+                        />
+                        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                          <label className="admin-upload-btn" style={{ fontSize: 11, padding: '4px 10px', cursor: 'pointer' }}>
+                            <span>📁 Upload Image</span>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              style={{ display: 'none' }}
+                              onChange={e => {
+                                const file = e.target.files?.[0];
+                                if (!file) return;
+                                const reader = new FileReader();
+                                reader.onload = () => {
+                                  handleUpdateAbout('avatar', reader.result as string);
+                                  triggerToast('Avatar image loaded successfully.');
+                                };
+                                reader.readAsDataURL(file);
+                              }}
+                            />
+                          </label>
+                          {data.config.widgets?.about?.avatar && (
+                            <button
+                              type="button"
+                              className="admin-danger-btn"
+                              style={{ padding: '4px 8px', fontSize: 11 }}
+                              onClick={() => handleUpdateAbout('avatar', '')}
+                            >
+                              Remove Avatar
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="admin-field">
+                    <label>Full Name</label>
+                    <input
+                      className="admin-input"
+                      value={data.config.widgets?.about?.name || ''}
+                      onChange={e => handleUpdateAbout('name', e.target.value)}
+                      placeholder="Zakarya Oukil"
+                    />
+                  </div>
+
+                  <div className="admin-field">
+                    <label>Role / Professional Title</label>
+                    <input
+                      className="admin-input"
+                      value={data.config.widgets?.about?.role || ''}
+                      onChange={e => handleUpdateAbout('role', e.target.value)}
+                      placeholder="Security Researcher & Systems Architect"
+                    />
+                  </div>
+
+                  <div className="admin-field">
+                    <label>Availability Badge Text</label>
+                    <input
+                      className="admin-input"
+                      value={data.config.widgets?.about?.statusText || ''}
+                      onChange={e => handleUpdateAbout('statusText', e.target.value)}
+                      placeholder="Available for Hire"
+                    />
+                  </div>
+
+                  <div className="admin-field">
+                    <label>Availability Status Type</label>
+                    <select
+                      className="admin-select"
+                      value={data.config.widgets?.about?.statusType || 'available'}
+                      onChange={e => handleUpdateAbout('statusType', e.target.value as any)}
+                    >
+                      <option value="available">🟢 Available (Green Radar Glow)</option>
+                      <option value="open">🔵 Open to Offers / Contracts (Cyan Glow)</option>
+                      <option value="busy">🟡 In High Demand / Limited (Amber Glow)</option>
+                    </select>
+                  </div>
+
+                  <div className="admin-field">
+                    <label>Location / Mobility</label>
+                    <input
+                      className="admin-input"
+                      value={data.config.widgets?.about?.location || ''}
+                      onChange={e => handleUpdateAbout('location', e.target.value)}
+                      placeholder="Algiers / Remote (Open to Relocation)"
+                    />
+                  </div>
+
+                  <div className="admin-field">
+                    <label>Resume / CV Link or Path</label>
+                    <input
+                      className="admin-input"
+                      value={data.config.widgets?.about?.resumeUrl || ''}
+                      onChange={e => handleUpdateAbout('resumeUrl', e.target.value)}
+                      placeholder="e.g. /resume.pdf or Google Drive / LinkedIn link"
+                    />
+                  </div>
+
+                  <div className="admin-field" style={{ gridColumn: 'span 2' }}>
+                    <label>Core Specialty Chips (Comma-separated)</label>
+                    <input
+                      className="admin-input"
+                      value={(data.config.widgets?.about?.specialties || []).join(', ')}
+                      onChange={e => handleUpdateAbout('specialties', e.target.value.split(',').map(s => s.trim()).filter(Boolean))}
+                      placeholder="Zero-Trust Architecture, Reverse Engineering, High-Concurrency, Kernel"
+                    />
+                  </div>
+
+                  <div className="admin-field" style={{ gridColumn: 'span 2' }}>
+                    <label>Short Elevator Bio</label>
+                    <textarea
+                      className="admin-textarea"
+                      rows={3}
+                      value={data.config.widgets?.about?.bio || ''}
+                      onChange={e => handleUpdateAbout('bio', e.target.value)}
+                      placeholder="Brief 2-line summary..."
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* 3. CERTIFICATIONS & CTF BENTO MANAGER */}
+              <div className="admin-card">
+                <div className="admin-card-header">
+                  <div>
+                    <h3>🏆 CTF & Certifications Bento</h3>
+                    <p style={{ margin: 0, fontSize: 11, color: '#94a3b8' }}>Verifiable security credentials and competition ranks displayed on the desktop</p>
+                  </div>
+                  <button type="button" className="admin-primary-btn" onClick={handleAddCert} style={{ padding: '6px 12px', fontSize: 12 }}>
+                    + Add Credential
+                  </button>
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  {(data.config.widgets?.certs || []).map((cert, index) => (
+                    <div key={cert.id || index} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, padding: 14 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <span style={{ width: 10, height: 10, borderRadius: '50%', background: cert.accent || '#38bdf8' }} />
+                          <strong style={{ fontSize: 13, color: '#f8fafc' }}>{cert.title || 'Untitled Credential'}</strong>
+                          <span style={{ fontSize: 9.5, padding: '1px 6px', borderRadius: 4, background: 'rgba(255,255,255,0.08)', color: cert.accent || '#38bdf8', border: `1px solid ${cert.accent || '#38bdf8'}` }}>
+                            {cert.badge}
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          className="admin-danger-btn"
+                          style={{ padding: '3px 8px', fontSize: 11 }}
+                          onClick={() => handleDeleteCert(cert.id)}
+                        >
+                          Delete
+                        </button>
+                      </div>
+
+                      <div className="admin-form-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))' }}>
+                        <div className="admin-field">
+                          <label>Title / Organization</label>
+                          <input
+                            className="admin-input"
+                            value={cert.title}
+                            onChange={e => handleUpdateCert(cert.id, 'title', e.target.value)}
+                            placeholder="HackTheBox / TryHackMe / INE"
+                          />
+                        </div>
+
+                        <div className="admin-field">
+                          <label>Badge Tag / Level</label>
+                          <input
+                            className="admin-input"
+                            value={cert.badge}
+                            onChange={e => handleUpdateCert(cert.id, 'badge', e.target.value)}
+                            placeholder="Pro Hacker / Top 1% / Certified"
+                          />
+                        </div>
+
+                        <div className="admin-field">
+                          <label>Issuer Authority</label>
+                          <input
+                            className="admin-input"
+                            value={cert.issuer}
+                            onChange={e => handleUpdateCert(cert.id, 'issuer', e.target.value)}
+                            placeholder="HackTheBox Labs / INE"
+                          />
+                        </div>
+
+                        <div className="admin-field">
+                          <label>Date / Status</label>
+                          <input
+                            className="admin-input"
+                            value={cert.date}
+                            onChange={e => handleUpdateCert(cert.id, 'date', e.target.value)}
+                            placeholder="2024 / Active"
+                          />
+                        </div>
+
+                        <div className="admin-field">
+                          <label>Accent Color</label>
+                          <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                            <input
+                              type="color"
+                              value={cert.accent || '#38bdf8'}
+                              onChange={e => handleUpdateCert(cert.id, 'accent', e.target.value)}
+                              style={{ width: 34, height: 34, border: 'none', borderRadius: 6, cursor: 'pointer', background: 'none' }}
+                            />
+                            <input
+                              className="admin-input"
+                              value={cert.accent || '#38bdf8'}
+                              onChange={e => handleUpdateCert(cert.id, 'accent', e.target.value)}
+                              placeholder="#38bdf8"
+                              style={{ flex: 1 }}
+                            />
+                          </div>
+                        </div>
+
+                        <div className="admin-field">
+                          <label>Verification URL</label>
+                          <input
+                            className="admin-input"
+                            value={cert.verifyUrl || ''}
+                            onChange={e => handleUpdateCert(cert.id, 'verifyUrl', e.target.value)}
+                            placeholder="https://..."
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* 4. HARDENED NEOFETCH SPECS EDITOR */}
+              <div className="admin-card">
+                <div className="admin-card-header">
+                  <h3>🖥️ Hardened Neofetch / Systems Specs</h3>
+                  <span style={{ fontSize: 11, color: '#38bdf8' }}>Terminal-inspired liquid glass bento card</span>
+                </div>
+                <div className="admin-form-grid">
+                  <div className="admin-field">
+                    <label>Operating System String</label>
+                    <input
+                      className="admin-input"
+                      value={data.config.widgets?.neofetch?.os || ''}
+                      onChange={e => handleUpdateNeofetch('os', e.target.value)}
+                      placeholder="ZakOS 27 (macOS Sequoia / Hardened Linux)"
+                    />
+                  </div>
+
+                  <div className="admin-field">
+                    <label>Kernel / Protocol</label>
+                    <input
+                      className="admin-input"
+                      value={data.config.widgets?.neofetch?.kernel || ''}
+                      onChange={e => handleUpdateNeofetch('kernel', e.target.value)}
+                      placeholder="Linux 6.8.0-Hardened / POSIX"
+                    />
+                  </div>
+
+                  <div className="admin-field">
+                    <label>Virtual Host Rig</label>
+                    <input
+                      className="admin-input"
+                      value={data.config.widgets?.neofetch?.host || ''}
+                      onChange={e => handleUpdateNeofetch('host', e.target.value)}
+                      placeholder="Apple M-Series / Virtual Systems Rig"
+                    />
+                  </div>
+
+                  <div className="admin-field">
+                    <label>Shell Environment</label>
+                    <input
+                      className="admin-input"
+                      value={data.config.widgets?.neofetch?.shell || ''}
+                      onChange={e => handleUpdateNeofetch('shell', e.target.value)}
+                      placeholder="zsh 5.9 (x86_64-darwin22.0)"
+                    />
+                  </div>
+
+                  <div className="admin-field">
+                    <label>Encryption Cipher Active</label>
+                    <input
+                      className="admin-input"
+                      value={data.config.widgets?.neofetch?.cipher || ''}
+                      onChange={e => handleUpdateNeofetch('cipher', e.target.value)}
+                      placeholder="AES-256-GCM / TLS 1.3 Active"
+                    />
+                  </div>
+
+                  <div className="admin-field">
+                    <label>System Uptime</label>
+                    <input
+                      className="admin-input"
+                      value={data.config.widgets?.neofetch?.uptime || ''}
+                      onChange={e => handleUpdateNeofetch('uptime', e.target.value)}
+                      placeholder="99.98% High Availability"
                     />
                   </div>
                 </div>

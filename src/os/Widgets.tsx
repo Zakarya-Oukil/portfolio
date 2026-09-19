@@ -51,3 +51,168 @@ export function NotesWidget() {
   const [note, setNote] = useSaved('zak.note', 'Build with intention.\nStay curious.\nLeave things a little better.');
   return <DraggableWidget className="notes-widget"><div className="widget-title"><span className="note-dot"/>A note to self <span>↗</span></div><textarea aria-label="Quick note" value={note} onChange={e => setNote(e.target.value)}/><div className="note-footer"><span>Edits saved locally</span><button onClick={() => s.open('mail')}>Say hello <Icon name="arrow" size={13}/></button></div></DraggableWidget>;
 }
+
+export function AboutMeWidget() {
+  const s = useSystemContext();
+  const about = s.config?.widgets?.about || {
+    name: 'Zakarya Oukil',
+    role: 'Security Researcher & Systems Architect',
+    statusText: 'Available for Hire',
+    statusType: 'available',
+    location: 'Algiers / Remote',
+    specialties: ['Zero-Trust Architecture', 'Reverse Engineering', 'High-Concurrency', 'Kernel & Sandboxing'],
+    bio: 'Engineering resilient systems from low-level Linux kernels to distributed cloud runtimes. Passionate about adversarial ML and offensive security.',
+    avatar: '',
+    resumeUrl: ''
+  };
+
+  const handleResume = () => {
+    if (about.resumeUrl) {
+      window.open(about.resumeUrl, '_blank');
+    } else {
+      s.notify('CV Download · Full credentials available in About Me');
+      s.open('about');
+    }
+  };
+
+  return (
+    <DraggableWidget className="about-me-widget">
+      <div className="about-me-header">
+        <div className="about-avatar-wrap">
+          {about.avatar ? (
+            <img src={about.avatar} alt={about.name} className="about-avatar-img" />
+          ) : (
+            <div className="about-avatar-fallback">ZO</div>
+          )}
+          <span className={`status-beacon status-${about.statusType || 'available'}`} />
+        </div>
+        <div className="about-meta">
+          <div className="about-status-pill">
+            <i className={`pulse-dot status-${about.statusType || 'available'}`} />
+            <span>{about.statusText || 'Available for Hire'}</span>
+          </div>
+          <strong>{about.name || 'Zakarya Oukil'}</strong>
+          <span className="about-role">{about.role || 'Security Researcher & Systems Architect'}</span>
+        </div>
+      </div>
+
+      <p className="about-bio">{about.bio}</p>
+
+      {about.specialties && about.specialties.length > 0 && (
+        <div className="about-chips">
+          {about.specialties.slice(0, 4).map((spec: string, i: number) => (
+            <span key={i} className="about-chip">{spec}</span>
+          ))}
+        </div>
+      )}
+
+      <div className="about-actions">
+        <button className="about-btn primary" onClick={handleResume} title="Download or inspect Resume">
+          <Icon name="arrow" size={12} />
+          <span>Resume / CV</span>
+        </button>
+        <button className="about-btn secondary" onClick={() => s.open('mail')} title="Send direct inquiry">
+          <Icon name="mail" size={12} />
+          <span>Contact</span>
+        </button>
+      </div>
+    </DraggableWidget>
+  );
+}
+
+export function CertificationsWidget() {
+  const s = useSystemContext();
+  const certs: any[] = s.config?.widgets?.certs || [
+    { id: 'htb', title: 'HackTheBox', badge: 'Pro Hacker', issuer: 'HackTheBox CTF', date: 'Active 2024', verifyUrl: 'https://hackthebox.com', accent: '#9fe870' },
+    { id: 'thm', title: 'TryHackMe', badge: 'Top 1% Global', issuer: 'TryHackMe Labs', date: '2024', verifyUrl: 'https://tryhackme.com', accent: '#ef4444' },
+    { id: 'ejpt', title: 'eJPTv2', badge: 'Certified', issuer: 'INE Security', date: '2024', verifyUrl: '', accent: '#38bdf8' },
+    { id: 'cve', title: 'CVE Hall of Fame', badge: 'Researcher', issuer: 'Responsible Disclosure', date: '2023 - 2024', verifyUrl: '', accent: '#c084fc' }
+  ];
+
+  return (
+    <DraggableWidget className="certs-widget">
+      <div className="widget-title">
+        <Icon name="shield" size={15} />
+        <span>Verifiable Credentials & CTF</span>
+        <span className="certs-count-badge">{certs.length}</span>
+      </div>
+
+      <div className="certs-grid">
+        {certs.map(cert => (
+          <div
+            key={cert.id}
+            className="cert-card"
+            style={{ '--cert-accent': cert.accent || '#38bdf8' } as React.CSSProperties}
+            onClick={() => {
+              if (cert.verifyUrl) {
+                window.open(cert.verifyUrl, '_blank');
+              } else {
+                s.notify(`${cert.title}: ${cert.badge} · Verified Credential`);
+              }
+            }}
+            title={cert.verifyUrl ? `Verify ${cert.title} credential` : `${cert.title} - ${cert.badge}`}
+          >
+            <div className="cert-card-top">
+              <span className="cert-pill" style={{ borderColor: cert.accent, color: cert.accent }}>
+                {cert.badge}
+              </span>
+              <span className="cert-date">{cert.date}</span>
+            </div>
+            <strong className="cert-title">{cert.title}</strong>
+            <div className="cert-issuer">
+              <span>{cert.issuer}</span>
+              {cert.verifyUrl && <span className="cert-arrow">↗</span>}
+            </div>
+          </div>
+        ))}
+      </div>
+    </DraggableWidget>
+  );
+}
+
+export function NeofetchWidget() {
+  const s = useSystemContext();
+  const specs = s.config?.widgets?.neofetch || {
+    os: 'ZakOS 27 (macOS Sequoia / Hardened Linux)',
+    host: 'Apple M-Series / Virtual Systems Rig',
+    kernel: 'Linux 6.8.0-Hardened / POSIX',
+    shell: 'zsh 5.9 (x86_64-darwin22.0)',
+    uptime: '99.98% High Availability',
+    cipher: 'AES-256-GCM / TLS 1.3 Active',
+    memory: '16.11 GB / 32 GB (Active)'
+  };
+
+  return (
+    <DraggableWidget className="neofetch-widget">
+      <div className="widget-title">
+        <Icon name="terminal" size={14} />
+        <span>Hardware & Kernel Specs</span>
+        <i className="status-dot" style={{ background: '#38bdf8' }} />
+      </div>
+
+      <div className="neofetch-stage">
+        <div className="neofetch-art">
+          <pre>{`  ___  ___ 
+ / _ \\/ __|
+| (_) \\__ \\
+ \\___/|___/`}</pre>
+          <span className="neofetch-badge">ZAK-OS</span>
+        </div>
+
+        <div className="neofetch-lines">
+          <div><small>OS</small><span>{specs.os}</span></div>
+          <div><small>KERNEL</small><span>{specs.kernel}</span></div>
+          <div><small>HOST</small><span>{specs.host}</span></div>
+          <div><small>CIPHER</small><strong style={{ color: '#9fe870' }}>{specs.cipher}</strong></div>
+          <div><small>UPTIME</small><span>{specs.uptime}</span></div>
+        </div>
+      </div>
+
+      <div className="neofetch-swatches">
+        {['#ef4444', '#f97316', '#eab308', '#22c55e', '#06b6d4', '#3b82f6', '#a855f7'].map(c => (
+          <i key={c} style={{ background: c }} />
+        ))}
+      </div>
+    </DraggableWidget>
+  );
+}

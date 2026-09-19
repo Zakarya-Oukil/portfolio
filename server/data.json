@@ -425,7 +425,81 @@
         "mail": "",
         "about": ""
       }
+    },
+    "widgets": {
+      "visibility": {
+        "about": true,
+        "certs": true,
+        "github": true,
+        "neofetch": true,
+        "telemetry": false,
+        "clock": false,
+        "notes": false
+      },
+      "about": {
+        "avatar": "",
+        "name": "Zakarya Oukil",
+        "role": "Security Researcher & Systems Architect",
+        "statusText": "Available for Hire",
+        "statusType": "available",
+        "location": "Algiers / Remote (Open to Relocation)",
+        "specialties": [
+          "Zero-Trust Architecture",
+          "Reverse Engineering",
+          "High-Concurrency",
+          "Kernel & Sandboxing"
+        ],
+        "bio": "Engineering resilient systems from low-level Linux kernels to distributed cloud runtimes. Passionate about adversarial ML and offensive security.",
+        "resumeUrl": ""
+      },
+      "certs": [
+        {
+          "id": "htb-pro",
+          "title": "HackTheBox",
+          "badge": "Pro Hacker",
+          "issuer": "HackTheBox CTF",
+          "date": "Active 2024",
+          "verifyUrl": "https://hackthebox.com",
+          "accent": "#9fe870"
+        },
+        {
+          "id": "thm-top1",
+          "title": "TryHackMe",
+          "badge": "Top 1% Global",
+          "issuer": "TryHackMe Labs",
+          "date": "2024",
+          "verifyUrl": "https://tryhackme.com",
+          "accent": "#ef4444"
+        },
+        {
+          "id": "ine-ejpt",
+          "title": "eJPTv2",
+          "badge": "Certified",
+          "issuer": "INE Security",
+          "date": "2024",
+          "verifyUrl": "",
+          "accent": "#38bdf8"
+        },
+        {
+          "id": "cve-research",
+          "title": "CVE Hall of Fame",
+          "badge": "Security Researcher",
+          "issuer": "Responsible Disclosure",
+          "date": "2023 - 2024",
+          "verifyUrl": "",
+          "accent": "#c084fc"
+        }
+      ],
+      "neofetch": {
+        "os": "ZakOS 27 (macOS Sequoia / Hardened Linux)",
+        "host": "Apple M-Series / Virtual Systems Rig",
+        "kernel": "Linux 6.8.0-Hardened / POSIX",
+        "shell": "zsh 5.9 (x86_64-darwin22.0)",
+        "uptime": "99.98% High Availability",
+        "cipher": "AES-256-GCM / TLS 1.3 Active",
+        "memory": "16.11 GB / 32 GB (Active)"
+      }
     }
   },
-  "lastUpdated": "2026-09-19T20:45:13.566Z"
+  "lastUpdated": "2026-09-19T21:51:34.803Z"
 }

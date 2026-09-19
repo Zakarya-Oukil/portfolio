@@ -33,6 +33,55 @@ export interface PortfolioProject {
   description: string;
 }
 
+export interface WidgetVisibility {
+  about: boolean;
+  certs: boolean;
+  github: boolean;
+  neofetch: boolean;
+  telemetry: boolean;
+  clock: boolean;
+  notes: boolean;
+}
+
+export interface AboutWidgetData {
+  avatar?: string;
+  name: string;
+  role: string;
+  statusText: string;
+  statusType: 'available' | 'busy' | 'open';
+  location: string;
+  specialties: string[];
+  bio: string;
+  resumeUrl?: string;
+}
+
+export interface CertItem {
+  id: string;
+  title: string;
+  badge: string;
+  issuer: string;
+  date: string;
+  verifyUrl?: string;
+  accent?: string;
+}
+
+export interface NeofetchData {
+  os: string;
+  host: string;
+  kernel: string;
+  shell: string;
+  uptime: string;
+  cipher: string;
+  memory: string;
+}
+
+export interface WidgetsConfig {
+  visibility: WidgetVisibility;
+  about: AboutWidgetData;
+  certs: CertItem[];
+  neofetch: NeofetchData;
+}
+
 export const appNames: Record<AppId, string> = { projects: 'Projects', terminal: 'Terminal', settings: 'Settings', mail: 'Mail', about: 'About me' };
 export const apps: AppId[] = ['projects', 'terminal', 'settings', 'mail', 'about'];
 export const modeNames: Record<Mode, string> = { macos: 'macOS 27', ios: 'iPhone 16 Pro Max', android: 'Android 15' };
