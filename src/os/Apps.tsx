@@ -2,13 +2,30 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Icon, AppIcon } from './Icon';
 import { apps, appNames, Mode, modeNames, Theme, useSaved, useSystemContext, Wallpaper } from './state';
 import { PROJECTS } from './projects-data';
+import { IPhonePreviewCard } from './IPhonePreviewCard';
 
 export function Settings() {
   const s = useSystemContext();
   const [github, setGithub] = useSaved('zak.github', '');
   const [username, setUsername] = useState(github);
   return <div className="settings-app app-scroll"><header className="app-heading"><div className="heading-icon"><Icon name="settings" size={27}/></div><div><h1>Make yourself at home.</h1><p>Your workspace, your way.</p></div></header>
-    <section className="settings-section"><h3>Choose your experience</h3><p>One portfolio. Three familiar worlds.</p><div className="os-options">{(['macos', 'ios', 'android'] as Mode[]).map(m => <button key={m} aria-pressed={s.mode === m} className={s.mode === m ? 'selected' : ''} onClick={() => s.setMode(m)}><Icon name={m === 'macos' ? 'monitor' : 'phone'} size={30}/><strong>{modeNames[m]}</strong><small>{m === 'macos' ? 'Liquid Glass desktop' : m === 'ios' ? 'iOS 18 experience' : 'Material You'}</small>{s.mode === m && <i><Icon name="check" size={13}/></i>}</button>)}</div></section>
+    <section className="settings-section"><h3>Choose your experience</h3><p>One portfolio. Three familiar worlds.</p><div className="os-options">
+      <button key="macos" aria-pressed={s.mode === 'macos'} className={s.mode === 'macos' ? 'selected' : ''} onClick={() => s.setMode('macos')}>
+        <Icon name="monitor" size={30}/>
+        <strong>{modeNames.macos}</strong>
+        <small>Liquid Glass desktop</small>
+        {s.mode === 'macos' && <i><Icon name="check" size={13}/></i>}
+      </button>
+
+      <IPhonePreviewCard isSelected={s.mode === 'ios'} onSelect={() => s.setMode('ios')} />
+
+      <button key="android" aria-pressed={s.mode === 'android'} className={s.mode === 'android' ? 'selected' : ''} onClick={() => s.setMode('android')}>
+        <Icon name="phone" size={30}/>
+        <strong>{modeNames.android}</strong>
+        <small>Material You</small>
+        {s.mode === 'android' && <i><Icon name="check" size={13}/></i>}
+      </button>
+    </div></section>
     <section className="settings-section"><h3>Appearance</h3><div className="appearance-options">{(['light', 'dark', 'oled'] as Theme[]).map(t => <button key={t} onClick={() => s.setTheme(t)} className={s.theme === t ? 'selected' : ''} aria-pressed={s.theme === t}><span className={`theme-preview preview-${t}`}><i/><i/><i/></span>{t === 'oled' ? 'OLED black' : `${t[0].toUpperCase()}${t.slice(1)}`}</button>)}</div></section>
     <section className="settings-section"><h3>Wallpaper</h3><div className="wallpaper-options">{(['sonoma', 'sequoia', 'neon', 'oled'] as Wallpaper[]).map(w => <button key={w} onClick={() => s.setWallpaper(w)} aria-pressed={s.wallpaper === w} className={s.wallpaper === w ? 'selected' : ''}><span className={`wallpaper-swatch wallpaper-${w}`}/>{({ sonoma: 'Sonoma', sequoia: 'Sequoia', neon: 'Cyberpunk', oled: 'Minimal' })[w]}</button>)}</div><p className="muted">Original landscape illustrations, with a palette that follows your wallpaper.</p></section>
     <section className="settings-section"><h3>GitHub activity</h3><p>Connect a public username to see recent public events on your desktop.</p><form className="inline-form" onSubmit={e => { e.preventDefault(); if (/^[a-z\d](?:[a-z\d-]{0,37}[a-z\d])?$/i.test(username.trim()) || !username) { setGithub(username.trim()); window.dispatchEvent(new CustomEvent('zak:github', { detail: username.trim() })); s.notify(username ? 'GitHub username saved' : 'GitHub disconnected'); } }}><input aria-label="GitHub username" placeholder="Your GitHub username" value={username} onChange={e => setUsername(e.target.value)} pattern="[a-zA-Z0-9][a-zA-Z0-9-]{0,38}"/><button className="primary-button" type="submit">Connect</button></form></section>

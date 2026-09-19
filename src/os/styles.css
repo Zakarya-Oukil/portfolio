@@ -1020,3 +1020,922 @@
   transform: scaleY(1.2);
 }
 
+/* ==========================================================================
+   3D MacBook Opening Cinematic Intro
+   ========================================================================== */
+.macbook-intro-stage {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #06090d;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  cursor: pointer;
+  perspective: 2000px;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.intro-aurora-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.aurora-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.35;
+  animation: aurora-drift 12s ease-in-out infinite alternate;
+}
+
+.aurora-teal {
+  width: 600px;
+  height: 600px;
+  top: -150px;
+  left: 15%;
+  background: radial-gradient(circle, #0ea5e9, #10b981);
+}
+
+.aurora-indigo {
+  width: 700px;
+  height: 700px;
+  top: 10%;
+  right: 10%;
+  background: radial-gradient(circle, #6366f1, #3b82f6);
+  animation-duration: 16s;
+  animation-delay: -4s;
+}
+
+.aurora-emerald {
+  width: 500px;
+  height: 500px;
+  bottom: -100px;
+  left: 30%;
+  background: radial-gradient(circle, #10b981, #064e3b);
+  animation-duration: 14s;
+  animation-delay: -7s;
+}
+
+@keyframes aurora-drift {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(40px, -30px) scale(1.1); }
+  100% { transform: translate(-30px, 20px) scale(0.95); }
+}
+
+.intro-stars {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    radial-gradient(1.5px 1.5px at 15% 25%, rgba(255,255,255,0.7), transparent),
+    radial-gradient(1px 1px at 35% 15%, rgba(255,255,255,0.6), transparent),
+    radial-gradient(1.5px 1.5px at 75% 30%, rgba(255,255,255,0.8), transparent),
+    radial-gradient(1px 1px at 85% 65%, rgba(255,255,255,0.5), transparent),
+    radial-gradient(1.5px 1.5px at 25% 75%, rgba(255,255,255,0.7), transparent),
+    radial-gradient(2px 2px at 60% 80%, rgba(255,255,255,0.9), transparent);
+  opacity: 0.6;
+}
+
+.intro-spotlight {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 55%, rgba(255, 255, 255, 0.08) 0%, rgba(0, 0, 0, 0.4) 50%, rgba(6, 9, 13, 0.95) 100%);
+  pointer-events: none;
+}
+
+.intro-skip-btn {
+  z-index: 10000;
+}
+
+/* 3D Scene Wrapper */
+.macbook-3d-scene {
+  position: relative;
+  width: 720px;
+  height: 480px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-style: preserve-3d;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+/* Floor Shadows & Reflection */
+.laptop-floor-shadow {
+  position: absolute;
+  width: 680px;
+  height: 180px;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%) rotateX(80deg);
+  background: radial-gradient(ellipse, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.3) 50%, transparent 75%);
+  filter: blur(25px);
+  pointer-events: none;
+  transition: all 1.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.laptop-floor-shadow.lid-open-shadow {
+  width: 740px;
+  height: 240px;
+  background: radial-gradient(ellipse, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.4) 55%, transparent 80%);
+  filter: blur(30px);
+}
+
+.laptop-reflection {
+  position: absolute;
+  width: 600px;
+  height: 90px;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: radial-gradient(ellipse at 50% 0%, rgba(255, 255, 255, 0.04), transparent 70%);
+  opacity: 0;
+  transition: opacity 1.2s ease;
+  pointer-events: none;
+}
+
+.laptop-reflection.screen-glow-active {
+  opacity: 1;
+  background: radial-gradient(ellipse at 50% 0%, rgba(138, 180, 248, 0.15), rgba(99, 102, 241, 0.08) 40%, transparent 75%);
+  filter: blur(15px);
+}
+
+/* MacBook Body Assembly */
+.macbook-body {
+  position: relative;
+  width: 600px;
+  height: 380px;
+  transform-style: preserve-3d;
+}
+
+/* Base Chassis */
+.macbook-base {
+  position: absolute;
+  width: 600px;
+  height: 380px;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(180deg, #1c1d22 0%, #292a30 40%, #1e2025 100%);
+  border-radius: 16px;
+  box-shadow: 
+    0 15px 35px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.8);
+  transform: rotateX(60deg) translateZ(0);
+  transform-origin: bottom center;
+  transform-style: preserve-3d;
+}
+
+.base-top-deck {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 16px 20px;
+  box-sizing: border-box;
+}
+
+/* Speaker Grilles */
+.speaker-grille {
+  position: absolute;
+  top: 20px;
+  width: 22px;
+  height: 190px;
+  background-image: radial-gradient(circle, #0e0f12 1px, transparent 1px);
+  background-size: 3px 3px;
+  opacity: 0.85;
+}
+.speaker-grille.left { left: 16px; }
+.speaker-grille.right { right: 16px; }
+
+/* Keyboard Well */
+.keyboard-well {
+  margin: 4px auto 0;
+  width: 480px;
+  background: #111216;
+  border-radius: 9px;
+  padding: 8px 10px;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.9), 0 1px 0 rgba(255, 255, 255, 0.08);
+  box-sizing: border-box;
+}
+
+.keyboard-deck {
+  display: flex;
+  flex-direction: column;
+  gap: 3.5px;
+}
+
+.kb-row {
+  display: flex;
+  gap: 3.5px;
+}
+
+.kb-key {
+  height: 20px;
+  flex: 1;
+  background: linear-gradient(180deg, #24262d 0%, #17181c 100%);
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 7.5px;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+  color: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.7), inset 0 0.5px 0 rgba(255, 255, 255, 0.15);
+  user-select: none;
+}
+
+.kb-fn-row { height: 14px; }
+.kb-fn-row .kb-key { height: 14px; font-size: 6px; }
+.kb-key.kb-touch-id {
+  background: radial-gradient(circle, #111 50%, #2a2c33 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.kb-key.kb-delete, .kb-key.kb-tab, .kb-key.kb-caps, .kb-key.kb-return, .kb-key.kb-shift, .kb-key.kb-shift-r {
+  flex: 1.5;
+  font-size: 6.5px;
+}
+
+.kb-key.kb-space { flex: 4.8; }
+.kb-key.kb-cmd-main { flex: 1.3; }
+
+.kb-arrows {
+  display: flex;
+  gap: 2px;
+  flex: 1.6;
+}
+.kb-arrows .kb-key { height: 20px; font-size: 6px; }
+.kb-arrow-v {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+.kb-arrow-v .kb-key { height: 9px; font-size: 5px; }
+
+/* Force Touch Trackpad */
+.macbook-trackpad {
+  margin: 14px auto 0;
+  width: 200px;
+  height: 110px;
+  background: linear-gradient(180deg, #23252b 0%, #2a2c33 100%);
+  border-radius: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.4), 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+/* Front Notch */
+.base-front-notch {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90px;
+  height: 5px;
+  background: #111317;
+  border-radius: 0 0 5px 5px;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.8);
+}
+
+.base-front-edge {
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: linear-gradient(180deg, #18191e, #0e0f12);
+  border-radius: 0 0 16px 16px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* MacBook Lid Assembly */
+.macbook-lid {
+  position: absolute;
+  width: 600px;
+  height: 380px;
+  top: 0;
+  left: 0;
+  transform-origin: bottom center;
+  transform-style: preserve-3d;
+  transition: transform 1.6s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+/* Closed vs Open States */
+.macbook-lid.lid-closed {
+  transform: rotateX(60deg) translateZ(2px);
+}
+
+.macbook-lid.lid-open {
+  transform: rotateX(-35deg) translateZ(0);
+}
+
+/* Outer Shell (Facing user when closed, facing back when open) */
+.lid-outer-shell {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(145deg, #2c2e35 0%, #1e2025 50%, #15171b 100%);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12),
+    0 10px 30px rgba(0, 0, 0, 0.5);
+  backface-visibility: hidden;
+  transform: rotateY(180deg);
+}
+
+.lid-apple-logo {
+  color: #e5e7eb;
+  filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.3));
+  opacity: 0.9;
+}
+
+/* Inner Display Bezel */
+.lid-inner-display {
+  position: absolute;
+  inset: 0;
+  background: #090a0d;
+  border-radius: 16px;
+  padding: 10px 10px 18px;
+  box-sizing: border-box;
+  box-shadow: 
+    inset 0 0 0 1px rgba(255, 255, 255, 0.15),
+    0 20px 50px rgba(0, 0, 0, 0.8);
+  backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Camera Notch */
+.display-camera-notch {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 52px;
+  height: 9px;
+  background: #090a0d;
+  border-radius: 0 0 7px 7px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.notch-camera-lens {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 40%, #1e293b, #030712);
+  border: 0.5px solid rgba(255, 255, 255, 0.15);
+}
+
+.notch-indicator-green {
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 4px #22c55e;
+}
+
+/* Screen Surface */
+.screen-content-surface {
+  position: relative;
+  flex: 1;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #050608;
+  transition: filter 1.2s ease, opacity 1s ease;
+}
+
+.screen-content-surface.powered-off {
+  filter: brightness(0.15);
+  opacity: 0.8;
+}
+
+.screen-content-surface.powered-on {
+  filter: brightness(1);
+  opacity: 1;
+  box-shadow: inset 0 0 30px rgba(255, 255, 255, 0.05);
+}
+
+.screen-glass-sheen {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, transparent 45%, rgba(255, 255, 255, 0.03) 100%);
+  pointer-events: none;
+}
+
+/* Screen Desktop Preview Mock */
+.screen-desktop-preview {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0;
+  color: #fff;
+  background-size: cover;
+  background-position: center;
+}
+
+.screen-mock-menubar {
+  height: 18px;
+  padding: 0 10px;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 7.5px;
+  border-bottom: 0.5px solid rgba(255, 255, 255, 0.12);
+}
+.mock-menu-left { display: flex; gap: 8px; align-items: center; }
+.mock-apple-icon { font-size: 9px; font-weight: bold; }
+.mock-menu-right { display: flex; gap: 8px; font-size: 7px; opacity: 0.8; }
+
+.screen-mock-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 10px;
+}
+
+.mock-hero-brand h1 {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: -0.5px;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.6);
+}
+.mock-hero-brand h1 span { color: #10b981; }
+.mock-hero-brand p {
+  font-size: 8px;
+  color: rgba(255, 255, 255, 0.75);
+  margin: 2px 0 0;
+}
+
+.screen-mock-widgets {
+  display: flex;
+  gap: 8px;
+  width: 90%;
+  max-width: 480px;
+}
+
+.mock-widget {
+  flex: 1;
+  background: rgba(20, 30, 25, 0.55);
+  border: 0.5px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  padding: 7px 9px;
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.mock-w-badge { font-size: 6px; font-weight: 700; color: #10b981; letter-spacing: 0.5px; }
+.mock-widget strong { font-size: 9px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mock-widget small { font-size: 6.5px; color: rgba(255, 255, 255, 0.65); }
+
+.screen-mock-dock {
+  align-self: center;
+  margin-bottom: 6px;
+  display: flex;
+  gap: 8px;
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(15px);
+  border: 0.5px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+}
+.mock-dock-icon { font-size: 11px; }
+
+/* Welcoming CTA Banner */
+.intro-welcome-cta {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+  z-index: 100;
+}
+
+.intro-welcome-cta.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}
+
+.welcome-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  border-radius: 30px;
+  font-size: 9.5px;
+  font-weight: 600;
+  color: #34d399;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.welcome-pulse {
+  width: 6px;
+  height: 6px;
+  background: #10b981;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #10b981;
+  animation: pulse-ring 2s infinite;
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.9); opacity: 0.7; }
+  50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 12px #34d399; }
+  100% { transform: scale(0.9); opacity: 0.7; }
+}
+
+.intro-welcome-cta h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #f3f4f6;
+  margin: 0 0 4px;
+  letter-spacing: -0.5px;
+}
+
+.intro-welcome-cta p {
+  font-size: 14px;
+  color: #9ca3af;
+  margin: 0 0 14px;
+}
+
+.intro-cursive-swash {
+  font-family: 'Great Vibes', cursive, sans-serif !important;
+  font-size: 1.45em;
+  font-weight: 400;
+  color: #d1fae5;
+  padding: 0 6px;
+  vertical-align: middle;
+}
+
+.intro-enter-action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.intro-enter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 22px;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #042f1a;
+  font-weight: 600;
+  font-size: 12px;
+  border-radius: 25px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.intro-enter-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 26px rgba(16, 185, 129, 0.6);
+  background: linear-gradient(135deg, #34d399, #059669);
+}
+
+.intro-enter-btn kbd {
+  font-family: inherit;
+  font-size: 9px;
+  background: rgba(0, 0, 0, 0.2);
+  color: #042f1a;
+  padding: 2px 6px;
+  border-radius: 5px;
+}
+
+.intro-click-hint {
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.45);
+  letter-spacing: 0.3px;
+}
+
+/* Cinematic Zoom-in Camera Transition */
+.macbook-intro-stage.zooming-in {
+  pointer-events: none;
+}
+
+.macbook-intro-stage.zooming-in .intro-welcome-cta,
+.macbook-intro-stage.zooming-in .intro-skip-btn {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.macbook-intro-stage.zooming-in .macbook-3d-scene {
+  transform: perspective(1000px) rotateX(0deg) rotateY(0deg) scale(4.5) translateZ(400px) translateY(80px) !important;
+  opacity: 0;
+  transition: transform 0.75s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.75s cubic-bezier(0.8, 0, 0.2, 1);
+}
+
+/* ==========================================================================
+   3D Dual-iPhone Animated Settings Component (Spline Inspired)
+   ========================================================================== */
+.iphone-3d-card-wrapper {
+  position: relative;
+  grid-column: span 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  cursor: pointer;
+  transition: border-color 0.25s ease, background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+  user-select: none;
+  text-align: left;
+  outline: none;
+}
+
+.iphone-3d-card-wrapper:hover {
+  border-color: rgba(var(--accent-rgb), 0.45);
+  background: rgba(var(--accent-rgb), 0.04);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+.iphone-3d-card-wrapper.selected {
+  border-color: var(--accent);
+  background: rgba(var(--accent-rgb), 0.08);
+  box-shadow: 0 0 0 1px var(--accent), 0 12px 35px rgba(0, 0, 0, 0.4);
+}
+
+/* 3D Viewport Stage */
+.iphone-3d-stage {
+  position: relative;
+  width: 100%;
+  height: 190px;
+  border-radius: 10px;
+  background: radial-gradient(circle at 50% 60%, rgba(var(--accent-rgb), 0.12), transparent 75%), #0c120e;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1000px;
+  overflow: hidden;
+}
+
+.iphone-stage-glow {
+  position: absolute;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(var(--accent-rgb), 0.3), transparent 70%);
+  filter: blur(25px);
+  opacity: 0.4;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.iphone-stage-glow.active {
+  opacity: 0.8;
+  transform: scale(1.3);
+}
+
+/* Dual Group */
+.iphone-dual-group {
+  position: relative;
+  width: 180px;
+  height: 160px;
+  transform-style: preserve-3d;
+  transition: transform 0.15s cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* 3D Devices */
+.iphone-3d-device {
+  position: absolute;
+  width: 95px;
+  height: 155px;
+  transform-style: preserve-3d;
+}
+
+/* Foreground Phone (About Me Screen) */
+.iphone-3d-device.phone-fg {
+  left: 10px;
+  top: 10px;
+  transform: translateZ(25px) rotateY(-8deg) rotateX(6deg);
+  animation: float-iphone-fg 4.5s ease-in-out infinite alternate;
+  z-index: 5;
+}
+
+/* Background Phone (Projects Screen) */
+.iphone-3d-device.phone-bg {
+  right: 10px;
+  top: -2px;
+  transform: translateZ(-20px) rotateY(12deg) rotateX(4deg) scale(0.92);
+  animation: float-iphone-bg 5s ease-in-out infinite alternate;
+  animation-delay: -2s;
+  z-index: 2;
+  opacity: 0.95;
+}
+
+@keyframes float-iphone-fg {
+  0% { transform: translateZ(25px) translateY(0px) rotateY(-8deg) rotateX(6deg); }
+  100% { transform: translateZ(25px) translateY(-8px) rotateY(-5deg) rotateX(4deg); }
+}
+
+@keyframes float-iphone-bg {
+  0% { transform: translateZ(-20px) translateY(0px) rotateY(12deg) rotateX(4deg) scale(0.92); }
+  100% { transform: translateZ(-20px) translateY(-10px) rotateY(15deg) rotateX(2deg) scale(0.92); }
+}
+
+/* Outer Frame */
+.iphone-frame-outer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  padding: 3px;
+  box-sizing: border-box;
+  background: linear-gradient(135deg, #a3a69f, #414440 25%, #888b82 75%, #30332f);
+  box-shadow: 
+    0 8px 24px rgba(0, 0, 0, 0.7),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.4),
+    0 0 0 1px #111;
+}
+
+.iphone-screen-chassis {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 17px;
+  overflow: hidden;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Mini Dynamic Island */
+.iphone-mini-island {
+  position: absolute;
+  top: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32px;
+  height: 8px;
+  background: #000;
+  border-radius: 8px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 4px;
+}
+
+.mini-island-cam {
+  width: 3.5px;
+  height: 3.5px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 40%, #1e293b, #030712);
+  border: 0.5px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Screenshot image */
+.iphone-screen-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+}
+
+.iphone-specular-sheen {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(125deg, rgba(255, 255, 255, 0.22) 0%, transparent 55%);
+  pointer-events: none;
+}
+
+/* Device Cast Shadow */
+.iphone-device-shadow {
+  position: absolute;
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(0, 0, 0, 0.6) 0%, transparent 75%);
+  filter: blur(4px);
+}
+
+/* Info Bar */
+.iphone-card-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.iphone-card-meta {
+  flex: 1;
+}
+
+.iphone-title-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 3px;
+}
+
+.iphone-title-row strong {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.iphone-chip-badge {
+  font-size: 7px;
+  font-weight: 700;
+  padding: 1.5px 5px;
+  border-radius: 4px;
+  background: rgba(var(--accent-rgb), 0.15);
+  color: var(--accent);
+  border: 0.5px solid rgba(var(--accent-rgb), 0.3);
+  letter-spacing: 0.3px;
+}
+
+.iphone-card-meta small {
+  display: block;
+  font-size: 8px;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.iphone-check-badge {
+  background: var(--accent);
+  color: var(--bg);
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.iphone-select-hint {
+  font-size: 8px;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  padding: 3px 7px;
+  border-radius: 6px;
+}
+
+/* Layout adaptions for .os-options with 3D iPhone component */
+.os-options {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  align-items: stretch;
+}
+
+.os-options > button {
+  justify-content: center;
+}
+
+@media (max-width: 900px) {
+  .macbook-3d-scene {
+    transform: scale(0.85) !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .macbook-3d-scene {
+    transform: scale(0.65) !important;
+  }
+  .os-options {
+    grid-template-columns: 1fr;
+  }
+}
+
+

@@ -9,7 +9,14 @@ function MenuBar() {
   const s = useSystemContext(); const [menu, setMenu] = useState(''); const menuRef = useRef<HTMLDivElement>(null);
   useEffect(() => { if (!menu) return; const dismiss = (e: PointerEvent) => { if (!menuRef.current?.contains(e.target as Node)) setMenu(''); }; const escape = (e: KeyboardEvent) => { if (e.key === 'Escape') setMenu(''); }; document.addEventListener('pointerdown', dismiss); document.addEventListener('keydown', escape); return () => { document.removeEventListener('pointerdown', dismiss); document.removeEventListener('keydown', escape); }; }, [menu]);
   const commands: Record<string, { label: string; action: () => void }[]> = {
-    Apple: [{ label: 'About this portfolio', action: () => s.open('about') }, { label: 'System Settings…', action: () => s.open('settings') }, { label: 'Force quit active app', action: () => { if (s.active) s.close(s.active); } }, { label: 'Sleep', action: () => s.setSleeping(true) }, { label: 'Restart workspace', action: () => { s.windows.forEach(w => s.close(w.id)); s.home(); s.notify('Workspace restarted. Preferences preserved.'); } }],
+    Apple: [
+      { label: 'About this portfolio', action: () => s.open('about') },
+      { label: 'System Settings…', action: () => s.open('settings') },
+      { label: 'Replay Laptop Opening Intro', action: () => s.setBooting('macos') },
+      { label: 'Force quit active app', action: () => { if (s.active) s.close(s.active); } },
+      { label: 'Sleep', action: () => s.setSleeping(true) },
+      { label: 'Restart workspace', action: () => { s.windows.forEach(w => s.close(w.id)); s.home(); s.notify('Workspace restarted. Preferences preserved.'); } }
+    ],
     File: [{ label: 'Open Projects', action: () => s.open('projects') }, { label: 'New Terminal', action: () => s.open('terminal') }, { label: 'New Message', action: () => s.open('mail') }],
     Edit: [{ label: 'Copy portfolio link', action: () => { navigator.clipboard?.writeText(location.href).then(() => s.notify('Portfolio link copied')).catch(() => s.notify('Clipboard unavailable')); } }, { label: 'Edit quick note', action: () => { (document.querySelector('[aria-label="Quick note"]') as HTMLTextAreaElement)?.focus(); } }],
     View: [{ label: 'Toggle appearance', action: () => s.setTheme(s.theme === 'dark' ? 'light' : 'dark') }, { label: 'Show desktop', action: () => { s.windows.forEach(w => s.updateWindow(w.id, { minimized: true })); s.home(); } }, { label: 'Toggle full screen', action: () => { const active = s.windows.find(w => w.id === s.active); if (active) s.updateWindow(active.id, { maximized: !active.maximized }); } }],
