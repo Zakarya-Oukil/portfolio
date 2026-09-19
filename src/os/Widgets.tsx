@@ -4,8 +4,76 @@ import { readSaved, useSaved, useSystemContext } from './state';
 
 export function DraggableWidget({ children, className = '' }: { children: React.ReactNode; className?: string }) {
   const [position, setPosition] = useState({ x: 0, y: 0 });
-  const start = useRef({ x: 0, y: 0, px: 0, py: 0, dragging: false });
-  return <section className={`widget ${className}`} style={{ transform: `translate(${position.x}px, ${position.y}px)` }}><div className="widget-grip" aria-label="Drag widget" title="Drag widget" onPointerDown={e => { start.current = { x: e.clientX, y: e.clientY, px: position.x, py: position.y, dragging: true }; e.currentTarget.setPointerCapture(e.pointerId); }} onPointerMove={e => { if (!start.current.dragging) return; const rect = e.currentTarget.parentElement!.getBoundingClientRect(); const dx = Math.min(window.innerWidth - rect.right, Math.max(-rect.left, e.clientX - start.current.x)); const dy = Math.min(window.innerHeight - 95 - rect.bottom, Math.max(40 - rect.top, e.clientY - start.current.y)); setPosition({ x: position.x + dx, y: position.y + dy }); start.current.x = e.clientX; start.current.y = e.clientY; }} onPointerUp={() => { start.current.dragging = false; }} onPointerCancel={() => { start.current.dragging = false; }}><span/></div>{children}</section>;
+  const [dragging, setDragging] = useState(false);
+  const dragRef = useRef({ startX: 0, startY: 0, initialX: 0, initialY: 0, isDown: false });
+
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    dragRef.current = {
+      startX: e.clientX,
+      startY: e.clientY,
+      initialX: position.x,
+      initialY: position.y,
+      isDown: true
+    };
+    setDragging(true);
+    e.currentTarget.setPointerCapture(e.pointerId);
+  };
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!dragRef.current.isDown) return;
+    const dx = e.clientX - dragRef.current.startX;
+    const dy = e.clientY - dragRef.current.startY;
+    setPosition({
+      x: dragRef.current.initialX + dx,
+      y: dragRef.current.initialY + dy
+    });
+  };
+
+  const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!dragRef.current.isDown) return;
+    dragRef.current.isDown = false;
+    setDragging(false);
+    try {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    } catch {
+      // ignore
+    }
+
+    // Magnetic grid snapping (16px grid increments)
+    setPosition(prev => {
+      const snapX = Math.round(prev.x / 16) * 16;
+      const snapY = Math.round(prev.y / 16) * 16;
+      return {
+        x: Math.abs(snapX) < 16 ? 0 : snapX,
+        y: Math.abs(snapY) < 16 ? 0 : snapY
+      };
+    });
+  };
+
+  return (
+    <section
+      className={`widget ${className} ${dragging ? 'widget-dragging' : ''}`}
+      style={{
+        transform: `translate(${position.x}px, ${position.y}px)`,
+        zIndex: dragging ? 999 : undefined,
+        transition: dragging ? 'none' : 'transform 0.22s cubic-bezier(0.16, 1, 0.3, 1)'
+      }}
+    >
+      <div
+        className="widget-grip"
+        aria-label="Drag widget"
+        title="Drag to reposition widget"
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerCancel={handlePointerUp}
+      >
+        <span />
+      </div>
+      {children}
+    </section>
+  );
 }
 export function ClockWidget() {
   const { time } = useSystemContext();
@@ -185,31 +253,34 @@ export function NeofetchWidget() {
   return (
     <DraggableWidget className="neofetch-widget">
       <div className="widget-title">
-        <Icon name="terminal" size={14} />
+        <Icon name="terminal" size={15} />
         <span>Hardware & Kernel Specs</span>
-        <i className="status-dot" style={{ background: '#38bdf8' }} />
+        <span className="neofetch-status-pill">POSIX KERNEL</span>
       </div>
 
       <div className="neofetch-stage">
         <div className="neofetch-art">
-          <pre>{`  ___  ___ 
- / _ \\/ __|
-| (_) \\__ \\
- \\___/|___/`}</pre>
-          <span className="neofetch-badge">ZAK-OS</span>
+          <pre>{`    __/\__
+   \\ _  _ /
+   /  \\/  \\
+  /  (..)  \\
+  \\  /||\\  /
+   \\/    \\/`}</pre>
+          <span className="neofetch-badge">ZAKAR·OS</span>
         </div>
 
         <div className="neofetch-lines">
           <div><small>OS</small><span>{specs.os}</span></div>
           <div><small>KERNEL</small><span>{specs.kernel}</span></div>
           <div><small>HOST</small><span>{specs.host}</span></div>
-          <div><small>CIPHER</small><strong style={{ color: '#9fe870' }}>{specs.cipher}</strong></div>
+          <div><small>CIPHER</small><strong style={{ color: '#10b981' }}>{specs.cipher}</strong></div>
+          <div><small>MEMORY</small><span>{specs.memory || '16.11 GB / 32 GB (Active)'}</span></div>
           <div><small>UPTIME</small><span>{specs.uptime}</span></div>
         </div>
       </div>
 
       <div className="neofetch-swatches">
-        {['#ef4444', '#f97316', '#eab308', '#22c55e', '#06b6d4', '#3b82f6', '#a855f7'].map(c => (
+        {['#ef4444', '#f97316', '#eab308', '#10b981', '#06b6d4', '#3b82f6', '#8b5cf6', '#ec4899'].map(c => (
           <i key={c} style={{ background: c }} />
         ))}
       </div>
