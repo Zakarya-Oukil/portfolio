@@ -32,8 +32,8 @@ export function validatePortfolio(data) {
     if (!item || typeof item !== 'object') return;
     for (const [key, value] of Object.entries(item)) {
       if (['__proto__','constructor','prototype'].includes(key)) valid = false;
-      if (typeof value === 'string' && (/url$/i.test(key) || ['image','avatar','macosToIos','iosToAndroid'].includes(key) || ['macos','ios','android'].includes(parent))) {
-        if (!safeUrl(value, ['image','avatar'].includes(key) || ['macos','ios','android'].includes(parent))) valid = false;
+      if (typeof value === 'string' && (/url$/i.test(key) || parent === 'media' || ['image','avatar','macosToIos','iosToMacos','macosToAndroid','androidToMacos','iosToAndroid','androidToIos'].includes(key) || ['macos','ios','android'].includes(parent))) {
+        if (!safeUrl(value, parent === 'media' || ['image','avatar'].includes(key) || ['macos','ios','android'].includes(parent))) valid = false;
       }
       if (typeof value === 'object') walk(value, key, depth + 1);
     }

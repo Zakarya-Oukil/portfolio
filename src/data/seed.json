@@ -827,6 +827,8 @@
     "media": {
       "macosToIos": "/media/macos-ios.mp4",
       "iosToMacos": "/media/ios-macos.mp4",
+      "macosToAndroid": "/media/macos-android.mp4",
+      "androidToMacos": "/media/android-macos.mp4",
       "iosToAndroid": "/media/ios-android.mp4"
     }
   },

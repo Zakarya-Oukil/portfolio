@@ -13,10 +13,14 @@ export function HardwareTransition() {
       ? safeLink(s.config.media?.macosToIos || '/media/macos-ios.mp4')
       : pair === 'ios:macos'
       ? safeLink(s.config.media?.iosToMacos || '/media/ios-macos.mp4')
+      : pair === 'macos:android'
+      ? safeLink(s.config.media?.macosToAndroid || '/media/macos-android.mp4')
+      : pair === 'android:macos'
+      ? safeLink(s.config.media?.androidToMacos || '/media/android-macos.mp4')
       : pair === 'ios:android'
       ? safeLink(s.config.media?.iosToAndroid || '/media/ios-android.mp4')
-      : pair === 'macos:android'
-      ? safeLink(s.config.media?.macosToAndroid)
+      : pair === 'android:ios'
+      ? safeLink(s.config.media?.androidToIos || '/media/android-ios.mp4')
       : undefined;
 
   const [fadingOut, setFadingOut] = useState(false);
