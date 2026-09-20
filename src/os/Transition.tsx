@@ -1,82 +1,82 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSystemContext } from './state';
-import { safeLink } from './portfolio-store';
+import { playSound } from './audio';
 
 export function HardwareTransition() {
   const s = useSystemContext();
-  const video = useRef<HTMLVideoElement>(null);
   const transition = s.transition!;
-  const pair = `${transition.from}:${transition.to}`;
-
-  const url =
-    pair === 'macos:ios'
-      ? safeLink(s.config.media?.macosToIos || '/media/macos-ios.mp4')
-      : pair === 'ios:macos'
-      ? safeLink(s.config.media?.iosToMacos || '/media/ios-macos.mp4')
-      : pair === 'macos:android'
-      ? safeLink(s.config.media?.macosToAndroid || '/media/macos-android.mp4')
-      : pair === 'android:macos'
-      ? safeLink(s.config.media?.androidToMacos || '/media/android-macos.mp4')
-      : pair === 'ios:android'
-      ? safeLink(s.config.media?.iosToAndroid || '/media/ios-android.mp4')
-      : pair === 'android:ios'
-      ? safeLink(s.config.media?.androidToIos || '/media/android-ios.mp4')
-      : undefined;
-
   const [fadingOut, setFadingOut] = useState(false);
 
   const finish = () => {
     setFadingOut(true);
-    setTimeout(() => s.setTransition(null), 250);
+    setTimeout(() => s.setTransition(null), 180);
   };
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') finish();
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
 
   useEffect(() => {
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
       s.setTransition(null);
       return;
     }
-    // Natural, cinematic 4.0s transition (finishes automatically on end or timeout)
-    const timer = setTimeout(finish, 4000);
+    if (s.soundOn) playSound('hardware');
+    // Snappy, clean 460ms transition with smooth exit
+    const timer = setTimeout(finish, 460);
     return () => clearTimeout(timer);
-  }, [transition, url]);
+  }, [transition]);
+
+  const targetLabel =
+    transition.to === 'macos'
+      ? 'macOS Sonoma'
+      : transition.to === 'ios'
+      ? 'iPhone 16 Pro'
+      : 'Pixel 9 Pro';
+
+  const targetSub =
+    transition.to === 'macos'
+      ? 'Desktop Command Center'
+      : transition.to === 'ios'
+      ? 'iOS 18 Virtual Workspace'
+      : 'Material You Virtual Workspace';
+
+  const targetIcon =
+    transition.to === 'macos' ? (
+      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="4" width="18" height="12" rx="2" />
+        <path d="M2 20h20M9 16v4M15 16v4" />
+      </svg>
+    ) : transition.to === 'ios' ? (
+      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="6" y="2" width="12" height="20" rx="3" />
+        <line x1="11" y1="5" x2="13" y2="5" />
+        <circle cx="12" cy="18" r="0.8" />
+      </svg>
+    ) : (
+      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="6" y="2" width="12" height="20" rx="2.5" />
+        <circle cx="12" cy="5" r="0.8" />
+        <line x1="10" y1="19" x2="14" y2="19" />
+      </svg>
+    );
 
   return (
     <div
-      className={`hardware-transition ${fadingOut ? 'hardware-exit' : ''}`}
+      className={`hardware-transition simple-handoff ${fadingOut ? 'hardware-exit' : ''}`}
       aria-label={`Switching to ${transition.to}`}
+      onClick={finish}
+      role="button"
+      tabIndex={0}
     >
       <div className="hardware-sweep" />
-      {url && (
-        <video
-          ref={video}
-          src={url}
-          autoPlay
-          muted
-          playsInline
-          preload="auto"
-          onEnded={finish}
-          onError={e => {
-            e.currentTarget.style.display = 'none';
-          }}
-        />
-      )}
-      <span>
-        {transition.to === 'macos'
-          ? 'WORKSPACE'
-          : transition.to === 'ios'
-          ? 'A DIFFERENT PERSPECTIVE'
-          : 'ANOTHER WAY TO EXPLORE'}
-      </span>
-      <button onClick={finish}>Skip transition ↗</button>
+      <div className="handoff-card">
+        <div className="handoff-icon">{targetIcon}</div>
+        <div className="handoff-info">
+          <span className="handoff-subtitle">SWITCHING ENVIRONMENT</span>
+          <strong className="handoff-title">{targetLabel}</strong>
+          <small className="handoff-detail">{targetSub}</small>
+        </div>
+        <div className="handoff-bar">
+          <div className="handoff-bar-fill" />
+        </div>
+      </div>
     </div>
   );
 }
-
