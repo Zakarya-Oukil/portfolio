@@ -23,7 +23,7 @@ export function HardwareTransition() {
 
   const finish = () => {
     setFadingOut(true);
-    setTimeout(() => s.setTransition(null), 250);
+    setTimeout(() => s.setTransition(null), 200);
   };
 
   useEffect(() => {
@@ -31,14 +31,9 @@ export function HardwareTransition() {
       s.setTransition(null);
       return;
     }
-    // If no video is present, fallback gradient sweep lasts 1200ms
-    if (!url) {
-      const timer = setTimeout(finish, 1200);
-      return () => clearTimeout(timer);
-    }
-    // Safety timer in case video stalls
-    const safetyTimer = setTimeout(finish, 7500);
-    return () => clearTimeout(safetyTimer);
+    // Snappy, cinematic 1.6s transition
+    const timer = setTimeout(finish, 1600);
+    return () => clearTimeout(timer);
   }, [transition, url]);
 
   return (
@@ -52,15 +47,9 @@ export function HardwareTransition() {
           ref={video}
           src={url}
           autoPlay
-          muted={!s.soundOn}
+          muted
           playsInline
           preload="auto"
-          onLoadedMetadata={() => {
-            if (video.current) {
-              // 1.25x playback rate plays the 8s Veo render in a crisp ~6.4s
-              video.current.playbackRate = 1.25;
-            }
-          }}
           onEnded={finish}
           onError={e => {
             e.currentTarget.style.display = 'none';
