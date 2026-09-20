@@ -27,16 +27,24 @@ export function HardwareTransition() {
 
   const finish = () => {
     setFadingOut(true);
-    setTimeout(() => s.setTransition(null), 200);
+    setTimeout(() => s.setTransition(null), 250);
   };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') finish();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   useEffect(() => {
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
       s.setTransition(null);
       return;
     }
-    // Snappy, cinematic 1.6s transition
-    const timer = setTimeout(finish, 1600);
+    // Natural, cinematic 4.0s transition (finishes automatically on end or timeout)
+    const timer = setTimeout(finish, 4000);
     return () => clearTimeout(timer);
   }, [transition, url]);
 
