@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Icon } from './Icon';
+import { Credentials } from './Recruiter';
 import { readSaved, useSaved, useSystemContext } from './state';
 
 export function DraggableWidget({ children, className = '' }: { children: React.ReactNode; className?: string }) {
@@ -96,7 +97,7 @@ export function GithubWidget() {
   const [status, setStatus] = useState('Loading GitHub telemetry…');
 
   useEffect(() => {
-    if (s.config?.githubUsername && !readSaved('zak.github', '')) {
+    if (s.config?.githubUsername) {
       setUsername(s.config.githubUsername);
     }
   }, [s.config?.githubUsername]);
@@ -189,53 +190,7 @@ export function AboutMeWidget() {
 }
 
 export function CertificationsWidget() {
-  const s = useSystemContext();
-  const certs: any[] = s.config?.widgets?.certs || [
-    { id: 'htb', title: 'HackTheBox', badge: 'Pro Hacker', issuer: 'HackTheBox CTF', date: 'Active 2024', verifyUrl: 'https://hackthebox.com', accent: '#9fe870' },
-    { id: 'thm', title: 'TryHackMe', badge: 'Top 1% Global', issuer: 'TryHackMe Labs', date: '2024', verifyUrl: 'https://tryhackme.com', accent: '#ef4444' },
-    { id: 'ejpt', title: 'eJPTv2', badge: 'Certified', issuer: 'INE Security', date: '2024', verifyUrl: '', accent: '#38bdf8' },
-    { id: 'cve', title: 'CVE Hall of Fame', badge: 'Researcher', issuer: 'Responsible Disclosure', date: '2023 - 2024', verifyUrl: '', accent: '#c084fc' }
-  ];
-
-  return (
-    <DraggableWidget className="certs-widget">
-      <div className="widget-title">
-        <Icon name="shield" size={15} />
-        <span>Verifiable Credentials & CTF</span>
-        <span className="certs-count-badge">{certs.length}</span>
-      </div>
-
-      <div className="certs-grid">
-        {certs.map(cert => (
-          <div
-            key={cert.id}
-            className="cert-card"
-            style={{ '--cert-accent': cert.accent || '#38bdf8' } as React.CSSProperties}
-            onClick={() => {
-              if (cert.verifyUrl) {
-                window.open(cert.verifyUrl, '_blank');
-              } else {
-                s.notify(`${cert.title}: ${cert.badge} · Verified Credential`);
-              }
-            }}
-            title={cert.verifyUrl ? `Verify ${cert.title} credential` : `${cert.title} - ${cert.badge}`}
-          >
-            <div className="cert-card-top">
-              <span className="cert-pill" style={{ borderColor: cert.accent, color: cert.accent }}>
-                {cert.badge}
-              </span>
-              <span className="cert-date">{cert.date}</span>
-            </div>
-            <strong className="cert-title">{cert.title}</strong>
-            <div className="cert-issuer">
-              <span>{cert.issuer}</span>
-              {cert.verifyUrl && <span className="cert-arrow">↗</span>}
-            </div>
-          </div>
-        ))}
-      </div>
-    </DraggableWidget>
-  );
+  return <DraggableWidget className="certs-widget"><div className="widget-title"><Icon name="shield" size={15}/><span>Credentials & ongoing study</span></div><Credentials/></DraggableWidget>;
 }
 
 export function NeofetchWidget() {

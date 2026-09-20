@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { AppIcon } from '../os/Icon';
 import './admin.css';
+import { cachePortfolio, cachedPortfolio, fetchPortfolio, DRAFT_KEY, validPortfolio } from '../os/portfolio-store';
+import { CommandCenterAdmin, ProjectExtras } from './CommandCenterAdmin';
 
 interface TabItem {
   id: string;
@@ -84,6 +86,7 @@ interface WidgetsConfig {
 }
 
 interface PortfolioConfig {
+  [key: string]: any;
   defaultTheme: 'light' | 'dark' | 'oled';
   defaultWallpaper: 'sonoma' | 'sequoia' | 'neon' | 'oled';
   githubUsername?: string;
@@ -141,13 +144,11 @@ export function AdminDashboard() {
   const [uploadingImage, setUploadingImage] = useState<string | null>(null);
 
   // Authentication State
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-    try {
-      return sessionStorage.getItem('zakos_admin_auth') === 'true';
-    } catch {
-      return false;
-    }
-  });
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [saveStatus, setSaveStatus] = useState('');
+  const [storageWarning, setStorageWarning] = useState('');
+  useEffect(() => { fetch('/api/admin/session', { cache: 'no-store' }).then(r => r.ok ? r.json() : null).then(result => setIsAuthenticated(result?.authenticated === true)).catch(() => {}); }, []);
+  useEffect(() => { if (!data || !isAuthenticated) return; const timer = setTimeout(() => { try { localStorage.setItem(DRAFT_KEY, JSON.stringify(data)); setStorageWarning(''); } catch { setStorageWarning('Browser storage is full or unavailable. Publish to the server to preserve these edits.'); } }, 250); return () => clearTimeout(timer); }, [data, isAuthenticated]);
   const [usernameInput, setUsernameInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -161,22 +162,15 @@ export function AdminDashboard() {
     }
 
     Promise.all([
-      fetch('/api/portfolio-data').then(r => r.json()),
-      fetch('/api/messages').then(r => r.json()).catch(() => [])
+      fetchPortfolio().catch(() => cachedPortfolio()),
+      fetch('/api/messages').then(r => r.ok ? r.json() : []).catch(() => [])
     ]).then(([portfolioData, messagesData]) => {
-      if (!portfolioData.config.appIcons) {
-        portfolioData.config.appIcons = { macos: {}, ios: {}, android: {} };
-      }
-      setData(portfolioData);
-      setMessages(messagesData);
-      if (portfolioData.tabs && portfolioData.tabs.length > 0) {
-        setSelectedProjectTab(portfolioData.tabs[0].name);
-      }
-      setLoading(false);
-    }).catch(err => {
-      console.error('Failed to load admin data:', err);
-      setLoading(false);
-    });
+      let draft; try { draft = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null'); } catch { /* No draft. */ }
+      const next = validPortfolio(draft) ? draft : portfolioData;
+      setData(next); setMessages(Array.isArray(messagesData) ? messagesData : []);
+      setSelectedProjectTab(next.tabs[0]?.name || ''); setLoading(false);
+      if (validPortfolio(draft)) setSaveStatus('Restored your browser draft. Publish when ready.');
+    }).catch(() => { setData(cachedPortfolio()); setLoading(false); });
   }, [isAuthenticated]);
 
   const triggerToast = (msg: string) => {
@@ -197,93 +191,39 @@ export function AdminDashboard() {
       });
 
       const json = await res.json();
-      if (json.success || (usernameInput === 'Zakarya2003' && passwordInput === 'Oukil26072003@')) {
-        try {
-          sessionStorage.setItem('zakos_admin_auth', 'true');
-        } catch {
-          // ignore
-        }
-        setIsAuthenticated(true);
-        triggerToast('✓ Welcome back, Zakarya. Admin workstation unlocked.');
-      } else {
-        setLoginError(json.error || 'Invalid credentials. Access denied.');
-      }
-    } catch {
-      // Fallback client check
-      if (usernameInput === 'Zakarya2003' && passwordInput === 'Oukil26072003@') {
-        sessionStorage.setItem('zakos_admin_auth', 'true');
-        setIsAuthenticated(true);
-        triggerToast('✓ Welcome back, Zakarya.');
-      } else {
-        setLoginError('Invalid username or password. Access denied.');
-      }
+      if (res.ok && json.success) { setPasswordInput(''); setIsAuthenticated(true); triggerToast('Welcome back. Your admin session is active.'); }
+      else setLoginError(json.error || 'Invalid credentials.');
+    } catch { setLoginError('The admin service is unavailable. Start the portfolio server to sign in.');
     } finally {
       setLoggingIn(false);
     }
   };
 
-  const handleLogout = () => {
-    try {
-      sessionStorage.removeItem('zakos_admin_auth');
-    } catch {
-      // ignore
-    }
-    setIsAuthenticated(false);
-    setUsernameInput('');
-    setPasswordInput('');
-    setLoginError(null);
+  const handleLogout = async () => {
+    try { const response = await fetch('/api/admin/logout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' }); if (!response.ok) throw new Error(); setIsAuthenticated(false); setData(null); setUsernameInput(''); setPasswordInput(''); setLoginError(null); }
+    catch { triggerToast('Could not end the server session. Reconnect and retry Lock.'); }
   };
 
   const handleSaveData = async () => {
-    if (!data) return;
-    setSaving(true);
+    if (!data) return; setSaving(true);
     try {
-      const res = await fetch('/api/portfolio-data', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
-      if (res.ok) {
-        triggerToast('✓ All changes saved and published to server!');
-      } else {
-        triggerToast('⚠️ Failed to save changes.');
-      }
-    } catch (e) {
-      console.error(e);
-      triggerToast('⚠️ Network error saving changes.');
-    } finally {
-      setSaving(false);
-    }
+      const res = await fetch('/api/portfolio-data', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+      if (res.status === 401) { setIsAuthenticated(false); setLoginError('Session expired. Sign in again; your draft is preserved.'); return; }
+      if (!res.ok) { const error = await res.json().catch(() => ({})); throw new Error(error.error || 'Publishing service unavailable'); }
+      const result = await res.json(); cachePortfolio(result.data); setData(result.data);
+      setSaveStatus('Published to all visitors. Open portfolio tabs refresh automatically.'); triggerToast('Portfolio published.');
+    } catch (error) {
+      const stored = cachePortfolio({ ...data, _localOnly: true });
+      setSaveStatus((error instanceof Error ? error.message + '. ' : '') + (stored ? 'Saved in this browser only. Retry Publish to update other visitors.' : 'Storage unavailable. Keep this page open and retry Publish.'));
+    } finally { setSaving(false); }
   };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, onComplete: (url: string) => void, contextId: string) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setUploadingImage(contextId);
-    const reader = new FileReader();
-    reader.onload = async () => {
-      try {
-        const base64 = reader.result as string;
-        const res = await fetch('/api/upload', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ filename: file.name, base64, data: base64 })
-        });
-        const json = await res.json();
-        if (json.url) {
-          onComplete(json.url);
-          triggerToast('✓ Image uploaded successfully!');
-        } else {
-          triggerToast('⚠️ Image upload failed.');
-        }
-      } catch (err) {
-        console.error(err);
-        triggerToast('⚠️ Error uploading image.');
-      } finally {
-        setUploadingImage(null);
-      }
-    };
+    const file = e.target.files?.[0]; if (!file) return;
+    if (!['image/png','image/jpeg','image/webp','image/gif'].includes(file.type) || file.size > 1500000) { triggerToast('Choose a PNG, JPEG, WebP, or GIF smaller than 1.5 MB.'); return; }
+    setUploadingImage(contextId); const reader = new FileReader();
+    reader.onload = () => { onComplete(reader.result as string); setUploadingImage(null); triggerToast('Image added to draft. Publish to share it.'); };
+    reader.onerror = () => { setUploadingImage(null); triggerToast('Could not read image.'); };
     reader.readAsDataURL(file);
   };
 
@@ -756,6 +696,7 @@ export function AdminDashboard() {
       </header>
 
       {/* Main Container */}
+      <div className="admin-publish-status" role="status">{saveStatus || 'Edits autosave as a private browser draft. Save & Publish updates the portfolio.'}{storageWarning && <strong>{storageWarning}</strong>}</div>
       <div className="admin-body">
         {/* Sidebar */}
         <aside className="admin-sidebar">
@@ -902,6 +843,7 @@ export function AdminDashboard() {
             </div>
           )}
 
+          <CommandCenterAdmin data={data} setData={setData} section={activeSection}/>
           {/* SECTION: PROJECTS */}
           {activeSection === 'projects' && (
             <div>
@@ -945,9 +887,9 @@ export function AdminDashboard() {
                 </div>
               ) : (
                 currentTabProjects.map((proj, pIdx) => (
-                  <div className="admin-project-item" key={proj.id}>
+                  <div className="admin-project-item" key={proj.id}><ProjectExtras project={proj} update={patch => setData({ ...data, projects: data.projects.map(p => p.id === proj.id ? { ...p, ...patch } : p) })}/>
                     <div className="admin-project-header">
-                      <div className="admin-project-title-preview">
+                      <div className="admin-project-title-preview"><button className="admin-secondary-btn" aria-label={`Move ${proj.title} up`} disabled={pIdx === 0} onClick={() => { const items = [...data.projects]; const a = items.findIndex(p => p.id === proj.id); const b = items.findIndex(p => p.id === currentTabProjects[pIdx - 1].id); [items[a], items[b]] = [items[b], items[a]]; setData({ ...data, projects: items }); }}>↑</button><button className="admin-secondary-btn" aria-label={`Move ${proj.title} down`} disabled={pIdx === currentTabProjects.length - 1} onClick={() => { const items = [...data.projects]; const a = items.findIndex(p => p.id === proj.id); const b = items.findIndex(p => p.id === currentTabProjects[pIdx + 1].id); [items[a], items[b]] = [items[b], items[a]]; setData({ ...data, projects: items }); }}>↓</button>
                         <span className="admin-project-num">#{pIdx + 1}</span>
                         <strong style={{ fontSize: 16 }}>{proj.title || 'Untitled Project'}</strong>
                         <span style={{ color: '#94a3b8', fontSize: 12 }}>— {proj.subtitle}</span>

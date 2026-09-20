@@ -1,0 +1,53 @@
+import React, { useEffect, useRef, useState } from 'react';
+import { useSystemContext } from './state';
+import { safeLink } from './portfolio-store';
+import { ProjectImage } from './Projects';
+import { playSound } from './audio';
+
+export function Credentials() {
+  const s = useSystemContext();
+  return <div className="brief-credentials">{(s.config.widgets?.certs || []).filter((c: any) => c.active !== false).map((cert: any) => <article key={cert.id} style={{ '--cert-accent': cert.accent || '#8bb8ff' } as React.CSSProperties}>
+    <div><strong>{cert.title}</strong><span>{cert.status === 'in-progress' ? 'In Progress' : cert.badge}</span></div>
+    <small>{cert.issuer}{cert.date && ` · ${cert.date}`}</small>
+    {cert.status === 'in-progress' && <><progress aria-label={`${cert.title} study progress`} max="100" {...(typeof cert.progress === 'number' ? { value: cert.progress } : {})}/><small>{typeof cert.progress === 'number' ? `${cert.progress}% of study plan` : 'Study progress not yet published'}</small></>}
+    {cert.credentialId && <code>{cert.credentialId}</code>}
+    {safeLink(cert.verifyUrl) ? <a href={safeLink(cert.verifyUrl)} target="_blank" rel="noreferrer">Verify credential ↗</a> : <small>Verification link pending</small>}
+  </article>)}</div>;
+}
+export function Dossier() {
+  const s = useSystemContext(); const profile = s.config.recruiter || {}; const about = s.config.widgets?.about || {};
+  const resume = safeLink(profile.resumeUrl || about.resumeUrl);
+  const booking = safeLink(profile.bookingUrl) || (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(profile.email || '') ? `mailto:${profile.email}?subject=Interview%20with%20Zakarya` : undefined);
+  return <div className="brief-panel dossier-panel"><span className="brief-eyebrow"><i/> AVAILABLE FOR WHAT’S NEXT</span><div className="dossier-monogram">ZO<span>⌁</span></div><h1>{about.name || 'Zakarya Oukil'}<span>Security-minded.<br/>Built to engineer.</span></h1><p className="brief-degree">{profile.degree}</p><p className="brief-focus">{profile.focus}</p><Credentials/><div className="brief-actions">{resume ? <a className="brief-primary" href={resume} target="_blank" rel="noreferrer" download>↓ Download PDF Resume</a> : <button disabled>Resume · coming soon</button>}{booking ? <a className="brief-secondary" href={booking}>Book an Interview ↗</a> : <button onClick={() => s.open('mail')}>Leave an interview inquiry ↗</button>}</div><small className="brief-footnote">Credentials reported by the candidate. Verification links appear when provided.</small></div>;
+}
+export function Flagships() {
+  const s = useSystemContext(); const [selected, setSelected] = useState<string>('');
+  const featured = s.projects.filter(p => p.featured).slice(0, 3);
+  const projects = featured.length ? featured : s.projects.slice(0, 3);
+  return <div className="brief-panel flagship-panel"><span className="brief-eyebrow">SELECTED ENGINEERING / 01—03</span><h1>Built with intent.<span>Explore the decisions behind the systems.</span></h1>{projects.map((p, index) => <article className="flagship-card" key={p.id}><div className="flagship-heading"><span className="flagship-index">0{index + 1}</span><div><small>{p.country}</small><h2>{p.title}</h2><p>{p.subtitle}</p></div><ProjectImage project={p}/></div><p>{p.description}</p><div className="flagship-stack">{(p.tags || []).slice(0, 4).map(t => <span key={t}>{t}</span>)}</div><div className="flagship-metrics">{p.metrics?.length ? p.metrics.map((m, i) => <div key={i}><strong>{m.value}</strong><span>{m.label}</span><small>{m.source || 'Project-reported'}{safeLink(m.url) && <> · <a href={safeLink(m.url)} target="_blank" rel="noreferrer">Source ↗</a></>}</small></div>) : <small>Benchmark measurements not yet published.</small>}</div><div className="architecture-nodes" aria-label={`${p.title} architecture`}>{(p.architecture || []).map((node, i) => <React.Fragment key={node.id}>{i > 0 && <span aria-hidden="true">→</span>}<button aria-expanded={selected === `${p.id}:${node.id}`} onClick={() => setSelected(selected === `${p.id}:${node.id}` ? '' : `${p.id}:${node.id}`)}>{node.label}</button></React.Fragment>)}</div>{p.architecture?.map(node => selected === `${p.id}:${node.id}` && <p className="architecture-detail" key={node.id}>{node.detail}</p>)}<footer>{safeLink(p.codeUrl) ? <a href={safeLink(p.codeUrl)} target="_blank" rel="noreferrer">View code ↗</a> : <span>Code link pending</span>}{safeLink(p.demoUrl) ? <a href={safeLink(p.demoUrl)} target="_blank" rel="noreferrer">Live demo ↗</a> : <span>Demo link pending</span>}</footer></article>)}{!projects.length && <p>No flagship projects published yet.</p>}</div>;
+}
+export function Quickstart() {
+  const s = useSystemContext(); const [choice, setChoice] = useState(0);
+  const options = ['Core Competencies', 'Cybersecurity Philosophy', 'Why Hire Zakarya?', 'Run Threat Diagnostics'];
+  const output = [
+    'Select a briefing below. Each answer is designed to take a few seconds.',
+    'OFFENSE\nNetwork pivoting · Active Directory · Web exploitation\n\nDEFENSE\nSOC operations · SIEM triage · Incident response\nBTL1 study in progress\n\nENGINEERING\nReact 18 · TypeScript · Web Audio · Systems architecture',
+    s.config.recruiter?.philosophy,
+    s.config.recruiter?.whyHire,
+    'Opening Cyber Defense Lab…\nA safe, simulated incident. No host or network scanning.'
+  ];
+  const choose = (i: number) => { setChoice(i + 1); playSound('tap'); if (i === 3) s.open('defense'); };
+  return <div className="brief-panel executive-terminal"><div className="terminal-session"><i/> GUIDED SESSION <span>zsh</span></div><p className="terminal-command"><span>visitor@zakarya ~ %</span><br/>./recruiter_quickstart.sh</p><div className="terminal-ascii" aria-hidden="true">{'┌──────────────────────────┐\n│  ZO / EXECUTIVE BRIEF     │\n│  SECURITY × ENGINEERING  │\n└──────────────────────────┘'}</div><p className="terminal-welcome">Welcome. Here’s the signal.</p><nav aria-label="Executive briefing topics">{options.map((option, i) => <button key={option} aria-pressed={choice === i + 1} onClick={() => choose(i)}><span>[{i + 1}]</span>{option}<span>↗</span></button>)}</nav><pre className="executive-output" aria-live="polite">{output[choice]}</pre><div className="terminal-ready"><i/> Ready when you are.<span className="terminal-cursor">▌</span></div><small>Interactive portfolio simulation · no commands run on your device.</small></div>;
+}
+
+export function DefenseLab() {
+  const [step, setStep] = useState(0); const [packet, setPacket] = useState<number | null>(null); const [feedback, setFeedback] = useState('');
+  const neutralized = step === 3;
+  return <div className={`brief-panel defense-panel ${neutralized ? 'neutralized' : ''}`}><span className="brief-eyebrow">CYBER DEFENSE LAB / SIMULATED INCIDENT</span><h1>{neutralized ? 'Threat neutralized.' : 'Follow the signal.'}<span>A fifteen-second incident response exercise.</span></h1><ol className="incident-steps">{['Triage', 'Analysis', 'Containment'].map((label, i) => <li className={step >= i ? 'current' : ''} key={label}><span>{i + 1}</span>{label}</li>)}</ol>{step === 0 && <><div className="incident-alert"><i/> Repeated outbound traffic from 192.168.1.105</div><p>Inspect a packet. Look for a pattern in the timestamps and destination.</p><div className="packet-scroll"><table><thead><tr><th>Time</th><th>Source</th><th>Destination</th><th>Protocol</th><th>Bytes</th></tr></thead><tbody>{[0, 1, 2, 3].map(i => <tr key={i} className={packet === i ? 'selected' : ''}><td><button aria-label={`Inspect packet ${i + 1}`} onClick={() => setPacket(i)}>09:41:{String(i * 5).padStart(2, '0')}</button></td><td>192.168.1.105</td><td>203.0.113.42:4444</td><td>TCP</td><td>64</td></tr>)}</tbody></table></div>{packet !== null && <div className="packet-detail"><code>PROCESS: /bin/sh · PARENT: web-worker<br/>SESSION: outbound command channel · INTERVAL: 5 seconds</code><p>Regular outbound connections plus a shell spawned by a web process suggest command-and-control activity.</p></div>}<button className="brief-primary" disabled={packet === null} onClick={() => { setStep(1); setFeedback(''); }}>Continue to analysis →</button></>}{step === 1 && <><h2>What does the evidence support?</h2><p>A web worker spawned <code>/bin/sh</code>, which opened a recurring outbound connection on port 4444.</p><div className="incident-choices">{['Routine health check', 'Reverse shell / C2 beacon', 'Privilege escalation proven'].map((answer, i) => <button key={answer} onClick={() => { if (i === 1) { setStep(2); setFeedback(''); playSound('tap'); } else setFeedback(i === 0 ? 'A health check does not explain the spawned command shell. Inspect the process evidence.' : 'The evidence shows a shell and outbound C2 traffic, but does not establish elevated privileges.'); }}>{answer} ↗</button>)}</div><p role="status">{feedback}</p><button onClick={() => setStep(0)}>← Review packets</button></>}{step === 2 && <><div className="incident-alert">Reverse shell identified · containment required</div><h2>Break the command channel.</h2><p>Preserve the evidence, block the unauthorized destination, and revoke the compromised workload token. These actions run only inside this exercise.</p><ul className="containment-list"><li>Preserve packet and process evidence</li><li>Block outbound C2 traffic</li><li>Revoke the exposed workload token</li></ul><button className="brief-primary" onClick={() => { setStep(3); playSound('success'); }}>Deploy Firewall Countermeasure & Revoke Token</button></>}{neutralized && <div className="incident-success" role="status"><span>✓</span><h2>Threat Neutralized by Zakarya.</h2><p>Ready to protect your infrastructure.</p><code>Evidence preserved ✓<br/>C2 destination blocked ✓<br/>Workload token revoked ✓</code><p>Next in a real incident: scope affected hosts, rotate related secrets, eradicate persistence, and monitor recovery.</p><button className="brief-secondary" onClick={() => { setStep(0); setPacket(null); }}>Replay exercise ↺</button></div>}</div>;
+}
+
+export function BriefNavigation() {
+  const s = useSystemContext(); const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => { ref.current?.querySelector<HTMLButtonElement>('button')?.focus(); }, []);
+  return <div className="brief-navigation" ref={ref}><span>⚡ RECRUITER BRIEF <small>60 seconds. The essentials.</small></span><nav>{(['dossier', 'flagships', 'quickstart'] as const).map((id, i) => <button key={id} aria-pressed={s.active === id} onClick={() => s.open(id)}>{['01 Dossier', '02 Projects', '03 Terminal'][i]}</button>)}</nav><button aria-label="Exit recruiter brief" onClick={s.endBrief}>Back to workspace <kbd>esc</kbd></button></div>;
+}

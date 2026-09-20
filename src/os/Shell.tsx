@@ -7,12 +7,14 @@ import { PROJECTS } from './projects-data';
 import { Desktop } from './Desktop';
 import { Phone } from './Mobile';
 import { BootAnimation } from './BootAnimation';
+import { BriefNavigation, Credentials, DefenseLab, Dossier, Flagships, Quickstart } from './Recruiter';
+import { HardwareTransition } from './Transition';
 
-export function Application({ id }: { id: AppId }) { return id === 'projects' ? <Projects/> : id === 'terminal' ? <Terminal/> : id === 'settings' ? <Settings/> : id === 'mail' ? <Mail/> : <About/>; }
+export function Application({ id }: { id: AppId }) { return id === 'dossier' ? <Dossier/> : id === 'flagships' ? <Flagships/> : id === 'quickstart' ? <Quickstart/> : id === 'defense' ? <DefenseLab/> : id === 'projects' ? <Projects/> : id === 'terminal' ? <Terminal/> : id === 'settings' ? <Settings/> : id === 'mail' ? <Mail/> : <About/>; }
 export function Dock({ mobile = false }: { mobile?: boolean }) {
   const s = useSystemContext(); const [pointer, setPointer] = useState<number | null>(null); const [bounce, setBounce] = useState(''); const dock = useRef<HTMLDivElement>(null);
   const items: AppId[] = mobile ? ['projects', 'terminal', 'settings', 'mail'] : ['projects', 'terminal', 'mail', 'about', 'settings'];
-  return <div className={`dock ${mobile ? 'mobile-dock' : ''}`} ref={dock} onPointerMove={e => { if (!mobile && e.pointerType === 'mouse') setPointer(e.clientX); }} onPointerLeave={() => setPointer(null)}>{items.map((id, i) => { const element = dock.current?.children[i] as HTMLElement; const rect = element?.getBoundingClientRect(); const distance = pointer === null || !rect ? 200 : Math.abs(pointer - (rect.left + rect.width / 2)); const scale = 1 + Math.max(0, 1 - distance / 125) * .35; return <button key={id} className={`dock-item ${bounce === id ? 'bouncing' : ''}`} style={{ '--dock-scale': scale } as React.CSSProperties} aria-label={`Open ${appNames[id]}`} onClick={() => { s.open(id); setBounce(id); }} onAnimationEnd={() => setBounce('')}><span className="dock-tooltip">{appNames[id]}</span><AppIcon id={id}/>{!mobile && <i className={s.windows.some(w => w.id === id) ? 'running' : ''}/>}</button>; })}{!mobile && <><span className="dock-divider"/><button className="dock-item device-dock" aria-label="Switch device" onClick={() => s.open('settings')}><span className="dock-tooltip">Switch experience</span><span className="app-icon icon-device"><Icon name="monitor" size={28}/></span></button></>}</div>;
+  return <div className={`dock ${mobile ? 'mobile-dock' : ''}`} ref={dock} onPointerMove={e => { if (!mobile && e.pointerType === 'mouse') setPointer(e.clientX); }} onPointerLeave={() => setPointer(null)}>{items.map((id, i) => { const element = dock.current?.children[i] as HTMLElement; const rect = element?.getBoundingClientRect(); const distance = pointer === null || !rect ? 200 : Math.abs(pointer - (rect.left + rect.width / 2)); const scale = 1 + Math.max(0, 1 - distance / 125) * .35; return <button key={id} className={`dock-item ${bounce === id ? 'bouncing' : ''}`} style={{ '--dock-scale': scale } as React.CSSProperties} aria-label={`Open ${appNames[id]}`} onClick={() => { s.open(id); setBounce(id); }} onAnimationEnd={() => setBounce('')}><span className="dock-tooltip">{appNames[id]}</span><AppIcon id={id}/>{!mobile && <i className={s.windows.some(w => w.id === id) ? 'running' : ''}/>}</button>; })}{!mobile && <><button className="recruiter-pill dock-brief" onClick={s.startBrief} aria-label="Recruiter Brief (60s)"><span>⚡</span><span>Recruiter Brief<small>60s · ⌘ / Ctrl K</small></span></button><span className="dock-divider"/><button className="dock-item device-dock" aria-label="Switch device" onClick={() => s.open('settings')}><span className="dock-tooltip">Switch experience</span><span className="app-icon icon-device"><Icon name="monitor" size={28}/></span></button></>}</div>;
 }
 export function ControlCenter() {
   const s = useSystemContext(); const start = useRef(0);
@@ -28,13 +30,15 @@ function Spotlight() {
 }
 export function Shell() {
   const s = useSystemContext();
-  useEffect(() => { const key = (e: KeyboardEvent) => { if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); s.setSpotlight(!s.spotlight); } if ((e.metaKey || e.ctrlKey) && e.key === ',') { e.preventDefault(); s.open('settings'); } if (e.key === 'Escape') { if (s.spotlight) s.setSpotlight(false); else s.back(); } }; window.addEventListener('keydown', key); return () => window.removeEventListener('keydown', key); }, [s]);
-  return <div className={`os-shell theme-${s.theme} mode-${s.mode} wallpaper-${s.wallpaper}`}>
+  useEffect(() => { const key = (e: KeyboardEvent) => { if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); if (e.shiftKey) s.setSpotlight(!s.spotlight); else s.startBrief(); } if ((e.metaKey || e.ctrlKey) && e.key === ',') { e.preventDefault(); s.open('settings'); } if (e.key === 'Escape') { if (s.transition) s.setTransition(null); else if (s.spotlight) s.setSpotlight(false); else if (s.brief) s.endBrief(); else s.back(); } }; window.addEventListener('keydown', key); return () => window.removeEventListener('keydown', key); }, [s]);
+  return <div className={`os-shell theme-${s.theme} mode-${s.mode} wallpaper-${s.wallpaper} ${s.brief ? 'brief-open' : ''}`}>
     {s.mode === 'macos' ? <><Desktop/>{s.shade && <ControlCenter/>}</> : <Phone/>}
+    {s.brief && <BriefNavigation/>}
     {s.spotlight && <Spotlight/>}
     {s.toast && <div className="toast" role="status"><Icon name="check" size={17}/>{s.toast}</div>}
     {s.sleeping && <button className="sleep-screen" onClick={() => s.setSleeping(false)}><span>{s.time.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}</span><small>Click anywhere to wake</small></button>}
     <div className="brightness-overlay" style={{ opacity: 1 - s.brightness / 100 }}/>
     {s.booting && <BootAnimation mode={s.booting} onComplete={() => s.setBooting(null)} />}
+    {s.transition && <HardwareTransition/>}
   </div>;
 }

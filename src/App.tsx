@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { SystemProvider } from './os/state';
 import { Shell } from './os/Shell';
-import { AdminDashboard } from './admin/AdminDashboard';
+const AdminDashboard = lazy(() => import('./admin/AdminDashboard').then(module => ({ default: module.AdminDashboard })));
 import './os/styles.css';
+import './os/command-center.css';
 
 export default function App() {
   const [isAdmin, setIsAdmin] = useState(() => {
@@ -18,7 +19,7 @@ export default function App() {
   }, []);
 
   if (isAdmin) {
-    return <AdminDashboard />;
+    return <Suspense fallback={<div style={{ padding: 40, background: '#0b0f19', color: '#cad7e8', minHeight: '100vh' }}>Opening admin workstation…</div>}><AdminDashboard /></Suspense>;
   }
 
   return (

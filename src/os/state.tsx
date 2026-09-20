@@ -1,10 +1,12 @@
 import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { detectInitialOS } from '../utils/deviceDetection';
 import { PROJECTS, CATEGORIES } from './projects-data';
+import { cachedPortfolio, cachePortfolio, fetchPortfolio, PORTFOLIO_KEY, validPortfolio } from './portfolio-store';
+import { configureAudio, playSound } from './audio';
 
 export type Mode = 'macos' | 'ios' | 'android';
 export type Theme = 'dark' | 'light' | 'oled';
-export type AppId = 'projects' | 'terminal' | 'settings' | 'mail' | 'about';
+export type AppId = 'projects' | 'terminal' | 'settings' | 'mail' | 'about' | 'dossier' | 'flagships' | 'quickstart' | 'defense';
 export type Wallpaper = 'sonoma' | 'sequoia' | 'neon' | 'oled';
 
 export interface PortfolioTab {
@@ -17,6 +19,11 @@ export interface PortfolioTab {
 }
 
 export interface PortfolioProject {
+  featured?: boolean;
+  codeUrl?: string;
+  demoUrl?: string;
+  metrics?: { label: string; value: string; source: string; url?: string }[];
+  architecture?: { id: string; label: string; detail: string }[];
   id: string;
   country: string;
   title: string;
@@ -82,7 +89,7 @@ export interface WidgetsConfig {
   neofetch: NeofetchData;
 }
 
-export const appNames: Record<AppId, string> = { projects: 'Projects', terminal: 'Terminal', settings: 'Settings', mail: 'Mail', about: 'About me' };
+export const appNames: Record<AppId, string> = { projects: 'Projects', terminal: 'Terminal', settings: 'Settings', mail: 'Mail', about: 'About me', dossier: 'Executive Dossier', flagships: 'Flagship Projects', quickstart: 'Executive Terminal', defense: 'Cyber Defense Lab' };
 export const apps: AppId[] = ['projects', 'terminal', 'settings', 'mail', 'about'];
 export const modeNames: Record<Mode, string> = { macos: 'macOS 27', ios: 'iPhone 16 Pro Max', android: 'Android 15' };
 
@@ -107,8 +114,8 @@ function useSystem() {
   })();
 
   const [mode, setModeState] = useSaved<Mode>('zak.mode', initialMode);
-  const [theme, setTheme] = useSaved<Theme>('zak.theme', 'dark');
-  const [wallpaper, setWallpaper] = useSaved<Wallpaper>('zak.wallpaper', 'sonoma');
+  const [theme, setTheme] = useSaved<Theme>('zak.theme', cachedPortfolio().config.defaultTheme as Theme);
+  const [wallpaper, setWallpaper] = useSaved<Wallpaper>('zak.wallpaper', cachedPortfolio().config.defaultWallpaper as Wallpaper);
   const [windows, setWindows] = useState<WindowState[]>([{ id: 'projects', minimized: false, maximized: false, x: 0, y: 0, z: 1 }]);
   const [active, setActive] = useState<AppId | null>(mode === 'macos' ? 'projects' : null);
   const [history, setHistory] = useState<AppId[]>([]);
@@ -120,6 +127,13 @@ function useSystem() {
   const [time, setTime] = useState(new Date());
   const [brightness, setBrightness] = useSaved('zak.brightness', 100);
   const [volume, setVolume] = useSaved('zak.volume', 65);
+  const [soundOn, setSoundOn] = useSaved('zak.sound', false);
+  const [brief, setBrief] = useState(false);
+  const [transition, setTransition] = useState<{ from: Mode; to: Mode } | null>(null);
+  const previousWindows = useRef<WindowState[]>([]);
+  const previousActive = useRef<AppId | null>(null);
+  useEffect(() => configureAudio(soundOn, volume), [soundOn, volume]);
+  const toggleSound = () => { configureAudio(!soundOn, volume); setSoundOn(!soundOn); if (!soundOn) playSound('startup'); };
   const [toggles, setToggles] = useState<Record<string, boolean>>({
     'Wi-Fi': true, Bluetooth: true, Cellular: true, AirDrop: false, 'Do Not Disturb': false, Flashlight: false, 'Auto-Rotate': true, 'Low Power': false
   });
@@ -156,29 +170,23 @@ function useSystem() {
     }));
   });
 
-  const [projects, setProjects] = useState<PortfolioProject[]>(PROJECTS as unknown as PortfolioProject[]);
-  const [config, setConfig] = useState<any>(null);
+  const [projects, setProjects] = useState<PortfolioProject[]>(() => cachedPortfolio().projects);
+  const [config, setConfig] = useState<any>(() => cachedPortfolio().config);
 
   const z = useRef(2);
 
   // Sync with /api/portfolio-data
   useEffect(() => {
-    fetch('/api/portfolio-data')
-      .then(res => res.json())
-      .then(data => {
-        if (data.tabs && Array.isArray(data.tabs)) {
-          setTabs(data.tabs);
-        }
-        if (data.projects && Array.isArray(data.projects)) {
-          setProjects(data.projects);
-        }
-        if (data.config) {
-          setConfig(data.config);
-        }
-      })
-      .catch(() => {
-        // Keeps default data
-      });
+    const apply = (data: any) => { if (validPortfolio(data)) { setTabs(data.tabs); setProjects(data.projects); setConfig(data.config); } };
+    apply(cachedPortfolio());
+    const controller = new AbortController();
+    let revision = 0;
+    const refresh = async () => { const started = revision; if (cachedPortfolio()._localOnly) return; try { const data = await fetchPortfolio(controller.signal); if (started === revision && !controller.signal.aborted) cachePortfolio(data); } catch { /* Cached public content remains available offline. */ } };
+    const local = (event: Event) => { revision++; apply((event as CustomEvent).detail); };
+    const storage = (event: StorageEvent) => { if (event.key === PORTFOLIO_KEY) { revision++; apply(cachedPortfolio()); } };
+    window.addEventListener('zak:portfolio', local); window.addEventListener('storage', storage); window.addEventListener('focus', refresh);
+    void refresh(); const timer = setInterval(refresh, 60000);
+    return () => { controller.abort(); clearInterval(timer); window.removeEventListener('zak:portfolio', local); window.removeEventListener('storage', storage); window.removeEventListener('focus', refresh); };
   }, []);
 
   useEffect(() => { const id = setInterval(() => setTime(new Date()), 1000); return () => clearInterval(id); }, []);
@@ -201,6 +209,7 @@ function useSystem() {
   }, []);
 
   const open = (id: AppId) => {
+    playSound(id === 'defense' ? 'alert' : 'tap');
     if (active && active !== id) setHistory(h => [...h, active]);
     setActive(id);
     setRecents(false);
@@ -209,7 +218,7 @@ function useSystem() {
     const nextZ = ++z.current;
     setWindows(ws => ws.some(w => w.id === id)
       ? ws.map(w => w.id === id ? { ...w, minimized: false, z: nextZ } : w)
-      : [...ws, { id, minimized: false, maximized: false, x: Math.min(ws.length * 28, 100), y: Math.min(ws.length * 24, 80), z: nextZ }]
+      : [...ws, { id, minimized: false, maximized: false, x: id === 'defense' ? 0 : Math.min(ws.length * 28, 100), y: id === 'defense' ? 0 : Math.min(ws.length * 24, 80), z: nextZ }]
     );
   };
 
@@ -254,13 +263,27 @@ function useSystem() {
   };
 
   const setMode = (next: Mode) => {
+    if (next === mode) return;
+    if (brief) endBrief();
+    playSound('hardware');
+    setTransition({ from: mode, to: next });
     setModeState(next);
     home();
-    setBooting(next);
+    setBooting(null);
     if (next === 'macos') {
       setActive(windows.filter(w => !w.minimized).sort((a, b) => b.z - a.z)[0]?.id || null);
     }
   };
+
+  const startBrief = () => {
+    setBooting(null); setSpotlight(false); setShade(false); setSleeping(false);
+    if (!brief) { previousWindows.current = windows; previousActive.current = active; }
+    setBrief(true); playSound('tap');
+    const ids: AppId[] = ['dossier', 'flagships', 'quickstart'];
+    setWindows(ws => [...ws.filter(w => !ids.includes(w.id)).map(w => ({ ...w, minimized: true })), ...ids.map(id => ({ id, minimized: false, maximized: false, x: 0, y: 0, z: ++z.current }))]);
+    setActive('dossier');
+  };
+  const endBrief = () => { setBrief(false); setWindows(previousWindows.current); setActive(previousActive.current); };
 
   return {
     mode,
@@ -293,6 +316,7 @@ function useSystem() {
     setBrightness,
     volume,
     setVolume,
+    soundOn, toggleSound, brief, startBrief, endBrief, transition, setTransition,
     toggles,
     setToggles,
     battery,

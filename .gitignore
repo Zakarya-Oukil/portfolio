@@ -28,3 +28,9 @@ dist-ssr
 .eslintcache
 .stylelintcache
 .vite
+server/*.local.json
+server/messages.json
+.env
+.env.*
+!.env.example
+artifacts/
