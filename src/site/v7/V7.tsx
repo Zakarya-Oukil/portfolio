@@ -137,8 +137,14 @@ function Hero() {
 }
 
 interface RoleRow { id: string; title: string; line: string; comps: string[]; slug?: string; cv?: { href: string; filename: string } }
+/** Role text written to match what is actually earned and built. It replaces the older seed text in content data. */
+const ROLE_COPY: Record<string, { title: string; line: string; comps: string[] }> = {
+  pentest: { title: 'Offensive security', line: 'Trace the attack path. Explain the exposure. Verify the fix.', comps: ['Reconnaissance and enumeration (eJPT, Zak’s Spider)', 'Host and network penetration testing fundamentals', 'Web application testing basics', 'Writing findings as clear report entries'] },
+  soc: { title: 'SOC and detection', line: 'Learning to connect evidence to detection logic. Studying for BTL1.', comps: ['Sentinel Shield: a phishing-detection platform I built', 'Detection rule formats: Sigma and Suricata (study samples)', 'MITRE ATT&CK for mapping what I learn', 'BTL1 in progress'] },
+  systems: { title: 'Systems and DevOps', line: 'Building and running systems I can secure: containers, servers and tooling.', comps: ['Docker and Kubernetes for my own projects', 'Linux server administration on a VPS', 'Studying Linux kernel security and eBPF', 'Full-stack TypeScript tooling (ZakOS)'] }
+};
 const ROWS: RoleRow[] = [
-  ...ROLES.map(role => ({ id: role.id, title: role.title, line: role.line, comps: role.competencies, slug: role.caseSlug, cv: role.cv })),
+  ...ROLES.map(role => ({ id: role.id, title: ROLE_COPY[role.id].title, line: ROLE_COPY[role.id].line, comps: ROLE_COPY[role.id].comps, slug: role.caseSlug, cv: role.cv })),
   { id: 'software', title: 'Software engineering', line: 'Full-stack TypeScript, shipped in public.', comps: ['React, TypeScript and Node', 'Docker for sandboxes and web projects', `${REPOS.length} public repositories`] }
 ];
 
