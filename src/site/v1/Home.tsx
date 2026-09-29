@@ -2,10 +2,11 @@ import React, { useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
-import { CASE_STUDIES, CONTACT_COPY, PROFILE, ROLES } from './content';
-import { CONTACT, mailto } from './site-config';
-import { Link } from './router';
-import { heroIntro, liftRedactions, scrubWords, workImages } from './motion';
+import { CASE_STUDIES, CONTACT_COPY, PROFILE, ROLES } from '../content';
+import { CONTACT, mailto } from '../site-config';
+import { Link } from '../router';
+import { heroIntro, liftRedactions, scrubWords, workImages } from '../motion';
+import { VersionSwitcher } from '../versions/VersionSwitcher';
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -17,6 +18,7 @@ export function SiteHeader() {
     <Link to="/" className="st-brand">Zakarya Oukil</Link>
     <nav className="st-nav" aria-label="Primary">
       <Link to="/#roles">Roles</Link><Link to="/#work">Work</Link><Link to="/#contact">Contact</Link><a href="/lab">Lab</a>
+      <VersionSwitcher />
       {email ? <a className="st-btn" href={email}>Email</a> : <Link className="st-btn" to="/#contact">Contact</Link>}
     </nav>
   </div></header>;

@@ -50,6 +50,8 @@ export interface CaseStudy {
   summary: string;
   stack: string[];
   image: { src: string; alt: string };
+  /** Full-colour copy for light or photographic versions. Only set when the image is a real screenshot. */
+  imageColor?: string;
   repo: string;
   /** Owner-supplied later through the admin; rendered only when present. */
   demoUrl?: string;
@@ -66,7 +68,8 @@ export const CASE_STUDIES: CaseStudy[] = [
     slug: 'zaks-spider', role: 'pentest', title: 'Zak’s Spider', kind: 'Reconnaissance and pentest toolkit',
     summary: 'A web toolkit for authorized security testing. It pairs a library of 130 pentest commands, with live target substitution, with a reconnaissance crawler and a linked notes graph.',
     stack: ['TypeScript', 'React', 'Vite', 'Vercel serverless functions', 'Mermaid'],
-    image: { src: '/img/work-spider.webp', alt: ILLUSTRATIVE },
+    image: { src: '/img/work-spider.webp', alt: 'Screenshot of the Audit Arsenal view in Zak’s Spider, showing a command with its flag explanations. Addresses shown are lab placeholders.' },
+    imageColor: '/img/work-spider-color.webp',
     repo: 'https://github.com/Zakarya-Oukil/Zaks_Spider',
     built: [
       'A command library of 130 entries in 9 categories, from reconnaissance and web exploitation to Active Directory, pivoting and password cracking.',

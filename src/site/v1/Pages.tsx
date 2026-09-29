@@ -1,7 +1,7 @@
 import React from 'react';
-import { CASE_STUDIES, REPOS, ROLES, caseBySlug } from './content';
-import { CONTACT, mailto } from './site-config';
-import { Link } from './router';
+import { CASE_STUDIES, REPOS, ROLES, caseBySlug } from '../content';
+import { CONTACT, mailto } from '../site-config';
+import { Link } from '../router';
 
 export function CaseStudyPage({ slug }: { slug: string }) {
   const study = caseBySlug(slug);

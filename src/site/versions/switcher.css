@@ -1,0 +1,11 @@
+/* Version switcher. Inherits the look of whichever version hosts it via --vs-* variables. */
+.vs { position: relative; display: inline-flex; }
+.vs-button { min-height: 44px; padding: 0 16px; background: transparent; color: var(--vs-ink, currentColor); border: 1px solid var(--vs-line, currentColor); font: 600 15px/1 var(--vs-font, system-ui, sans-serif); border-radius: var(--vs-radius, 0); cursor: pointer; white-space: nowrap; }
+.vs-button:hover { background: var(--vs-ink, currentColor); color: var(--vs-bg, #000); }
+.vs-button:focus-visible, .vs-item:focus-visible { outline: 2px solid var(--vs-ink, currentColor); outline-offset: 3px; }
+.vs-menu { position: absolute; z-index: 200; top: calc(100% + 8px); right: 0; width: min(340px, calc(100vw - 32px)); margin: 0; padding: 6px; list-style: none; background: var(--vs-bg, #fff); color: var(--vs-ink, #111); border: 1px solid var(--vs-line, #111); border-radius: var(--vs-radius, 0); box-shadow: 0 18px 40px rgba(0, 0, 0, .35); }
+.vs-item { display: block; width: 100%; padding: 12px 14px; text-align: left; background: transparent; color: inherit; border: 0; border-radius: var(--vs-radius, 0); font: 400 14px/1.35 var(--vs-font, system-ui, sans-serif); cursor: pointer; }
+.vs-item strong { display: block; font-weight: 650; font-size: 15px; }
+.vs-item span { display: block; margin-top: 2px; opacity: .72; }
+.vs-item:hover { background: var(--vs-ink, #111); color: var(--vs-bg, #fff); }
+.vs-item[aria-checked='true'] { box-shadow: inset 3px 0 0 var(--vs-accent, currentColor); }

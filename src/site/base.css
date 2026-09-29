@@ -1,0 +1,5 @@
+/* Shared by every version: reset the page frame and respect reduced motion. Versions set their own background. */
+:root { color-scheme: light dark; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+html, body { margin: 0; }

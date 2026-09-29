@@ -1,10 +1,6 @@
 /* Main site: declassified case-file concept.
    Shape rule: everything is square-cornered like paper. One accent (signal red) used as a mark, never as glow.
    No gradients, no glow, no pill buttons, no chip tags. Texture is a static film-grain layer and halftone prints. */
-:root { color-scheme: dark; }
-html { scroll-behavior: smooth; }
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
-html, body { margin: 0; background: #1b1a18; }
 
 .st-root {
   --g1: #1b1a18; --g2: #23211e; --g3: #2c2925;
