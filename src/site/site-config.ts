@@ -12,11 +12,16 @@ const validHttp = (value?: string) => {
   try { const url = new URL((value || '').trim()); return url.protocol === 'https:' || url.protocol === 'http:' ? url.toString() : ''; } catch { return ''; }
 };
 
+const validPhone = (value?: string) => (value && /^\+?[\d\s().-]{7,20}$/.test(value.trim()) ? value.trim() : '');
+
 export const CONTACT = {
   email: validEmail(env.VITE_CONTACT_EMAIL),
   bookingUrl: validHttp(env.VITE_BOOKING_URL),
   github: validHttp(env.VITE_GITHUB_URL),
-  linkedin: validHttp(env.VITE_LINKEDIN_URL)
+  linkedin: validHttp(env.VITE_LINKEDIN_URL),
+  instagram: validHttp(env.VITE_INSTAGRAM_URL),
+  phone: validPhone(env.VITE_CONTACT_PHONE),
+  whatsapp: validPhone(env.VITE_WHATSAPP_NUMBER)
 };
 
 export const mailto = (subject: string, body = '') =>

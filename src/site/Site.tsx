@@ -10,7 +10,8 @@ const LOADERS: Partial<Record<VersionId, React.LazyExoticComponent<React.Compone
   editorial: lazy(() => import('./v2/V2')),
   swiss: lazy(() => import('./v3/V3')),
   blueprint: lazy(() => import('./v4/V4')),
-  cinematic: lazy(() => import('./v5/V5'))
+  cinematic: lazy(() => import('./v5/V5')),
+  sheet: lazy(() => import('./v7/V7'))
 };
 
 const Fallback = () => <div role="status" style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', font: '500 15px system-ui, sans-serif', color: '#8f8878', background: '#1b1a18' }}>Loading</div>;
