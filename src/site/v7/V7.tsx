@@ -5,7 +5,6 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrollSmoother } from 'gsap/ScrollSmoother';
 import { SplitText } from 'gsap/SplitText';
 import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
-import { Flip } from 'gsap/Flip';
 import { useGSAP } from '@gsap/react';
 import { animate } from 'motion';
 import './v7.css';
@@ -17,7 +16,7 @@ import { CaseView, IndexView, MissingView, usePageChrome } from '../shared/Inner
 import { VersionSwitcher } from '../versions/VersionSwitcher';
 import { onceVisible, scrollToId, wipe } from './motion7';
 
-gsap.registerPlugin(useGSAP, ScrollTrigger, ScrollSmoother, SplitText, ScrambleTextPlugin, Flip);
+gsap.registerPlugin(useGSAP, ScrollTrigger, ScrollSmoother, SplitText, ScrambleTextPlugin);
 const SUBJECT = 'Opportunity for Zakarya Oukil';
 const HERO_LINE = 'Security engineer who builds the tools: penetration testing, detection engineering and full-stack systems.';
 const EJPT_VERIFY = ((import.meta.env as Record<string, string | undefined>).VITE_EJPT_VERIFY_URL || '').trim();
@@ -167,13 +166,22 @@ function Roles() {
     });
   };
 
+  /** Rows fold like drawers: the old body collapses while the new one opens, both clipped, so text never overlaps. */
   const toggle = (id: string) => {
     if (id === open) return;
-    if (reduce || !list.current) { setOpen(id); return; }
-    const state = Flip.getState(list.current.querySelectorAll('.v7-role'));
+    const root = list.current;
+    if (reduce || !root) { setOpen(id); return; }
+    const prev = root.querySelector<HTMLElement>('.v7-role.is-open .v7-role-body');
+    const prevHeight = prev ? prev.offsetHeight : 0;
     flushSync(() => setOpen(id));
-    Flip.from(state, { duration: 0.6, ease: 'power3.inOut', scale: false, nested: true });
-    scramble(list.current.querySelector(`[data-role="${id}"]`));
+    const next = root.querySelector<HTMLElement>(`[data-role="${id}"] .v7-role-body`);
+    const done = () => ScrollTrigger.refresh();
+    if (prev && prev !== next) gsap.fromTo(prev, { height: prevHeight, visibility: 'visible' }, { height: 0, duration: 0.55, ease: 'power3.inOut', clearProps: 'height,visibility', overwrite: true });
+    if (next) {
+      gsap.fromTo(next, { height: 0 }, { height: 'auto', duration: 0.6, ease: 'power3.inOut', clearProps: 'height', overwrite: true, onComplete: done });
+      gsap.fromTo(next.children, { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.45, delay: 0.18, stagger: 0.06, ease: 'power3.out', clearProps: 'opacity,visibility,transform' });
+    }
+    scramble(root.querySelector(`[data-role="${id}"]`));
   };
 
   useGSAP(() => {
@@ -207,7 +215,7 @@ function Roles() {
           const isOpen = open === row.id;
           return <article key={row.id} className={`v7-role${isOpen ? ' is-open' : ''}`} data-role={row.id}>
             <h3><button type="button" className="v7-role-btn" aria-expanded={isOpen} aria-controls={`v7-body-${row.id}`} onClick={() => toggle(row.id)}><span>{row.title}</span><i className="v7-plus" aria-hidden="true" /></button></h3>
-            <div className="v7-role-body" id={`v7-body-${row.id}`}>
+            <div className="v7-role-body" id={`v7-body-${row.id}`} {...(isOpen ? {} : ({ inert: '' } as object))}>
               <p className="v7-role-line">{row.line}</p>
               <ul className="v7-comps">{row.comps.map(item => <li key={item}><span aria-hidden="true" data-scramble={item}>{item}</span><span className="v7-sr">{item}</span></li>)}</ul>
               <div className="v7-links">
