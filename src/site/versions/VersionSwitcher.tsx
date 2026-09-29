@@ -21,7 +21,7 @@ export function VersionSwitcher() {
 
   return <div className="vs" ref={root}>
     <button ref={button} type="button" className="vs-button" aria-haspopup="menu" aria-expanded={open} onClick={() => setOpen(v => !v)}>
-      Version {VERSIONS.indexOf(active) + 1}
+      Design: {active.name}
     </button>
     {open && <ul className="vs-menu" role="menu" aria-label="Design version">
       {VERSIONS.map((v, i) => <li key={v.id} role="none">

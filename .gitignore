@@ -34,3 +34,4 @@ server/messages.json
 .env.*
 !.env.example
 artifacts/
+server/messages.json
