@@ -1,32 +1,16 @@
-import React, { lazy, Suspense, useEffect, useState } from 'react';
-import { SystemProvider } from './os/state';
-import { Shell } from './os/Shell';
+import React, { lazy, Suspense } from 'react';
+import { usePath } from './site/router';
+
+const Site = lazy(() => import('./site/Site'));
+const Lab = lazy(() => import('./lab/Lab'));
 const AdminDashboard = lazy(() => import('./admin/AdminDashboard').then(module => ({ default: module.AdminDashboard })));
-import '@fontsource-variable/geist/wght.css';
-import './os/styles.css';
-import './os/command-center.css';
-import './os/recruiter-entry.css';
 
+const loading = (label: string) => <div role="status" style={{ padding: 40, background: '#070b0d', color: '#9fb2aa', minHeight: '100vh', fontFamily: 'system-ui, sans-serif' }}>{label}</div>;
+
+/** Route split: main site by default, the Kali lab at /lab, the editor at /admin. */
 export default function App() {
-  const [isAdmin, setIsAdmin] = useState(() => {
-    return window.location.pathname.startsWith('/admin');
-  });
-
-  useEffect(() => {
-    const handleLocation = () => {
-      setIsAdmin(window.location.pathname.startsWith('/admin'));
-    };
-    window.addEventListener('popstate', handleLocation);
-    return () => window.removeEventListener('popstate', handleLocation);
-  }, []);
-
-  if (isAdmin) {
-    return <Suspense fallback={<div style={{ padding: 40, background: '#0b0f19', color: '#cad7e8', minHeight: '100vh' }}>Opening admin workstation…</div>}><AdminDashboard /></Suspense>;
-  }
-
-  return (
-    <SystemProvider>
-      <Shell />
-    </SystemProvider>
-  );
+  const path = usePath();
+  if (path.startsWith('/admin')) return <Suspense fallback={loading('Opening admin workstation...')}><AdminDashboard /></Suspense>;
+  if (path === '/lab' || path.startsWith('/lab/')) return <Suspense fallback={loading('Booting the lab...')}><Lab /></Suspense>;
+  return <Suspense fallback={loading('Loading...')}><Site /></Suspense>;
 }

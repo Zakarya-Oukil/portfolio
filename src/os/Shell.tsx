@@ -58,9 +58,10 @@ function Spotlight() {
   const projects = query ? s.projects.filter(p => p.title.toLowerCase().includes(query.toLowerCase())).slice(0, 4) : [];
   return <div className="spotlight-backdrop" onClick={() => s.setSpotlight(false)}><section ref={dialog} className="spotlight" role="dialog" aria-modal="true" aria-label="Spotlight search" onClick={e => e.stopPropagation()} onKeyDown={e => { if (e.key !== 'Tab') return; const elements = Array.from(dialog.current!.querySelectorAll<HTMLElement>('input,button')); if (e.shiftKey && document.activeElement === elements[0]) { e.preventDefault(); elements.at(-1)?.focus(); } else if (!e.shiftKey && document.activeElement === elements.at(-1)) { e.preventDefault(); elements[0]?.focus(); } }}><div className="spotlight-input"><Icon name="search" size={25}/><input ref={input} placeholder="Search apps and projects…" aria-label="Spotlight query" value={query} onChange={e => setQuery(e.target.value)} onKeyDown={e => { if (e.key === 'Enter' && results[0]) s.open(results[0]); }}/><button aria-label="Close search" onClick={() => s.setSpotlight(false)}><kbd>esc</kbd></button></div><div className="spotlight-results">{results.map(id => <button key={id} onClick={() => s.open(id)}><AppIcon id={id} small/><span>{appNames[id]}<small>Application</small></span><Icon name="arrow" size={16}/></button>)}{projects.map(p => <button key={p.id} onClick={() => { s.open('projects'); setTimeout(() => window.dispatchEvent(new CustomEvent('zak:project', { detail: p.id })), 80); }}><Icon name="code"/><span>{p.title}<small>{p.country}</small></span><Icon name="arrow" size={16}/></button>)}{!results.length && !projects.length && <p className="empty-state">No matches. Try “Terminal” or “Kernel”.</p>}</div></section></div>;
 }
-export function Shell() {
+export function Shell({ skipEntry = false }: { skipEntry?: boolean }) {
   const s = useSystemContext();
   const [entryOpen, setEntryOpen] = useState(() => {
+    if (skipEntry) return false;
     try { return sessionStorage.getItem('zak.explored') !== '1'; } catch { return true; }
   });
   const [fastPassRole, setFastPassRole] = useState<RecruiterRoleId>('pentest');
