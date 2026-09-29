@@ -14,7 +14,6 @@ import { mailtoFor, useLiveContent } from '../live';
 import { usePath } from '../router';
 import { parseRoute, titleFor } from '../routes';
 import { CaseView, IndexView, MissingView, usePageChrome } from '../shared/InnerPages';
-import { VersionSwitcher } from '../versions/VersionSwitcher';
 import { onceVisible, scrollToId } from './motion7';
 import { MotionCtx, SheetLink } from './ctx';
 import { Plotter } from './Plotter';
@@ -49,7 +48,6 @@ function Head() {
     <SheetLink to="/" className="v7-brand">Zakarya Oukil</SheetLink>
     <nav className="v7-nav" aria-label="Primary">
       <SheetLink to="/#roles">Roles</SheetLink><SheetLink to="/#work">Work</SheetLink><SheetLink to="/#contact">Contact</SheetLink><LabLink>Lab</LabLink>
-      <VersionSwitcher />
       {email ? <a className="v7-btn" href={email}>Email</a> : <SheetLink className="v7-btn" to="/#contact">Contact</SheetLink>}
     </nav>
   </header>;
