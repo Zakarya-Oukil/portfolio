@@ -1,15 +1,15 @@
 import type { RecruiterFastPassConfig, IncidentReplayStage } from './state';
 
 export const DEFAULT_FAST_PASS: RecruiterFastPassConfig = {
-  workAuthorization: 'Authorized to work without sponsorship restrictions.',
+  workAuthorization: '',
   availability: 'Immediate / 2 Weeks.',
   workPreference: 'Remote / Hybrid / Relocation Friendly.',
-  clearance: 'Eligible for clearance / Level 3 SecOps.',
+  clearance: '',
   publicKeyUrl: '',
   roles: [
-    { id: 'pentest', label: '⚔️ Offensive / Penetration Tester', summary: 'Trace the attack path. Explain the exposure. Verify the fix.', certifications: ['eJPTv2 track · eJPT certified'], competencies: ['Active Directory & Kerberos assessment', 'Web / API authentication testing', 'Exploit chaining & CVSS assessment', 'Remediation validation & reporting'], resumeUrl: '/resumes/Zakarya_Oukil_Pentest_CV.pdf', resumeFilename: 'Zakarya_Oukil_Pentest_CV.pdf', evidenceApp: 'pentest-reports' },
-    { id: 'soc', label: '🛡️ SOC Analyst / Threat Hunter', summary: 'Connect endpoint evidence to detection logic and a defensible response.', certifications: ['BTL1 · In progress'], competencies: ['Sigma, Suricata & YARA engineering', 'SIEM triage & MITRE ATT&CK mapping', 'Memory forensics & incident response', 'Threat hunting & containment playbooks'], resumeUrl: '/resumes/Zakarya_Oukil_SOC_CV.pdf', resumeFilename: 'Zakarya_Oukil_SOC_CV.pdf', evidenceApp: 'soc-hunting' },
-    { id: 'systems', label: '⚙️ Security Systems & eBPF Engineer', summary: 'Translate security policy into observable Linux runtime controls.', certifications: ['CompTIA Security+ · In progress', "Master’s · Candidate"], competencies: ['Linux kernel & eBPF LSM research', 'Zero-trust runtime architecture', 'C / C++ & Python systems tooling', 'Adversarial ML & sandbox benchmarking'], resumeUrl: '/resumes/Zakarya_Oukil_Systems_CV.pdf', resumeFilename: 'Zakarya_Oukil_Systems_CV.pdf', evidenceApp: 'masters-research' }
+    { id: 'pentest', label: '⚔️ Offensive / Penetration Tester', summary: 'Trace the attack path. Explain the exposure. Verify the fix.', certifications: ['eJPTv2 track · eJPT certified'], competencies: ['Active Directory & Kerberos assessment', 'Web / API authentication testing', 'Exploit chaining & CVSS assessment', 'Remediation validation & reporting'], resumeUrl: '', resumeFilename: 'Zakarya_Oukil_Pentest_CV.pdf', evidenceApp: 'pentest-reports' },
+    { id: 'soc', label: '🛡️ SOC Analyst / Threat Hunter', summary: 'Connect endpoint evidence to detection logic and a defensible response.', certifications: ['BTL1 · In progress'], competencies: ['Sigma, Suricata & YARA engineering', 'SIEM triage & MITRE ATT&CK mapping', 'Memory forensics & incident response', 'Threat hunting & containment playbooks'], resumeUrl: '', resumeFilename: 'Zakarya_Oukil_SOC_CV.pdf', evidenceApp: 'soc-hunting' },
+    { id: 'systems', label: '⚙️ Security Systems & eBPF Engineer', summary: 'Translate security policy into observable Linux runtime controls.', certifications: ['CompTIA Security+ · In progress', "Master’s · Candidate"], competencies: ['Linux kernel & eBPF LSM research', 'Zero-trust runtime architecture', 'C / C++ & Python systems tooling', 'Adversarial ML & sandbox benchmarking'], resumeUrl: '', resumeFilename: 'Zakarya_Oukil_Systems_CV.pdf', evidenceApp: 'masters-research' }
   ]
 };
 

@@ -9,8 +9,8 @@ import { useGSAP } from '@gsap/react';
 import { animate } from 'motion';
 import './v7.css';
 import './lab.css';
-import { CASE_STUDIES, CONTACT_COPY, PROFILE, REPOS, ROLES, CaseStudy } from '../content';
-import { CONTACT, mailto } from '../site-config';
+import { CASE_STUDIES, PROFILE, REPOS, ROLES, CaseStudy } from '../content';
+import { mailtoFor, useLiveContent } from '../live';
 import { usePath } from '../router';
 import { parseRoute, titleFor } from '../routes';
 import { CaseView, IndexView, MissingView, usePageChrome } from '../shared/InnerPages';
@@ -26,7 +26,6 @@ gsap.registerPlugin(useGSAP, ScrollTrigger, ScrollSmoother, SplitText, ScrambleT
 const SUBJECT = 'Opportunity for Zakarya Oukil';
 const HERO_TITLE = 'Junior penetration tester and software engineer.';
 const HERO_SUB = 'Master’s student in cybersecurity, eJPT certified, studying for BTL1 and Security+. I build the tools I use, and I keep learning in public.';
-const EJPT_VERIFY = ((import.meta.env as Record<string, string | undefined>).VITE_EJPT_VERIFY_URL || '').trim();
 
 const useMedia = (query: string) => {
   const [match, setMatch] = useState(() => typeof window !== 'undefined' && window.matchMedia(query).matches);
@@ -44,7 +43,8 @@ function LabLink({ className, children, to = '/lab' }: { className?: string; chi
 }
 
 function Head() {
-  const email = mailto(SUBJECT);
+  const live = useLiveContent();
+  const email = mailtoFor(live.email, SUBJECT);
   return <header className="v7-head">
     <SheetLink to="/" className="v7-brand">Zakarya Oukil</SheetLink>
     <nav className="v7-nav" aria-label="Primary">
@@ -67,7 +67,8 @@ function SheetFrame() {
 
 function Hero() {
   const { reduce, fine } = React.useContext(MotionCtx);
-  const email = mailto(SUBJECT);
+  const live = useLiveContent();
+  const email = mailtoFor(live.email, SUBJECT);
   const root = useRef<HTMLElement>(null);
 
   useGSAP(() => {
@@ -115,7 +116,7 @@ function Hero() {
       <div className="v7-actions" data-fade>
         <LabLink to="/lab/spider-run" className="v7-btn v7-btn-lg v7-btn-red">Try the live demo</LabLink>
         {email && <a className="v7-btn v7-btn-lg" href={email}>Email</a>}
-        {CONTACT.bookingUrl && <a className="v7-link" href={CONTACT.bookingUrl} target="_blank" rel="noreferrer noopener">Book 30 minutes</a>}
+        {live.bookingUrl && <a className="v7-link" href={live.bookingUrl} target="_blank" rel="noreferrer noopener">Book 30 minutes</a>}
       </div>
     </div>
     <figure className="v7-print" data-print>
@@ -136,7 +137,7 @@ function Hero() {
   </section>;
 }
 
-interface RoleRow { id: string; title: string; line: string; comps: string[]; slug?: string; cv?: { href: string; filename: string } }
+interface RoleRow { id: string; title: string; line: string; comps: string[]; slug?: string }
 /** Role text written to match what is actually earned and built. It replaces the older seed text in content data. */
 const ROLE_COPY: Record<string, { title: string; line: string; comps: string[] }> = {
   pentest: { title: 'Offensive security', line: 'Trace the attack path. Explain the exposure. Verify the fix.', comps: ['Reconnaissance and enumeration (eJPT, Zak’s Spider)', 'Host and network penetration testing fundamentals', 'Web application testing basics', 'Writing findings as clear report entries'] },
@@ -144,12 +145,13 @@ const ROLE_COPY: Record<string, { title: string; line: string; comps: string[] }
   systems: { title: 'Systems and DevOps', line: 'Building and running systems I can secure: containers, servers and tooling.', comps: ['Docker and Kubernetes for my own projects', 'Linux server administration on a VPS', 'Studying Linux kernel security and eBPF', 'Full-stack TypeScript tooling (ZakOS)'] }
 };
 const ROWS: RoleRow[] = [
-  ...ROLES.map(role => ({ id: role.id, title: ROLE_COPY[role.id].title, line: ROLE_COPY[role.id].line, comps: ROLE_COPY[role.id].comps, slug: role.caseSlug, cv: role.cv })),
+  ...ROLES.map(role => ({ id: role.id, title: ROLE_COPY[role.id].title, line: ROLE_COPY[role.id].line, comps: ROLE_COPY[role.id].comps, slug: role.caseSlug })),
   { id: 'software', title: 'Software engineering', line: 'Full-stack TypeScript, shipped in public.', comps: ['React, TypeScript and Node', 'Docker for sandboxes and web projects', `${REPOS.length} public repositories`] }
 ];
 
 function Roles() {
   const { reduce } = React.useContext(MotionCtx);
+  const live = useLiveContent();
   const [open, setOpen] = useState(ROWS[0].id);
   const list = useRef<HTMLDivElement>(null);
   const box = useRef<HTMLElement>(null);
@@ -217,7 +219,7 @@ function Roles() {
               <div className="v7-links">
                 {study && <SheetLink className="v7-link" to={`/work/${study.slug}`}>Read the {study.title} case study</SheetLink>}
                 {!study && <SheetLink className="v7-link" to="/work">See the public repositories</SheetLink>}
-                {row.cv && <a className="v7-link" href={row.cv.href} download={row.cv.filename}>Download CV</a>}
+                {(live.cv[row.id] || live.cv.general) && <a className="v7-link" href={(live.cv[row.id] || live.cv.general).href} download={(live.cv[row.id] || live.cv.general).filename}>Download CV</a>}
               </div>
             </div>
           </article>;
@@ -232,7 +234,7 @@ function Roles() {
         <dt>{item.name}</dt>
         <dd className={`v7-status${item.status === 'Certified' ? ' is-earned' : ''}`} data-status={item.status} {...(item.status === 'Certified' ? { 'data-stamp': true } : {})}>{item.status === 'Certified' ? 'Certified' : item.status}</dd>
         <dd className="v7-meaning">{item.meaning}</dd>
-        {item.name === 'eJPT' && EJPT_VERIFY && <dd><a className="v7-link" href={EJPT_VERIFY} target="_blank" rel="noreferrer noopener">Verify the certificate</a></dd>}
+        {item.name === 'eJPT' && live.ejptVerify && <dd><a className="v7-link" href={live.ejptVerify} target="_blank" rel="noreferrer noopener">Verify the certificate</a></dd>}
         <dd className="v7-ruleholder" aria-hidden="true"><i className="v7-rule" data-rule /></dd>
       </div>)}</dl>
     </aside>
@@ -349,15 +351,16 @@ function LabTeaser() {
 
 function Contact() {
   const { reduce, fine } = React.useContext(MotionCtx);
+  const live = useLiveContent();
   const root = useRef<HTMLElement>(null);
   const channels: { label: string; value: string; href: string; ext?: boolean; scramble?: boolean }[] = [
-    CONTACT.email && { label: 'Email', value: CONTACT.email, href: mailto(SUBJECT), scramble: true },
-    CONTACT.phone && { label: 'Phone', value: CONTACT.phone, href: `tel:${CONTACT.phone.replace(/[^+\d]/g, '')}` },
-    CONTACT.whatsapp && { label: 'WhatsApp', value: 'Send a message', href: `https://wa.me/${CONTACT.whatsapp.replace(/\D/g, '')}`, ext: true },
-    CONTACT.bookingUrl && { label: 'Calendar', value: 'Book 30 minutes', href: CONTACT.bookingUrl, ext: true },
-    CONTACT.linkedin && { label: 'LinkedIn', value: 'Connect', href: CONTACT.linkedin, ext: true },
-    CONTACT.github && { label: 'GitHub', value: 'Zakarya-Oukil', href: CONTACT.github, ext: true },
-    CONTACT.instagram && { label: 'Instagram', value: 'Follow', href: CONTACT.instagram, ext: true }
+    live.email && { label: 'Email', value: live.email, href: mailtoFor(live.email, SUBJECT), scramble: true },
+    live.phone && { label: 'Phone', value: live.phone, href: `tel:${live.phone.replace(/[^+\d]/g, '')}` },
+    live.whatsapp && { label: 'WhatsApp', value: 'Send a message', href: `https://wa.me/${live.whatsapp.replace(/\D/g, '')}`, ext: true },
+    live.bookingUrl && { label: 'Calendar', value: 'Book 30 minutes', href: live.bookingUrl, ext: true },
+    live.linkedin && { label: 'LinkedIn', value: 'Connect', href: live.linkedin, ext: true },
+    live.github && { label: 'GitHub', value: 'Zakarya-Oukil', href: live.github, ext: true },
+    live.instagram && { label: 'Instagram', value: 'Follow', href: live.instagram, ext: true }
   ].filter(Boolean) as { label: string; value: string; href: string; ext?: boolean; scramble?: boolean }[];
 
   useGSAP(() => {
@@ -369,7 +372,7 @@ function Contact() {
     gsap.set(rows, { autoAlpha: 0, y: 14 });
     stops.push(onceVisible(root.current, () => gsap.to(rows, { autoAlpha: 1, y: 0, duration: 0.5, stagger: 0.07, ease: 'power3.out' }), 'top 75%'));
     return () => stops.forEach(stop => stop());
-  }, { scope: root, dependencies: [reduce] });
+  }, { scope: root, dependencies: [reduce, channels.length] });
 
   const spring = (el: HTMLElement, x: number) => { if (!reduce && fine) animate(el.querySelector('.v7-row-in') as HTMLElement, { x }, { type: 'spring', stiffness: 520, damping: 26 }); };
   return <section className="v7-section v7-contact" id="contact" data-section="Contact" ref={root} aria-labelledby="v7-contact">
@@ -382,16 +385,17 @@ function Contact() {
         </a>
       </li>)}</ul>
       <aside className="v7-contact-side">
-        <dl className="v7-facts">{CONTACT_COPY.facts.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>
-        <p className="v7-note">{CONTACT_COPY.note}</p>
-        <div className="v7-links">{ROLES.map(role => <a className="v7-link" key={role.id} href={role.cv.href} download={role.cv.filename}>{role.title} CV</a>)}</div>
+        {live.facts.length > 0 && <><dl className="v7-facts">{live.facts.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>
+        <p className="v7-note">Details are given by me and confirmed during screening.</p></>}
+        <div className="v7-links">{Object.entries(live.cv).map(([id, file]) => <a className="v7-link" key={id} href={file.href} download={file.filename}>{id === 'general' ? 'Download my CV' : `${ROLE_COPY[id]?.title || id} CV`}</a>)}</div>
       </aside>
     </div>
   </section>;
 }
 
 function Foot() {
-  return <footer className="v7-foot"><span>Zakarya Oukil</span><nav aria-label="Footer"><SheetLink to="/work">All projects</SheetLink><LabLink>Lab</LabLink>{CONTACT.github && <a href={CONTACT.github} target="_blank" rel="noreferrer noopener">GitHub</a>}</nav></footer>;
+  const live = useLiveContent();
+  return <footer className="v7-foot"><span>Zakarya Oukil</span><nav aria-label="Footer"><SheetLink to="/work">All projects</SheetLink><LabLink>Lab</LabLink>{live.github && <a href={live.github} target="_blank" rel="noreferrer noopener">GitHub</a>}</nav></footer>;
 }
 
 /** Inertial smooth scroll, only where it is safe. Rendered before the page so it exists before any ScrollTrigger pin is built. */

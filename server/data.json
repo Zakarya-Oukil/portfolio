@@ -1213,10 +1213,10 @@
       }
     },
     "recruiterFastPass": {
-      "workAuthorization": "Authorized to work without sponsorship restrictions.",
+      "workAuthorization": "",
       "availability": "Immediate / 2 Weeks.",
       "workPreference": "Remote / Hybrid / Relocation Friendly.",
-      "clearance": "Eligible for clearance / Level 3 SecOps.",
+      "clearance": "",
       "publicKeyUrl": "",
       "roles": [
         {
@@ -1232,7 +1232,7 @@
             "Exploit chaining & CVSS assessment",
             "Remediation validation & reporting"
           ],
-          "resumeUrl": "/resumes/Zakarya_Oukil_Pentest_CV.pdf",
+          "resumeUrl": "",
           "resumeFilename": "Zakarya_Oukil_Pentest_CV.pdf",
           "evidenceApp": "pentest-reports"
         },
@@ -1249,7 +1249,7 @@
             "Memory forensics & incident response",
             "Threat hunting & containment playbooks"
           ],
-          "resumeUrl": "/resumes/Zakarya_Oukil_SOC_CV.pdf",
+          "resumeUrl": "",
           "resumeFilename": "Zakarya_Oukil_SOC_CV.pdf",
           "evidenceApp": "soc-hunting"
         },
@@ -1267,7 +1267,7 @@
             "C / C++ & Python systems tooling",
             "Adversarial ML & sandbox benchmarking"
           ],
-          "resumeUrl": "/resumes/Zakarya_Oukil_Systems_CV.pdf",
+          "resumeUrl": "",
           "resumeFilename": "Zakarya_Oukil_Systems_CV.pdf",
           "evidenceApp": "masters-research"
         }
