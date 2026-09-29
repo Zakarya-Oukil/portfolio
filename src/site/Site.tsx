@@ -3,6 +3,7 @@ import '@fontsource-variable/jetbrains-mono/wght.css';
 import './fonts.css';
 import './base.css';
 import { useVersion, VersionId } from './versions/registry';
+import { usePath } from './router';
 
 /** Picks the active design version (see versions/registry.ts). Each version is its own code-split chunk. */
 const LOADERS: Partial<Record<VersionId, React.LazyExoticComponent<React.ComponentType>>> = {
@@ -17,7 +18,9 @@ const LOADERS: Partial<Record<VersionId, React.LazyExoticComponent<React.Compone
 const Fallback = () => <div role="status" style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', font: '500 15px system-ui, sans-serif', color: '#8f8878', background: '#1b1a18' }}>Loading</div>;
 
 export default function Site() {
-  const version = useVersion();
+  const stored = useVersion();
+  const path = usePath();
+  const version: VersionId = path === '/lab' || path.startsWith('/lab/') ? 'sheet' : stored;
   const View = LOADERS[version] || LOADERS.casefile!;
   return <Suspense fallback={<Fallback />}><View key={version} /></Suspense>;
 }

@@ -6,6 +6,6 @@ export default defineConfig({
   plugins: [react(), apiPlugin()],
   resolve: { alias: { 'react-native': 'react-native-web' }, extensions: ['.web.tsx','.web.ts','.web.jsx','.web.js','.tsx','.ts','.jsx','.js'] },
   define: { __DEV__: JSON.stringify(process.env.NODE_ENV !== 'production'), global: 'window' },
-  build: { rollupOptions: { output: { manualChunks(id) { if (id.includes('/node_modules/')) return 'vendor'; } } } },
+  build: { assetsInlineLimit: 0, rollupOptions: { output: { manualChunks(id) { if (id.includes('/node_modules/')) return 'vendor'; } } } },
   server: { port: 3000, host: '127.0.0.1', watch: { ignored: ['**/public/media/**', '**/server/*.json'] } }
 });

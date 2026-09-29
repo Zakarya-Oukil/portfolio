@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { Suspense, lazy, useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -8,14 +8,19 @@ import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
 import { useGSAP } from '@gsap/react';
 import { animate } from 'motion';
 import './v7.css';
+import './lab.css';
 import { CASE_STUDIES, CONTACT_COPY, PROFILE, REPOS, ROLES, CaseStudy } from '../content';
 import { CONTACT, mailto } from '../site-config';
-import { navigate, usePath } from '../router';
+import { usePath } from '../router';
 import { parseRoute, titleFor } from '../routes';
 import { CaseView, IndexView, MissingView, usePageChrome } from '../shared/InnerPages';
 import { VersionSwitcher } from '../versions/VersionSwitcher';
-import { onceVisible, scrollToId, wipe } from './motion7';
+import { onceVisible, scrollToId } from './motion7';
+import { MotionCtx, SheetLink } from './ctx';
 import { Plotter } from './Plotter';
+
+const LabIndex = lazy(() => import('../lab/LabPages').then(m => ({ default: m.LabIndex })));
+const LabSheetView = lazy(() => import('../lab/LabPages').then(m => ({ default: m.LabSheetView })));
 
 gsap.registerPlugin(useGSAP, ScrollTrigger, ScrollSmoother, SplitText, ScrambleTextPlugin);
 const SUBJECT = 'Opportunity for Zakarya Oukil';
@@ -34,27 +39,8 @@ const useMedia = (query: string) => {
   return match;
 };
 
-interface Motion { reduce: boolean; fine: boolean }
-const MotionCtx = React.createContext<Motion>({ reduce: false, fine: false });
-
-/** Real anchor that runs a sheet-wipe before an in-app route change, and scrolls smoothly for on-page anchors. */
-function SheetLink({ to, className, children, label = 'Next sheet' }: { to: string; className?: string; children: React.ReactNode; label?: string }) {
-  const { reduce } = React.useContext(MotionCtx);
-  const onClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
-    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-    event.preventDefault();
-    const [path, hash] = to.split('#');
-    const samePage = path === '' || path === window.location.pathname;
-    if (hash && samePage) { window.history.replaceState({}, '', `${path || window.location.pathname}#${hash}`); scrollToId(hash, reduce); return; }
-    if (!hash && samePage) { const smoother = ScrollSmoother.get(); if (smoother) smoother.scrollTo(0, !reduce); else window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' }); return; }
-    wipe(reduce, label, () => navigate(to));
-  };
-  return <a href={to} className={className} onClick={onClick}>{children}</a>;
-}
-
-function LabLink({ className, children }: { className?: string; children: React.ReactNode }) {
-  const { reduce } = React.useContext(MotionCtx);
-  return <a href="/lab" className={className} onClick={event => { if (event.button !== 0 || event.metaKey || event.ctrlKey) return; event.preventDefault(); wipe(reduce, 'Opening the lab', () => window.location.assign('/lab'), false); }}>{children}</a>;
+function LabLink({ className, children, to = '/lab' }: { className?: string; children: React.ReactNode; to?: string }) {
+  return <SheetLink to={to} className={className} label="Opening the lab">{children}</SheetLink>;
 }
 
 function Head() {
@@ -127,7 +113,7 @@ function Hero() {
       <p className="v7-dek" data-fade>{HERO_TITLE}</p>
       <p className="v7-sub" data-fade>{HERO_SUB}</p>
       <div className="v7-actions" data-fade>
-        <LabLink className="v7-btn v7-btn-lg v7-btn-red">Try the live demo</LabLink>
+        <LabLink to="/lab/spider-run" className="v7-btn v7-btn-lg v7-btn-red">Try the live demo</LabLink>
         {email && <a className="v7-btn v7-btn-lg" href={email}>Email</a>}
         {CONTACT.bookingUrl && <a className="v7-link" href={CONTACT.bookingUrl} target="_blank" rel="noreferrer noopener">Book 30 minutes</a>}
       </div>
@@ -346,6 +332,15 @@ function Work() {
   </section>;
 }
 
+function LabTeaser() {
+  const picks = [['L1', 'Zak’s Spider, live run', 'spider-run'], ['L2', 'Attack chain scrubber', 'attack-chain'], ['L3', 'Audit this site', 'audit'], ['L4', 'Break-in challenge', 'break-in']];
+  return <section className="v7-section" id="lab" data-section="Lab" aria-labelledby="v7-lab">
+    <h2 className="v7-h2" id="v7-lab">Try the tools</h2>
+    <p className="v7-lede">Run them right here. Each one works in your browser against a labelled demo target. <SheetLink className="v7-link" to="/lab">All lab sheets</SheetLink></p>
+    <ul className="v7-title-block v7-lab-teaser">{picks.map(([no, title, slug]) => <li key={slug}><SheetLink to={`/lab/${slug}`} label={title}><span className="v7-row-in"><span className="v7-row-label">{no}</span><b>{title}</b></span></SheetLink></li>)}</ul>
+  </section>;
+}
+
 function Contact() {
   const { reduce, fine } = React.useContext(MotionCtx);
   const root = useRef<HTMLElement>(null);
@@ -454,7 +449,9 @@ export default function V7() {
       <Head />
       <div id="v7-wrapper"><div id="v7-content">
         <main id="main">
-          {route.name === 'home' && <><Hero /><Roles /><Work /><Contact /></>}
+          {route.name === 'home' && <><Hero /><Roles /><Work /><LabTeaser /><Contact /></>}
+          {route.name === 'lab' && <Suspense fallback={<p className="v7-section">Loading the lab</p>}><LabIndex /></Suspense>}
+          {route.name === 'labSheet' && <Suspense fallback={<p className="v7-section">Loading the sheet</p>}><LabSheetView slug={route.slug} /></Suspense>}
           {route.name === 'work' && <IndexView />}
           {route.name === 'case' && <CaseView slug={route.slug} imageKey="color" />}
           {route.name === 'missing' && <MissingView />}
