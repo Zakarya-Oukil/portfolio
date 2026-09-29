@@ -12,8 +12,8 @@ export interface Credential { name: string; status: CredentialStatus; meaning: s
 export const PROFILE = {
   name: 'Zakarya Oukil',
   surname: ['Zakarya', 'Oukil'] as const,
-  line: 'Security engineer: penetration testing, detection engineering and Linux kernel security.',
-  statement: 'I am a security engineer working across penetration testing, detection engineering and Linux kernel security. I hold the eJPT, I am studying for BTL1 and Security+, and I am a Master’s candidate. I build tools end to end, from reconnaissance to threat intelligence to multi-agent systems.',
+  line: 'Junior penetration tester and software engineer, Master’s student in cybersecurity.',
+  statement: 'I am a junior penetration tester and software engineer, and a Master’s candidate in cybersecurity. I hold the eJPT and I am studying for BTL1 and Security+. I build tools end to end, from reconnaissance to threat intelligence to multi-agent systems, and I work with Docker, Kubernetes and VPS hosting.',
   credentials: [
     { name: 'eJPT', status: 'Certified', meaning: 'Exam passed and certificate held.' },
     { name: 'BTL1', status: 'In progress', meaning: 'Studying. Not yet earned.' },

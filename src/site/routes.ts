@@ -16,5 +16,5 @@ export function parseRoute(path: string): Route {
 export function titleFor(route: Route): string {
   if (route.name === 'case') return `${CASE_STUDIES.find(item => item.slug === route.slug)?.title} | Zakarya Oukil`;
   if (route.name === 'work') return 'All projects | Zakarya Oukil';
-  return 'Zakarya Oukil | Security Engineer';
+  return 'Zakarya Oukil | Junior Penetration Tester and Software Engineer';
 }

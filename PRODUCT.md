@@ -6,6 +6,9 @@
 
 web
 
+## Owner profile (stated by the owner, 2026-09-29)
+Master's student in cybersecurity, software engineer, occasional DevOps. New to cybersecurity: eJPT is the only earned certification, which makes him a junior penetration tester; BTL1 and Security+ are in progress. The tools he built are real. He is still learning and wants the site to show honest growth, not senior-level claims.
+
 ## Users
 Recruiters, hiring managers and technical interviewers judging Zakarya Oukil for junior offensive security, SOC and detection, security engineering (eBPF and kernel) and software engineering roles, plus remote and international employers. They arrive from a CV, a job application or a forwarded link, decide within about a minute whether to keep reading, and often forward the link to an engineer who reads deeper. A second group is freelance or client visitors. All groups use one site.
 
@@ -16,7 +19,7 @@ A personal portfolio that turns a first-minute visit into a conversation. Succes
 He builds the tools himself and spans offence, defence and systems in one person: shipped public projects (Zak's Spider, Sentinel Shield, ZakOS), pentest and detection work, and Linux kernel and eBPF security, alongside full-stack development. A neighbouring candidate who mostly uses tools, or who covers only one side, could not truthfully claim this.
 
 ## Operating Context
-One site with a role switch (offensive, SOC, systems and software engineering, client) that reorders proof and emphasis rather than duplicating pages. A separate Kali Lab at `/lab` holds material the main site does not: live tool demos, writeups replayed as command sessions, a playable challenge, and raw evidence and methodology. Lab demos run against a clearly labelled fictional demo target and never scan a real third party. Work is built with Docker for VMs, sandboxing and web projects; VPS hosting is still new to him.
+One site with a role switch (offensive, SOC, systems and software engineering, client) that reorders proof and emphasis rather than duplicating pages. A separate Kali Lab at `/lab` holds material the main site does not: live tool demos, writeups replayed as command sessions, a playable challenge, and raw evidence and methodology. Lab demos run against a clearly labelled fictional demo target and never scan a real third party. Work is built with Docker (VMs, sandboxing, web projects), Kubernetes and VPS hosting, which he uses alongside software engineering.
 
 ## Capabilities and Constraints
 - Stack: React 18, Vite, TypeScript, GSAP 3.15 with @gsap/react, Vercel serverless functions. Five earlier design versions exist on branches `version/1-casefile` to `version/5-cinematic`; version 7 (`version/7-sheet`) mixes them. A sixth, the pin-tumbler cutaway, was built and rejected by the owner.

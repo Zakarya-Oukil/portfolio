@@ -15,10 +15,12 @@ import { parseRoute, titleFor } from '../routes';
 import { CaseView, IndexView, MissingView, usePageChrome } from '../shared/InnerPages';
 import { VersionSwitcher } from '../versions/VersionSwitcher';
 import { onceVisible, scrollToId, wipe } from './motion7';
+import { Plotter } from './Plotter';
 
 gsap.registerPlugin(useGSAP, ScrollTrigger, ScrollSmoother, SplitText, ScrambleTextPlugin);
 const SUBJECT = 'Opportunity for Zakarya Oukil';
-const HERO_LINE = 'Security engineer who builds the tools: penetration testing, detection engineering and full-stack systems.';
+const HERO_TITLE = 'Junior penetration tester and software engineer.';
+const HERO_SUB = 'Master’s student in cybersecurity, eJPT certified, studying for BTL1 and Security+. I build the tools I use, and I keep learning in public.';
 const EJPT_VERIFY = ((import.meta.env as Record<string, string | undefined>).VITE_EJPT_VERIFY_URL || '').trim();
 
 const useMedia = (query: string) => {
@@ -119,9 +121,11 @@ function Hero() {
   }, [reduce, fine]);
 
   return <section className="v7-hero" ref={root} data-section="Cover" aria-labelledby="v7-name">
+    <Plotter reduce={reduce} fine={fine} />
     <div className="v7-hero-text">
       <h1 className="v7-h1" id="v7-name" data-split>Zakarya Oukil</h1>
-      <p className="v7-dek" data-fade>{HERO_LINE}</p>
+      <p className="v7-dek" data-fade>{HERO_TITLE}</p>
+      <p className="v7-sub" data-fade>{HERO_SUB}</p>
       <div className="v7-actions" data-fade>
         <LabLink className="v7-btn v7-btn-lg v7-btn-red">Try the live demo</LabLink>
         {email && <a className="v7-btn v7-btn-lg" href={email}>Email</a>}
@@ -135,7 +139,7 @@ function Hero() {
           <img className="v7-img" data-img src="/img/portrait-color.webp" width={900} height={1125} alt="Portrait of Zakarya Oukil" {...{ fetchpriority: 'high' }} />
           {[1, 2, 3, 4].map(n => <span key={n} className={`v7-corner v7-c${n}`} data-corner />)}
         </div>
-        <figcaption>Zakarya Oukil, security engineer</figcaption>
+        <figcaption>Zakarya Oukil, junior penetration tester</figcaption>
       </div>
       <ul className="v7-callouts" aria-label="Credentials">
         {PROFILE.credentials.map((item, index) => <li key={item.name} className={`v7-call v7-call-${index + 1}`} data-call data-status={item.status}>
