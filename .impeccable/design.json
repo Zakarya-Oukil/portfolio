@@ -1,0 +1,166 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-29T00:00:00.000Z",
+  "title": "Design System: Zakarya Oukil Portfolio (Version 7, the sheet)",
+  "extensions": {
+    "colorMeta": {
+      "paper": { "role": "neutral", "displayName": "Charcoal Paper", "canonical": "#1b1a18", "tonalRamp": ["#0e0d0c", "#141311", "#1b1a18", "#23211e", "#2c2925", "#3a3630", "#57524a", "#7a7468"] },
+      "paper-raised": { "role": "neutral", "displayName": "Raised Paper", "canonical": "#23211e", "tonalRamp": ["#0e0d0c", "#181715", "#1f1d1a", "#23211e", "#2c2925", "#3a3630", "#57524a", "#7a7468"] },
+      "paper-lifted": { "role": "neutral", "displayName": "Lifted Paper", "canonical": "#2c2925", "tonalRamp": ["#141311", "#1b1a18", "#23211e", "#2c2925", "#38342e", "#4a453d", "#655f54", "#847d70"] },
+      "bone": { "role": "neutral", "displayName": "Bone", "canonical": "#ece6d8", "tonalRamp": ["#5c574d", "#7a7468", "#948d7d", "#bdb5a5", "#d3ccbc", "#ece6d8", "#f4f0e6", "#faf8f2"] },
+      "bone-dim": { "role": "neutral", "displayName": "Dim Bone", "canonical": "#bdb5a5", "tonalRamp": ["#4a463e", "#666055", "#847d70", "#a19a8a", "#bdb5a5", "#d3ccbc", "#e4dfd1", "#f1ede3"] },
+      "bone-faint": { "role": "neutral", "displayName": "Faint Bone", "canonical": "#948d7d", "tonalRamp": ["#3a3630", "#57524a", "#726c5f", "#948d7d", "#aaa392", "#c0b9a9", "#d6d0c1", "#ebe6da"] },
+      "ink": { "role": "neutral", "displayName": "Ink", "canonical": "#12110f", "tonalRamp": ["#080807", "#0c0b0a", "#12110f", "#1b1a18", "#2c2925", "#403c35", "#5c574d", "#7a7468"] },
+      "print-caption": { "role": "neutral", "displayName": "Print Caption", "canonical": "#4b463c", "tonalRamp": ["#1f1d19", "#2e2b25", "#3b372f", "#4b463c", "#5f5a4e", "#767061", "#948d7d", "#b3ac9c"] },
+      "red": { "role": "primary", "displayName": "Signal Red", "canonical": "#e2452e", "tonalRamp": ["#3d100a", "#661a10", "#8f2414", "#b3301c", "#e2452e", "#f26a52", "#f7998a", "#fbc9c0"] },
+      "red-text": { "role": "primary", "displayName": "Signal Red, Text", "canonical": "#f26a52", "tonalRamp": ["#661a10", "#8f2414", "#b3301c", "#e2452e", "#f26a52", "#f58a76", "#f9b0a3", "#fcd6cf"] },
+      "brick": { "role": "primary", "displayName": "Brick", "canonical": "#b3301c", "tonalRamp": ["#2a0a05", "#45120a", "#661a10", "#8f2414", "#b3301c", "#d03b24", "#e2452e", "#f26a52"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "The name in the hero only." },
+      "headline": { "displayName": "Headline", "purpose": "Section titles." },
+      "title": { "displayName": "Title", "purpose": "Role rows, sheet titles, contact values, brand." },
+      "body": { "displayName": "Body", "purpose": "Reading text in Switzer, secondary copy in Dim Bone." },
+      "body-strong": { "displayName": "Body strong", "purpose": "Buttons, links and nav." },
+      "label": { "displayName": "Label", "purpose": "Mono for callouts, competency lines, stack lines, status pills, captions, plates, marker." }
+    },
+    "shadows": [
+      { "name": "print", "value": "0 26px 40px rgba(0,0,0,.45), 0 4px 8px rgba(0,0,0,.3)", "purpose": "The taped portrait card lying on the paper." },
+      { "name": "tape", "value": "0 2px 4px rgba(0,0,0,.3)", "purpose": "Red tape strip on the print." },
+      { "name": "stacked-sheet", "value": "-18px 0 40px rgba(0,0,0,.45)", "purpose": "Pinned sheets lying over the previous sheet." },
+      { "name": "loupe", "value": "0 10px 24px rgba(0,0,0,.5)", "purpose": "Magnifier over the real screenshot." },
+      { "name": "scan-glow", "value": "0 0 18px 2px rgba(226,69,46,.55)", "purpose": "Red scan line that develops each screenshot." }
+    ],
+    "motion": [
+      { "name": "ease-settle", "value": "cubic-bezier(.16, 1, .3, 1)", "purpose": "Button lift and role plus rotation." },
+      { "name": "gsap-entrance", "value": "power3.out", "purpose": "Split-text name, fades, credential entries." },
+      { "name": "gsap-draw", "value": "power2.inOut", "purpose": "Frame lines, rulers, halftone develop, credential edges, sheet reel." },
+      { "name": "gsap-flip", "value": "power3.inOut 0.6s", "purpose": "Role rows opening and closing." },
+      { "name": "spring-tilt", "value": "spring stiffness 140, damping 16", "purpose": "Print leaning toward a fine pointer." },
+      { "name": "spring-stamp", "value": "spring stiffness 380, damping 15", "purpose": "Earned stamp landing at -3deg." },
+      { "name": "spring-row", "value": "spring stiffness 520, damping 26", "purpose": "Contact row hover offset of 10px." },
+      { "name": "sheet-wipe", "value": "power3.inOut 0.55s in, 0.6s out", "purpose": "Bone sheet covering route changes." },
+      { "name": "reduced-motion", "value": "no pin, no ScrollSmoother, no wipe, all content shown", "purpose": "prefers-reduced-motion state." }
+    ],
+    "breakpoints": [
+      { "name": "frame-small", "value": "700px" },
+      { "name": "header-flow", "value": "800px" },
+      { "name": "single-column", "value": "900px" },
+      { "name": "pinned-reel", "value": "900px wide and 600px tall, motion allowed" },
+      { "name": "smooth-scroll", "value": "1024px, fine pointer, motion allowed" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Bone square button for secondary actions such as Email.",
+      "html": "<button class=\"ds-btn\">Email</button>",
+      "css": ".ds-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 22px; background: #ece6d8; color: #12110f; border: 1px solid #ece6d8; border-radius: 0; font: 600 16px 'Switzer', sans-serif; cursor: pointer; transition: background-color .2s, border-color .2s, transform .2s cubic-bezier(.16,1,.3,1); } .ds-btn:hover { background: #bdb5a5; border-color: #bdb5a5; transform: translateY(-2px); } .ds-btn:active { transform: translateY(1px); } .ds-btn:focus-visible { outline: 2px solid #f26a52; outline-offset: 4px; }"
+    },
+    {
+      "name": "Red Button",
+      "kind": "button",
+      "refersTo": "button-red",
+      "description": "The single main action, Try the live demo.",
+      "html": "<button class=\"ds-btn-red\">Try the live demo</button>",
+      "css": ".ds-btn-red { display: inline-flex; align-items: center; justify-content: center; min-height: 56px; padding: 0 30px; background: #b3301c; color: #ece6d8; border: 1px solid #b3301c; border-radius: 0; font: 600 17px 'Switzer', sans-serif; cursor: pointer; transition: background-color .2s, color .2s, border-color .2s, transform .2s cubic-bezier(.16,1,.3,1); } .ds-btn-red:hover { background: #e2452e; border-color: #e2452e; color: #12110f; transform: translateY(-2px); } .ds-btn-red:active { transform: translateY(1px); } .ds-btn-red:focus-visible { outline: 2px solid #f26a52; outline-offset: 4px; }"
+    },
+    {
+      "name": "Text Link",
+      "kind": "custom",
+      "description": "Underlined inline link with a hairline underline that turns red on hover.",
+      "html": "<a class=\"ds-link\" href=\"#\">Read the case study</a>",
+      "css": ".ds-link { display: inline-flex; align-items: center; min-height: 44px; color: #ece6d8; font: 600 16px 'Switzer', sans-serif; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .32em; text-decoration-color: rgba(236,230,216,.62); transition: color .2s, text-decoration-color .2s; } .ds-link:hover { color: #f26a52; text-decoration-color: #f26a52; } .ds-link:focus-visible { outline: 2px solid #f26a52; outline-offset: 4px; }"
+    },
+    {
+      "name": "Nav Header",
+      "kind": "nav",
+      "description": "Italic serif brand, dim links and a bone Email button, on paper with a bottom hairline.",
+      "html": "<header class=\"ds-head\"><a class=\"ds-brand\" href=\"#\">Zakarya Oukil</a><nav class=\"ds-nav\"><a href=\"#\">Roles</a><a href=\"#\">Work</a><a href=\"#\">Contact</a></nav></header>",
+      "css": ".ds-head { display: flex; align-items: center; justify-content: space-between; min-height: 60px; padding: 0 24px; background: #1b1a18; border-bottom: 1px solid rgba(236,230,216,.3); } .ds-brand { color: #ece6d8; font: italic 500 1.5rem 'Gambetta', Georgia, serif; letter-spacing: -.01em; text-decoration: none; } .ds-nav { display: flex; gap: 24px; } .ds-nav a { display: inline-flex; align-items: center; min-height: 44px; color: #bdb5a5; font: 400 16px 'Switzer', sans-serif; text-decoration: none; } .ds-nav a:hover { color: #ece6d8; } .ds-nav a:focus-visible { outline: 2px solid #f26a52; outline-offset: 4px; }"
+    },
+    {
+      "name": "Taped Print",
+      "kind": "card",
+      "description": "Bone card with red tape, red corner brackets and italic serif caption, rotated on the paper.",
+      "html": "<div style=\"padding:24px;background:#1b1a18\"><figure class=\"ds-print\"><span class=\"ds-tape\"></span><div class=\"ds-photo\"><span class=\"ds-corner ds-c1\"></span><span class=\"ds-corner ds-c2\"></span><span class=\"ds-corner ds-c3\"></span><span class=\"ds-corner ds-c4\"></span></div><figcaption>Zakarya Oukil, security engineer</figcaption></figure></div>",
+      "css": ".ds-print { position: relative; width: 240px; margin: 20px; padding: 14px 14px 12px; background: #ece6d8; color: #12110f; rotate: -2.2deg; box-shadow: 0 26px 40px rgba(0,0,0,.45), 0 4px 8px rgba(0,0,0,.3); } .ds-tape { position: absolute; top: -14px; left: 50%; width: 92px; height: 28px; margin-left: -46px; background: rgba(226,69,46,.86); rotate: 1.5deg; box-shadow: 0 2px 4px rgba(0,0,0,.3); } .ds-photo { position: relative; aspect-ratio: 4/5; background: #4b463c; filter: grayscale(1); } .ds-corner { position: absolute; width: 16px; height: 16px; border: 0 solid #e2452e; } .ds-c1 { top: -7px; left: -7px; border-top-width: 2px; border-left-width: 2px; } .ds-c2 { top: -7px; right: -7px; border-top-width: 2px; border-right-width: 2px; } .ds-c3 { bottom: -7px; left: -7px; border-bottom-width: 2px; border-left-width: 2px; } .ds-c4 { bottom: -7px; right: -7px; border-bottom-width: 2px; border-right-width: 2px; } .ds-print figcaption { margin: 10px 0 0; font: italic 400 .95rem 'Gambetta', Georgia, serif; color: #4b463c; }"
+    },
+    {
+      "name": "Callout",
+      "kind": "custom",
+      "description": "Mono label with a leader line and dot; red for the certified item.",
+      "html": "<div style=\"padding:16px;background:#1b1a18\"><p class=\"ds-call ds-call-earned\"><i class=\"ds-lead\"></i><span><strong>eJPT</strong> Certified</span></p><p class=\"ds-call\"><i class=\"ds-lead\"></i><span><strong>BTL1</strong> In progress</span></p></div>",
+      "css": ".ds-call { display: flex; align-items: center; width: 220px; margin: 12px 0; font: 500 13px/1.35 'JetBrains Mono Variable', ui-monospace, monospace; color: #ece6d8; } .ds-call strong { display: block; font-weight: 700; font-size: 14px; } .ds-lead { position: relative; flex: none; width: 32px; height: 1px; margin-right: 8px; background: #ece6d8; } .ds-lead::after { content: ''; position: absolute; left: -3px; top: -3px; width: 7px; height: 7px; border-radius: 50%; background: #ece6d8; } .ds-call-earned .ds-lead, .ds-call-earned .ds-lead::after { background: #e2452e; } .ds-call-earned strong { color: #f26a52; }"
+    },
+    {
+      "name": "Role Row",
+      "kind": "custom",
+      "description": "Serif accordion row with a CSS plus and mono competency lines.",
+      "html": "<div class=\"ds-role\"><button class=\"ds-role-btn\"><span>Offensive security</span><i class=\"ds-plus\"></i></button><ul class=\"ds-comps\"><li>Web application testing</li><li>Reporting</li></ul></div>",
+      "css": ".ds-role { width: 420px; border-top: 1px solid rgba(236,230,216,.3); border-bottom: 1px solid rgba(236,230,216,.3); background: #1b1a18; color: #ece6d8; } .ds-role-btn { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 72px; padding: 0; background: none; border: 0; color: inherit; text-align: left; cursor: pointer; font: 500 1.8rem/1.1 'Gambetta', Georgia, serif; letter-spacing: -.01em; transition: color .2s; } .ds-role-btn:hover { color: #f26a52; } .ds-role-btn:focus-visible { outline: 2px solid #f26a52; outline-offset: 4px; } .ds-plus { position: relative; width: 18px; height: 18px; } .ds-plus::before, .ds-plus::after { content: ''; position: absolute; left: 0; right: 0; top: 8px; height: 2px; background: currentColor; } .ds-plus::after { transform: rotate(0deg); } .ds-comps { margin: 0 0 12px; padding: 0; list-style: none; } .ds-comps li { padding: 9px 0; border-top: 1px solid rgba(236,230,216,.3); font: 500 14px/1.4 'JetBrains Mono Variable', ui-monospace, monospace; }"
+    },
+    {
+      "name": "Status Pill",
+      "kind": "chip",
+      "description": "Earned credentials are stamped red; others are dashed and dim.",
+      "html": "<div style=\"padding:16px;background:#1b1a18\"><span class=\"ds-status ds-earned\">Certified</span> <span class=\"ds-status\">In progress</span></div>",
+      "css": ".ds-status { display: inline-block; margin: 4px 8px 4px 0; padding: 1px 8px; font: 500 12.5px/1.5 'JetBrains Mono Variable', ui-monospace, monospace; color: #bdb5a5; border: 1px dashed #948d7d; border-radius: 0; } .ds-earned { color: #f26a52; border: 2px solid #e2452e; rotate: -3deg; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }"
+    },
+    {
+      "name": "Case-study Sheet",
+      "kind": "card",
+      "description": "Raised paper sheet with double outline, exhibit with mono caption, plate and serif title.",
+      "html": "<article class=\"ds-sheet\"><figure class=\"ds-exhibit\"><div class=\"ds-shot\"></div><figcaption>Real screenshot.</figcaption></figure><span class=\"ds-plate\">Sheet 1 / 3</span><div class=\"ds-sheet-text\"><h3>Zak's Spider</h3><p>Penetration-testing toolkit</p><p class=\"ds-stack\">Python · Docker</p></div></article>",
+      "css": ".ds-sheet { position: relative; display: grid; grid-template-columns: 7fr 5fr; width: 640px; border: 1px solid rgba(236,230,216,.62); outline: 1px solid rgba(236,230,216,.3); outline-offset: -8px; background: #23211e; color: #ece6d8; } .ds-exhibit { position: relative; margin: 14px; background: #0e0e0d; } .ds-shot { aspect-ratio: 16/10; background: #2c2925; } .ds-exhibit figcaption { position: absolute; left: 0; right: 0; bottom: 0; padding: 8px 12px; background: rgba(14,14,13,.82); font: 500 12px/1.4 'JetBrains Mono Variable', ui-monospace, monospace; color: #bdb5a5; } .ds-plate { position: absolute; right: 22px; bottom: 22px; padding: 6px 10px; border: 1px solid rgba(236,230,216,.62); background: #23211e; font: 500 11px/1 'JetBrains Mono Variable', ui-monospace, monospace; letter-spacing: .04em; color: #bdb5a5; } .ds-sheet-text { padding: 28px; } .ds-sheet-text h3 { margin: 0; font: 500 2rem/1 'Gambetta', Georgia, serif; letter-spacing: -.02em; } .ds-sheet-text p { margin: 8px 0 0; color: #bdb5a5; font: 400 1.05rem 'Switzer', sans-serif; } .ds-sheet-text .ds-stack { font: 500 13px/1.6 'JetBrains Mono Variable', ui-monospace, monospace; color: #948d7d; }"
+    },
+    {
+      "name": "Contact Row",
+      "kind": "custom",
+      "description": "Title-block channel row: mono uppercase label left, serif value right.",
+      "html": "<ul class=\"ds-title-block\"><li><a href=\"#\"><span class=\"ds-row-in\"><span class=\"ds-row-label\">Email</span><b>name@example.com</b></span></a></li></ul>",
+      "css": ".ds-title-block { width: 480px; margin: 0; padding: 0; list-style: none; border-top: 1px solid rgba(236,230,216,.62); background: #1b1a18; } .ds-title-block li { border-bottom: 1px solid rgba(236,230,216,.3); overflow: hidden; } .ds-title-block a { display: block; min-height: 60px; color: #ece6d8; text-decoration: none; } .ds-row-in { display: flex; align-items: center; justify-content: space-between; gap: 18px; min-height: 60px; } .ds-row-label { color: #bdb5a5; font: 500 13px/1 'JetBrains Mono Variable', ui-monospace, monospace; text-transform: uppercase; letter-spacing: .05em; } .ds-title-block b { font: 500 1.6rem/1.2 'Gambetta', Georgia, serif; text-align: right; transition: color .2s; } .ds-title-block a:hover b { color: #f26a52; } .ds-title-block a:focus-visible { outline: 2px solid #f26a52; outline-offset: -2px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Drawing Sheet",
+    "overview": "The whole site is one engineering drawing sheet lying on warm charcoal paper. A double-line frame with tick rulers is fixed to the viewport, so the page scrolls beneath it and the red marker on the left ruler reports position and names the section in view (Cover, Roles, Work, Contact). Content is set editorially: a large Gambetta serif name and headings, quiet Switzer reading text, and monospace reserved for measurement-style labels. Version 7 is a deliberate mix chosen by the owner: dark paper and the taped print (V1), the frame, rulers, corner brackets and mono callouts (V4), the editorial layout and serif (V2), the single red (V3), the pinned reel and hero settle (V5).\n\nThe mood is a dossier being laid out for a reader who has a minute: precise, warm, unhurried, and honest. Density is moderate: generous section padding, hairline rules instead of boxes, large type carrying hierarchy. Depth is minimal and physical: a taped photo print casts a real shadow; everything else is flat and separated by 1px lines.\n\nStatic film grain (a fixed 256px tile at 0.38 opacity) sits over everything so the paper never reads as flat digital black. Motion is a set of signature moments, not ambient decoration.",
+    "keyCharacteristics": [
+      "Warm charcoal paper, bone ink, exactly one red used sparingly and always for a job (tape, marker, brackets, scan line, earned stamp, hover text).",
+      "Square corners everywhere; the only round shapes are the leader-line dots and the loupe.",
+      "Hairline 1px rules in translucent bone define structure; no filled panels except the raised sheet.",
+      "Serif for names and headings, sans for reading, mono only for labels, callouts, competency lines and sheet plates.",
+      "Honest status: earned items are stamped red, in-progress items are plain dim with a dashed outline."
+    ],
+    "rules": [
+      { "name": "The One Red Rule", "body": "There is one hue of red. It marks things that do a job: a certified credential, a scroll position, a piece of tape, a primary action, a hover. It is never a background wash, a gradient, or decoration on a whole section.", "section": "colors" },
+      { "name": "The Earned Rule", "body": "Only a certified credential gets red and a stamp. In-progress and candidate items stay bone-dim with a dashed outline, however good they would look in red.", "section": "colors" },
+      { "name": "The Text Red Rule", "body": "Red text on paper uses Signal Red, Text (#f26a52); the fill red (#e2452e) is for shapes and lines.", "section": "colors" },
+      { "name": "The Mono Is Measurement Rule", "body": "Monospace appears only where the sheet would be lettered by machine: callouts, competency lines, stack lines, status pills, captions on exhibits, plates, the marker, contact row labels. Never for headings, buttons or paragraphs.", "section": "typography" },
+      { "name": "The Serif Names Things Rule", "body": "Every name and heading is Gambetta at weight 500 with negative tracking; body and controls are Switzer.", "section": "typography" },
+      { "name": "The Hairline Rule", "body": "Structure is drawn with 1px bone lines (30% for rows, 62% for edges and frames), a doubled inner outline on sheets, never with filled cards or soft glow.", "section": "elevation" },
+      { "name": "The Lying-On-Paper Rule", "body": "Shadows exist only where an object lies on the sheet (print, tape, stacked sheet, loupe) and are soft and dark; they are never used on buttons, text or rows.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do keep the ground Charcoal Paper (#1b1a18) with the fixed grain overlay and Bone (#ece6d8) ink.",
+      "Do spend red only on a job: fills #e2452e, text #f26a52, resting main action #b3301c.",
+      "Do set names and headings in Gambetta 500 with -0.01 to -0.02em tracking; reading text in Switzer.",
+      "Do use JetBrains Mono for callouts, competency lines, stack lines, status pills, captions and plates only.",
+      "Do draw structure with 1px translucent-bone rules and keep every corner square.",
+      "Do show earned, in-progress and candidate states as visibly different (red stamp versus dashed dim pill).",
+      "Do give every interactive target at least 44px and a 2px Signal Red, Text focus outline.",
+      "Do provide the reduced-motion state: everything visible, no pin, no smooth scroll."
+    ],
+    "donts": [
+      "Don't use rounded corners on surfaces, buttons or pills.",
+      "Don't introduce a second accent hue or a red wash, gradient or filled section.",
+      "Don't put a shadow on anything that does not lie on the sheet (no button or row shadows).",
+      "Don't set headings or buttons in mono, or paragraphs in serif.",
+      "Don't present a non-certified credential in red, stamped or uppercase-bold.",
+      "Don't replace the fixed frame, taped print or stacked sheet reel with a generic card grid or stock hero layout.",
+      "Don't enable ScrollSmoother or pinning under reduced motion or on touch or narrow screens."
+    ]
+  }
+}

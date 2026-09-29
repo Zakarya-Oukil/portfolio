@@ -52,12 +52,16 @@
 .v7-links { display: flex; flex-wrap: wrap; gap: 0 26px; }
 
 /* Header sits inside the frame; the frame is fixed, the page scrolls beneath it */
-.v7-head { display: flex; align-items: center; justify-content: space-between; gap: 20px; min-height: 76px; padding: 26px var(--padx) 0; }
+.v7-head { display: flex; align-items: center; justify-content: space-between; gap: 20px; min-height: 76px; padding: 26px var(--padx) 0; position: relative; z-index: 55; }
+@media (min-width: 801px) {
+  .v7-head { position: fixed; top: calc(var(--fr) + 14px); left: calc(var(--fr) + 20px); right: calc(var(--fr) + 20px); min-height: 60px; padding: 0 calc(var(--padx) - var(--fr) - 20px); background: var(--paper); border-bottom: 1px solid var(--line); }
+  #v7-content { padding-top: 84px; }
+}
 .v7-brand { white-space: nowrap; display: inline-flex; align-items: center; min-height: 44px; font: italic 500 1.5rem var(--serif); letter-spacing: -.01em; }
 .v7-nav { display: flex; align-items: center; gap: clamp(14px, 2.2vw, 30px); }
 .v7-nav > a:not(.v7-btn) { display: inline-flex; align-items: center; min-height: 44px; color: var(--dim); font-size: 16px; }
 .v7-nav > a:not(.v7-btn):hover { color: var(--bone); }
-@media (max-width: 800px) { .v7-nav > a:not(.v7-btn) { display: none; } }
+@media (max-width: 800px) { .v7-head { flex-direction: column; align-items: flex-start; gap: 0; padding-bottom: 6px; } .v7-nav { width: 100%; flex-wrap: wrap; gap: 0 18px; } .v7-nav .vs { margin-left: auto; } .v7-nav .v7-btn { display: none; } }
 
 /* Hero: V2 layout, V4 callouts, V1 print */
 .v7-hero { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(24px, 5vw, 80px); align-items: center; padding: clamp(28px, 6vw, 80px) var(--padx) clamp(56px, 8vw, 120px); min-height: calc(100dvh - 76px); }
@@ -135,9 +139,10 @@
 .v7-exhibit figcaption { position: absolute; left: 0; right: 0; bottom: 0; padding: 8px 12px; background: rgba(14, 14, 13, .82); font: 500 12px/1.4 var(--mono); color: var(--dim); }
 .v7-scan { position: absolute; top: 0; bottom: 0; left: 0; width: 2px; background: var(--red); box-shadow: 0 0 18px 2px rgba(226, 69, 46, .55); opacity: 0; pointer-events: none; }
 .v7-lens { position: absolute; top: 0; left: 0; width: 168px; height: 168px; border-radius: 50%; border: 2px solid var(--bone); box-shadow: 0 10px 24px rgba(0, 0, 0, .5); background-repeat: no-repeat; opacity: 0; pointer-events: none; transition: opacity .2s; }
-.v7-exhibit:has(.v7-lens) { cursor: none; }
+.v7-exhibit.has-lens { cursor: none; }
 .v7-sheet-text { padding: clamp(22px, 3vw, 40px); display: flex; flex-direction: column; gap: 10px; }
-.v7-kind { font: 500 12px/1.4 var(--mono); letter-spacing: .05em; text-transform: uppercase; color: var(--red-text); }
+.v7-plate { position: absolute; right: 22px; bottom: 22px; padding: 6px 10px; border: 1px solid var(--line-strong); background: var(--paper-2); font: 500 11px/1 var(--mono); letter-spacing: .04em; color: var(--dim); }
+.v7-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .v7-sheet h3 { font: 500 clamp(2rem, 3.4vw, 3.2rem)/1 var(--serif); letter-spacing: -.02em; }
 .v7-sub { color: var(--dim); font-size: 1.05rem; }
 .v7-sheet-text > p:not(.v7-kind):not(.v7-sub):not(.v7-stack) { max-width: 46ch; }
@@ -188,7 +193,7 @@
 .v7 .x-fig img { display: block; width: 100%; aspect-ratio: 21 / 9; object-fit: cover; border: 1px solid var(--line-strong); }
 .v7 .x-fig figcaption { margin-top: 10px; color: var(--faint); font-size: .92rem; }
 .v7 .x-case { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: clamp(28px, 5vw, 88px); margin-top: clamp(40px, 6vw, 96px); }
-.v7 .x-side { position: sticky; top: 96px; align-self: start; }
+.v7 .x-side { align-self: start; }
 .v7 .x-side div { padding: 14px 0; border-top: 1px solid var(--line); }
 .v7 .x-side dt { color: var(--faint); font-size: .95rem; }
 .v7 .x-side dd { margin-top: 2px; font-weight: 600; font-size: 1.2rem; }
@@ -208,7 +213,9 @@
 
 @media (max-width: 700px) {
   .v7 { --fr: 5px; --padx: 22px; }
-  .v7-marker-label, .v7-ruler-x { display: none; }
+  .v7-marker, .v7-ruler-x { display: none; }
   .v7-fl2, .v7-ruler-y { display: none; }
 }
 @media (prefers-reduced-motion: reduce) { .v7 *, .v7-wipe { transition-duration: .01ms !important; animation-duration: .01ms !important; } }
+
+html:has(.v7) { scroll-behavior: auto; }

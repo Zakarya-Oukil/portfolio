@@ -43,7 +43,9 @@ function SheetLink({ to, className, children, label = 'Next sheet' }: { to: stri
     if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     event.preventDefault();
     const [path, hash] = to.split('#');
-    if (hash && (path === '' || path === window.location.pathname)) { window.history.replaceState({}, '', `${path || window.location.pathname}#${hash}`); scrollToId(hash); return; }
+    const samePage = path === '' || path === window.location.pathname;
+    if (hash && samePage) { window.history.replaceState({}, '', `${path || window.location.pathname}#${hash}`); scrollToId(hash, reduce); return; }
+    if (!hash && samePage) { const smoother = ScrollSmoother.get(); if (smoother) smoother.scrollTo(0, !reduce); else window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' }); return; }
     wipe(reduce, label, () => navigate(to));
   };
   return <a href={to} className={className} onClick={onClick}>{children}</a>;
@@ -207,7 +209,7 @@ function Roles() {
             <h3><button type="button" className="v7-role-btn" aria-expanded={isOpen} aria-controls={`v7-body-${row.id}`} onClick={() => toggle(row.id)}><span>{row.title}</span><i className="v7-plus" aria-hidden="true" /></button></h3>
             <div className="v7-role-body" id={`v7-body-${row.id}`}>
               <p className="v7-role-line">{row.line}</p>
-              <ul className="v7-comps">{row.comps.map(item => <li key={item} data-scramble={item}>{item}</li>)}</ul>
+              <ul className="v7-comps">{row.comps.map(item => <li key={item}><span aria-hidden="true" data-scramble={item}>{item}</span><span className="v7-sr">{item}</span></li>)}</ul>
               <div className="v7-links">
                 {study && <SheetLink className="v7-link" to={`/work/${study.slug}`}>Read the {study.title} case study</SheetLink>}
                 {!study && <SheetLink className="v7-link" to="/work">See the public repositories</SheetLink>}
@@ -244,6 +246,7 @@ function Sheet({ item, index }: { item: CaseStudy; index: number }) {
   useEffect(() => {
     if (!real || !fine || reduce || !fig.current || !lens.current) return;
     const el = fig.current, lensEl = lens.current;
+    el.classList.add('has-lens');
     const zoom = 2.4, size = 168;
     const move = (event: PointerEvent) => {
       const box = el.getBoundingClientRect();
@@ -255,7 +258,7 @@ function Sheet({ item, index }: { item: CaseStudy; index: number }) {
     const enter = () => { lensEl.style.opacity = '1'; };
     const leave = () => { lensEl.style.opacity = '0'; };
     el.addEventListener('pointermove', move); el.addEventListener('pointerenter', enter); el.addEventListener('pointerleave', leave);
-    return () => { el.removeEventListener('pointermove', move); el.removeEventListener('pointerenter', enter); el.removeEventListener('pointerleave', leave); };
+    return () => { el.classList.remove('has-lens'); el.removeEventListener('pointermove', move); el.removeEventListener('pointerenter', enter); el.removeEventListener('pointerleave', leave); };
   }, [real, fine, reduce]);
 
   return <article className="v7-sheet" data-sheet>
@@ -265,8 +268,8 @@ function Sheet({ item, index }: { item: CaseStudy; index: number }) {
       {real && <i className="v7-lens" ref={lens} style={{ backgroundImage: `url(${src})` }} aria-hidden="true" />}
       <figcaption>{real ? (fine && !reduce ? 'Real screenshot. Move over it to inspect.' : 'Real screenshot.') : 'Illustrative image, not a screenshot of this project.'}</figcaption>
     </figure>
+    <span className="v7-plate" aria-hidden="true">Sheet {index + 1} / {CASE_STUDIES.length}</span>
     <div className="v7-sheet-text">
-      <p className="v7-kind">Sheet {index + 1} of {CASE_STUDIES.length}</p>
       <h3><SheetLink to={`/work/${item.slug}`}>{item.title}</SheetLink></h3>
       <p className="v7-sub">{item.kind}</p>
       <p>{item.summary}</p>
@@ -306,9 +309,18 @@ function Work() {
           .fromTo(scan(s), { left: '0%', opacity: 1 }, { left: '100%', duration: 0.6 }, t + 0.35)
           .to(scan(s), { opacity: 0, duration: 0.02 }, t + 0.96);
       });
+      // Keyboard: focusing a link inside an off-screen sheet scrolls the pin to that sheet.
+      const onFocus = (index: number) => () => {
+        const st = tl.scrollTrigger;
+        if (!st) return;
+        const y = st.start + (st.end - st.start) * (index / (sheets.length - 1));
+        const smoother = ScrollSmoother.get();
+        if (smoother) smoother.scrollTo(y, false); else window.scrollTo({ top: y, behavior: 'auto' });
+      };
+      const focusers = sheets.map((s, i) => { const fn = onFocus(i); s.addEventListener('focusin', fn); return () => s.removeEventListener('focusin', fn); });
       const refresh = () => ScrollTrigger.refresh();
       document.fonts?.ready.then(refresh);
-      return () => { first(); tl.scrollTrigger?.kill(); tl.kill(); reel.classList.remove('is-pinned'); sheets.forEach(s => gsap.set([s, shot(s), scan(s)], { clearProps: 'all' })); };
+      return () => { focusers.forEach(off => off()); first(); tl.scrollTrigger?.kill(); tl.kill(); reel.classList.remove('is-pinned'); sheets.forEach(s => gsap.set([s, shot(s), scan(s)], { clearProps: 'all' })); };
     });
     return () => media.revert();
   }, { scope: root, dependencies: [reduce] });
@@ -353,7 +365,7 @@ function Contact() {
     <div className="v7-contact-grid">
       <ul className="v7-title-block">{channels.map(channel => <li key={channel.label} data-row onPointerEnter={event => spring(event.currentTarget, 10)} onPointerLeave={event => spring(event.currentTarget, 0)}>
         <a href={channel.href} {...(channel.ext ? { target: '_blank', rel: 'noreferrer noopener' } : {})}>
-          <span className="v7-row-in"><span className="v7-row-label">{channel.label}</span><b {...(channel.scramble ? { 'data-mail': channel.value } : {})}>{channel.value}</b></span>
+          <span className="v7-row-in"><span className="v7-row-label">{channel.label}</span>{channel.scramble ? <><b aria-hidden="true" data-mail={channel.value}>{channel.value}</b><span className="v7-sr">{channel.value}</span></> : <b>{channel.value}</b>}</span>
         </a>
       </li>)}</ul>
       <aside className="v7-contact-side">
@@ -367,6 +379,17 @@ function Contact() {
 
 function Foot() {
   return <footer className="v7-foot"><span>Zakarya Oukil</span><nav aria-label="Footer"><SheetLink to="/work">All projects</SheetLink><LabLink>Lab</LabLink>{CONTACT.github && <a href={CONTACT.github} target="_blank" rel="noreferrer noopener">GitHub</a>}</nav></footer>;
+}
+
+/** Inertial smooth scroll, only where it is safe. Rendered before the page so it exists before any ScrollTrigger pin is built. */
+function Smoother({ active }: { active: boolean }) {
+  useGSAP(() => {
+    if (!active) return;
+    const smoother = ScrollSmoother.create({ wrapper: '#v7-wrapper', content: '#v7-content', smooth: 1, effects: false, normalizeScroll: false });
+    ScrollTrigger.refresh();
+    return () => { smoother.kill(); };
+  }, { dependencies: [active] });
+  return null;
 }
 
 /** Version 7: the mix. Dark paper, engineering-sheet frame, editorial layout, serif name with mono callouts. */
@@ -394,21 +417,20 @@ export default function V7() {
     const marker = q('[data-marker]')[0] as HTMLElement, label = q('[data-marker-label]')[0] as HTMLElement, frame = q('[data-frame]')[0] as HTMLElement;
     const setY = gsap.quickSetter(marker, 'y', 'px');
     const range = () => Math.max(0, frame.clientHeight - 110);
-    const progress = ScrollTrigger.create({ start: 0, end: 'max', onUpdate: self => setY(self.progress * range()), onRefresh: self => setY(self.progress * range()) });
-    const sections = gsap.utils.toArray<HTMLElement>('[data-section]', el).map(section => ScrollTrigger.create({ trigger: section, start: 'top 55%', end: 'bottom 55%', onToggle: self => { if (self.isActive) label.textContent = section.dataset.section || ''; } }));
+    const sectionEls = gsap.utils.toArray<HTMLElement>('[data-section]', el);
+    const name = () => {
+      const line = window.innerHeight * 0.55;
+      const hit = sectionEls.find(section => { const r = section.getBoundingClientRect(); return r.top <= line && r.bottom > line; });
+      if (hit && label.textContent !== hit.dataset.section) label.textContent = hit.dataset.section || '';
+    };
+    const progress = ScrollTrigger.create({ start: 0, end: 'max', onUpdate: self => { setY(self.progress * range()); name(); }, onRefresh: self => { setY(self.progress * range()); name(); } });
+    const sections: ScrollTrigger[] = [];
     return () => { progress.kill(); sections.forEach(s => s.kill()); };
   }, { scope: root, dependencies: [route.name] });
 
-  // Inertial smooth scroll, only where it is safe: wide screens with a fine pointer and motion allowed.
-  useGSAP(() => {
-    if (reduce || !fine || !wide) return;
-    const smoother = ScrollSmoother.create({ wrapper: '#v7-wrapper', content: '#v7-content', smooth: 1, effects: false, normalizeScroll: false });
-    return () => { smoother.kill(); };
-  }, { dependencies: [reduce, fine, wide] });
-
   useEffect(() => {
     const hash = window.location.hash.slice(1);
-    if (hash && route.name === 'home') requestAnimationFrame(() => scrollToId(hash));
+    if (hash && route.name === 'home') requestAnimationFrame(() => scrollToId(hash, reduce));
     else if (route.name !== 'home') ScrollSmoother.get()?.scrollTop(0);
   }, [route.name]);
 
@@ -416,8 +438,9 @@ export default function V7() {
     <div className="v7" ref={root} style={{ '--vs-bg': '#1b1a18', '--vs-ink': '#ece6d8', '--vs-line': 'rgba(236,230,216,.4)', '--vs-accent': '#e2452e', '--vs-font': "'Switzer', sans-serif" } as React.CSSProperties}>
       <a className="v7-skip" href="#main">Skip to content</a>
       <SheetFrame />
+      <Smoother active={!reduce && fine && wide} />
+      <Head />
       <div id="v7-wrapper"><div id="v7-content">
-        <Head />
         <main id="main">
           {route.name === 'home' && <><Hero /><Roles /><Work /><Contact /></>}
           {route.name === 'work' && <IndexView />}

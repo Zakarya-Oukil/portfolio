@@ -16,12 +16,12 @@ export function wipe(reduce: boolean, label: string, go: () => void, leaves = tr
 }
 
 /** Scrolls to an element id, through the smoother when it is running. */
-export function scrollToId(id: string) {
+export function scrollToId(id: string, reduce = false) {
   const el = document.getElementById(id);
   if (!el) return;
   const smoother = ScrollSmoother.get();
-  if (smoother) smoother.scrollTo(el, true, 'top 24px');
-  else el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (smoother) smoother.scrollTo(el, !reduce, 'top 24px');
+  else el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
 }
 
 /** Runs fire once when the element first enters view, and never strands content after anchor jumps. */
