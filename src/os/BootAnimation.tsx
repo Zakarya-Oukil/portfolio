@@ -25,7 +25,7 @@ export function BootAnimation({ mode, onComplete }: BootAnimationProps) {
     const interval = 25;
     const step = 100 / (duration / interval);
 
-    let finishTimer;
+    let finishTimer: ReturnType<typeof setTimeout> | undefined;
     const timer = setInterval(() => {
       setProgress(p => {
         const next = Math.min(100, p + step);

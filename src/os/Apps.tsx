@@ -8,7 +8,30 @@ export function Settings() {
   const [github, setGithub] = useSaved('zak.github', '');
   const [username, setUsername] = useState(github);
   return <div className="settings-app app-scroll"><header className="app-heading"><div className="heading-icon"><Icon name="settings" size={27}/></div><div><h1>Make yourself at home.</h1><p>Your workspace, your way.</p></div></header>
-    <section className="settings-section"><h3>Choose your experience</h3><p>One portfolio. Three familiar worlds.</p><div className="os-options">{(['macos', 'ios', 'android'] as Mode[]).map(m => <button key={m} aria-pressed={s.mode === m} className={s.mode === m ? 'selected' : ''} onClick={() => s.setMode(m)}><Icon name={m === 'macos' ? 'monitor' : 'phone'} size={30}/><strong>{modeNames[m]}</strong><small>{m === 'macos' ? 'Liquid Glass desktop' : m === 'ios' ? 'iOS 18 experience' : 'Material You'}</small>{s.mode === m && <i><Icon name="check" size={13}/></i>}</button>)}</div></section>
+    <section className="settings-section"><h3>Choose your experience</h3><p>Offensive and defensive cybersecurity platforms.</p>
+      <div className="os-options">
+        <button
+          aria-pressed={s.mode === 'macos' || s.mode === 'desktop'}
+          className={s.mode === 'macos' || s.mode === 'desktop' ? 'selected' : ''}
+          onClick={() => s.setMode('macos')}
+        >
+          <Icon name="monitor" size={30}/>
+          <strong>Kali Linux Workstation</strong>
+          <small>Desktop Operator & Threat Hunting Terminal</small>
+          {(s.mode === 'macos' || s.mode === 'desktop') && <i><Icon name="check" size={13}/></i>}
+        </button>
+        <button
+          aria-pressed={s.mode === 'nethunter' || s.mode === 'ios' || s.mode === 'android'}
+          className={s.mode === 'nethunter' || s.mode === 'ios' || s.mode === 'android' ? 'selected' : ''}
+          onClick={() => s.setMode('nethunter')}
+        >
+          <Icon name="phone" size={30}/>
+          <strong>Kali NetHunter</strong>
+          <small>Tactical Handheld BadUSB & Wardriving Rig</small>
+          {(s.mode === 'nethunter' || s.mode === 'ios' || s.mode === 'android') && <i><Icon name="check" size={13}/></i>}
+        </button>
+      </div>
+    </section>
     <section className="settings-section"><h3>Appearance</h3><div className="appearance-options">{(['light', 'dark', 'oled'] as Theme[]).map(t => <button key={t} onClick={() => s.setTheme(t)} className={s.theme === t ? 'selected' : ''} aria-pressed={s.theme === t}><span className={`theme-preview preview-${t}`}><i/><i/><i/></span>{t === 'oled' ? 'OLED black' : `${t[0].toUpperCase()}${t.slice(1)}`}</button>)}</div></section>
     <section className="settings-section"><h3>Wallpaper</h3><div className="wallpaper-options">{(['sonoma', 'sequoia', 'neon', 'oled'] as Wallpaper[]).map(w => <button key={w} onClick={() => s.setWallpaper(w)} aria-pressed={s.wallpaper === w} className={s.wallpaper === w ? 'selected' : ''}><span className={`wallpaper-swatch wallpaper-${w}`}/>{({ sonoma: 'Sonoma', sequoia: 'Sequoia', neon: 'Cyberpunk', oled: 'Minimal' })[w]}</button>)}</div><p className="muted">Original landscape illustrations, with a palette that follows your wallpaper.</p></section>
     <section className="settings-section"><h3>GitHub activity</h3><p>Connect a public username to see recent public events on your desktop.</p><form className="inline-form" onSubmit={e => { e.preventDefault(); if (/^[a-z\d](?:[a-z\d-]{0,37}[a-z\d])?$/i.test(username.trim()) || !username) { setGithub(username.trim()); window.dispatchEvent(new CustomEvent('zak:github', { detail: username.trim() })); s.notify(username ? 'GitHub username saved' : 'GitHub disconnected'); } }}><input aria-label="GitHub username" placeholder="Your GitHub username" value={username} onChange={e => setUsername(e.target.value)} pattern="[a-zA-Z0-9][a-zA-Z0-9-]{0,38}"/><button className="primary-button" type="submit">Connect</button></form></section>
@@ -18,7 +41,9 @@ export function Settings() {
 
 export function Terminal() {
   const s = useSystemContext();
-  const [lines, setLines] = useState<{ prompt?: boolean; text: string }[]>([{ text: 'ZakOS Terminal 1.0\nWelcome, curious human. Type help to get started.' }]);
+  const [lines, setLines] = useState<{ prompt?: boolean; text: string }[]>([
+    { text: 'Kali GNU/Linux Rolling 2024.3 (x86_64) · Zsh 5.9\nLogged in as zakarya@kali (MSc Cybersecurity Candidate)\nType "help" for a list of cybersecurity and navigation commands.' }
+  ]);
   const [input, setInput] = useState('');
   const [history, setHistory] = useState<string[]>([]);
   const cursor = useRef(0), output = useRef<HTMLDivElement>(null), autoScroll = useRef(true);
@@ -28,20 +53,148 @@ export function Terminal() {
     if (!command) return;
     setHistory(h => [...h, raw]); cursor.current = history.length + 1; setInput('');
     switch (command.toLowerCase()) {
-      case 'help': result = 'Available commands\n\nwhoami        Meet the developer\nneofetch      System information\nskills        Areas of focus\ntools         Tools of the trade\nprojects      Browse all 16 projects\nos            macos | ios | android\ntheme         dark | light | oled\nclear         Clear this terminal\n\n↑ / ↓ command history · Tab autocomplete · Ctrl+L clear'; break;
-      case 'whoami': result = 'Zakarya\nSecurity researcher. Systems thinker. Full-stack builder.\nEngineering thoughtful software from the kernel to the cloud.'; break;
-      case 'neofetch': result = `    ______     visitor@zak-portfolio\n   /_  __/     ---------------------\n    / /        OS: ${modeNames[s.mode]} (web simulation)\n   / /__       Theme: ${s.theme}\n  /____/       Runtime: React + TypeScript\n               Display: ${window.innerWidth} × ${window.innerHeight}\n               Projects: 16 / 4 disciplines\n               Memory: ${(performance as any).memory ? Math.round((performance as any).memory.usedJSHeapSize / 1048576) + ' MB JS heap' : 'Not exposed by this browser'}`; break;
-      case 'skills': result = 'SECURITY   Network defense · CTF · Binary analysis · eBPF\nFULL STACK React · TypeScript · Node.js · WebSockets\nSYSTEMS    C / C++ · Rust · Go · Linux · WebAssembly\nCLOUD & AI PyTorch · LLM evaluation · Containers · RAG'; break;
-      case 'tools': result = 'Kali Linux · Ghidra · Wireshark · Scikit-Learn\nGit · Docker · gRPC · Qdrant · FastAPI · nRF52'; break;
-      case 'projects': result = s.projects.map((p, i) => `${String(i + 1).padStart(2, '0')}  ${p.title}`).join('\n'); break;
-      case 'os': if (['macos', 'ios', 'android'].includes(argument)) { s.setMode(argument as Mode); result = `Switched to ${argument}.`; } else result = 'Usage: os [macos|ios|android]'; break;
-      case 'theme': if (['dark', 'light', 'oled'].includes(argument)) { s.setTheme(argument as Theme); result = `Appearance set to ${argument}.`; } else result = 'Usage: theme [dark|light|oled]'; break;
-      case 'clear': setLines([]); return;
-      default: result = `Command not found: ${command}\nType help to see available commands.`;
+      case 'help':
+        result = 'Available Kali commands:\n\nwhoami        Operator dossier & credentials\ncerts         Verified credentials (eJPT, BTL1, Security+)\npentests      Offensive penetration test reports & CVSS audits\nsoc           SOC threat hunting & detection engineering\nresearch      Master’s thesis & kernel sandboxing folio\nnmap          Scan local target network & ports\nneofetch      Hardware, OS & kernel specifications\nskills        Offensive & defensive competencies\ntools         Arsenal & toolchain (Wireshark, Ghidra, Burp...)\nstance        Toggle Dual-Plex operator stance (red | blue)\nprojects      Browse featured security projects\nresume        View or download curriculum vitae\nos            Switch environment (desktop | nethunter)\ntheme         dark | light | oled\nclear         Clear terminal screen (or Ctrl+L)\n\n↑ / ↓ command history · Tab autocomplete · Ctrl+L clear';
+        break;
+      case 'whoami':
+        result = 'Zakarya Oukil\nMSc Cybersecurity Candidate · eJPT Certified Penetration Tester · BTL1 SOC Analyst\nFocus: Zero-trust architecture, reverse engineering, defensive threat hunting.';
+        break;
+      case 'certs':
+      case 'cert':
+        s.open('credentials-sig');
+        result = '[VERIFIED CREDENTIALS]\n• eJPT (eLearnSecurity Junior Penetration Tester) — Certified\n• BTL1 (Blue Team Level 1) — In Progress / Final Exam Phase\n• CompTIA Security+ (SY0-701) — In Progress\n• MSc Cybersecurity & Information Assurance — Candidate\nOpening Cryptographic Attestation Modal...';
+        break;
+      case 'pentests':
+      case 'audits':
+        s.open('pentest-reports');
+        result = 'Opening Offensive Security Audit & CVE Vault...';
+        break;
+      case 'soc':
+      case 'hunting':
+        s.open('soc-hunting');
+        result = 'Opening SOC Command & Threat Hunting Center...';
+        break;
+      case 'research':
+      case 'thesis':
+        s.open('masters-research');
+        result = 'Opening Academic Research & Master’s Thesis Folio...';
+        break;
+      case 'ducky':
+      case 'badusb':
+        s.open('duckhunter');
+        result = 'Opening NetHunter DuckHunter BadUSB Studio...';
+        break;
+      case 'stance':
+        if (argument === 'red' || argument === 'blue') {
+          s.setOperatorStance(argument);
+          result = `Operator Stance set to [${argument.toUpperCase()}].`;
+        } else {
+          result = `Current stance: [${s.operatorStance.toUpperCase()}]. Usage: stance [red|blue]`;
+        }
+        break;
+      case 'nmap':
+        result = 'Starting Nmap 7.94 ( https://nmap.org )\nNmap scan report for zak-workstation.lab (10.10.14.22)\nHost is up (0.00042s latency).\n\nPORT      STATE SERVICE    VERSION\n22/tcp    open  ssh        OpenSSH 9.6p1 Debian\n80/tcp    open  http       Portfolio OS 2.0 (React/TypeScript)\n443/tcp   open  https      TLS 1.3 (ChaCha20-Poly1305)\n8080/tcp  open  http-proxy Kali Workstation Defense Gateway\n\nNmap done: 1 IP address (1 host up) scanned in 0.28 seconds';
+        break;
+      case 'resume':
+      case 'cv':
+      case 'cat':
+        if (command.toLowerCase() === 'cat' && argument && argument.toLowerCase() !== 'resume.pdf') {
+          result = `cat: ${argument}: No such file or directory`;
+          break;
+        }
+        if (s.config?.recruiter?.resumeUrl) {
+          window.open(s.config.recruiter.resumeUrl, '_blank');
+          result = 'Opening CV / Resume document...';
+        } else {
+          s.notify('CV Download · Opening Credentials & Dossier');
+          s.open('about');
+          result = 'Redirecting to Operator Credentials & Dossier...';
+        }
+        break;
+      case 'neofetch':
+        result = `    ______     zakarya@kali\n   /_  __/     ---------------------\n    / /        OS: Kali GNU/Linux Rolling 2024.3 (x86_64)\n   / /__       Host: Offensive Security Lab Rig (Bare Metal)\n  /____/       Kernel: 6.8.0-kali-amd64\n               Uptime: 99.98% High Availability\n               Shell: zsh 5.9 (x86_64-debian-linux-gnu)\n               Cipher: ChaCha20-Poly1305 / TLS 1.3 Active\n               Display: ${window.innerWidth} × ${window.innerHeight}\n               Memory: ${(performance as any).memory ? Math.round((performance as any).memory.usedJSHeapSize / 1048576) + ' MB JS heap' : '32 GB DDR5 (8.2 GB Active)'}`;
+        break;
+      case 'skills':
+        result = 'OFFENSIVE   eJPT Penetration Testing · Network Pivoting · Exploitation · Web Pentesting\nDEFENSIVE   BTL1 SOC Operations · Wireshark Packet Analysis · Splunk/ELK · Incident Response\nSYSTEMS     C / C++ · Rust · Go · Linux Kernel & eBPF · WebAssembly\nCLOUD & AI  Zero-Trust Architecture · Container Security · LLM Red-Teaming';
+        break;
+      case 'tools':
+        result = 'Kali Linux · Ghidra · Wireshark · Burp Suite · Metasploit · Nmap · BloodHound\nDocker · Kubernetes · Python · Go · FastAPI · Snort · Suricata · Frida';
+        break;
+      case 'projects':
+        result = s.projects.map((p, i) => `${String(i + 1).padStart(2, '0')}  ${p.title}`).join('\n');
+        break;
+      case 'os':
+        if (['macos', 'desktop', 'nethunter', 'ios', 'android'].includes(argument)) {
+          s.setMode(argument === 'desktop' ? 'macos' : argument as Mode);
+          result = `Switched to ${argument}.`;
+        } else {
+          result = 'Usage: os [desktop|nethunter]';
+        }
+        break;
+      case 'theme':
+        if (['dark', 'light', 'oled'].includes(argument)) { s.setTheme(argument as Theme); result = `Appearance set to ${argument}.`; }
+        else result = 'Usage: theme [dark|light|oled]';
+        break;
+      case 'clear':
+        setLines([]);
+        return;
+      default:
+        result = `Command not found: ${command}\nType help to see available Kali commands.`;
     }
-    autoScroll.current = true; setLines(l => [...l, { prompt: true, text: raw }, { text: result }]);
+    autoScroll.current = true;
+    setLines(l => [...l, { prompt: true, text: raw }, { text: result }]);
   };
-  return <div className="terminal-app"><div className="terminal-meta"><span><i className="status-dot"/> Local session</span><span>zsh — visitor</span></div><div className="terminal-output" ref={output} onScroll={e => { const el = e.currentTarget; autoScroll.current = el.scrollHeight - el.scrollTop - el.clientHeight < 40; }} role="log" aria-label="Terminal output">{lines.map((l, i) => <pre key={i} className={l.prompt ? 'command' : ''}>{l.prompt && <span>visitor@zak-portfolio:~$ </span>}{l.text}</pre>)}</div><form className="terminal-input" onSubmit={e => { e.preventDefault(); run(input); }}><label htmlFor="terminal-command">visitor@zak-portfolio:~$</label><input id="terminal-command" value={input} autoComplete="off" spellCheck={false} onChange={e => setInput(e.target.value)} onKeyDown={e => { if (e.key === 'ArrowUp') { e.preventDefault(); cursor.current = Math.max(0, cursor.current - 1); setInput(history[cursor.current] || ''); } if (e.key === 'ArrowDown') { e.preventDefault(); cursor.current = Math.min(history.length, cursor.current + 1); setInput(history[cursor.current] || ''); } if (e.key === 'Tab') { e.preventDefault(); const match = ['help', 'whoami', 'neofetch', 'skills', 'tools', 'projects', 'os', 'theme', 'clear'].find(c => c.startsWith(input)); if (match) setInput(match); } if (e.ctrlKey && e.key === 'l') { e.preventDefault(); setLines([]); } }}/><button aria-label="Run command" type="submit"><Icon name="arrow" size={18}/></button></form></div>;
+  return (
+    <div className="terminal-app kali-terminal-app">
+      <div className="terminal-meta">
+        <span><i className="status-dot"/> tun0: 10.10.14.22 (Connected)</span>
+        <span>zsh — zakarya@kali</span>
+      </div>
+      <div className="terminal-output" ref={output} onScroll={e => { const el = e.currentTarget; autoScroll.current = el.scrollHeight - el.scrollTop - el.clientHeight < 40; }} role="log" aria-label="Terminal output">
+        {lines.map((l, i) => (
+          <pre key={i} className={l.prompt ? 'command kali-cmd-line' : ''}>
+            {l.prompt && <span className="kali-prompt-text">┌──(zakarya㉿kali)-[~] └─$&nbsp;</span>}
+            {l.text}
+          </pre>
+        ))}
+      </div>
+      <form className="terminal-input kali-term-input" onSubmit={e => { e.preventDefault(); run(input); }}>
+        <label htmlFor="terminal-command" className="kali-prompt-text">┌──(zakarya㉿kali)-[~] └─$&nbsp;</label>
+        <input
+          id="terminal-command"
+          aria-label="Terminal command"
+          value={input}
+          autoComplete="off"
+          spellCheck={false}
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={e => {
+            if (e.key === 'ArrowUp') {
+              e.preventDefault();
+              cursor.current = Math.max(0, cursor.current - 1);
+              setInput(history[cursor.current] || '');
+            }
+            if (e.key === 'ArrowDown') {
+              e.preventDefault();
+              cursor.current = Math.min(history.length, cursor.current + 1);
+              setInput(history[cursor.current] || '');
+            }
+            if (e.key === 'Tab') {
+              e.preventDefault();
+              const match = ['help', 'whoami', 'certs', 'nmap', 'soc', 'resume', 'neofetch', 'skills', 'tools', 'projects', 'os', 'theme', 'clear'].find(c => c.startsWith(input));
+              if (match) setInput(match);
+            }
+            if (e.ctrlKey && e.key === 'l') {
+              e.preventDefault();
+              setLines([]);
+            }
+          }}
+        />
+        <button aria-label="Run command" type="submit">
+          <Icon name="arrow" size={18}/>
+        </button>
+      </form>
+    </div>
+  );
 }
 
 export function Mail() {

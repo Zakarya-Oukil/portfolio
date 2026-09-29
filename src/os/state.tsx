@@ -4,10 +4,150 @@ import { PROJECTS, CATEGORIES } from './projects-data';
 import { cachedPortfolio, cachePortfolio, fetchPortfolio, PORTFOLIO_KEY, validPortfolio } from './portfolio-store';
 import { configureAudio, playSound } from './audio';
 
-export type Mode = 'macos' | 'ios' | 'android';
+export type Mode = 'macos' | 'ios' | 'android' | 'desktop' | 'nethunter';
 export type Theme = 'dark' | 'light' | 'oled';
-export type AppId = 'projects' | 'terminal' | 'settings' | 'mail' | 'about' | 'dossier' | 'flagships' | 'quickstart' | 'defense';
+export type OperatorStance = 'red' | 'blue';
+export type AppId =
+  | 'projects'
+  | 'terminal'
+  | 'settings'
+  | 'mail'
+  | 'about'
+  | 'dossier'
+  | 'flagships'
+  | 'quickstart'
+  | 'defense'
+  | 'pentest-reports'
+  | 'soc-hunting'
+  | 'masters-research'
+  | 'credentials-sig'
+  | 'live-soc-script'
+  | 'duckhunter'
+  | 'subnet-radar'
+  | 'incident-replay';
 export type Wallpaper = 'sonoma' | 'sequoia' | 'neon' | 'oled';
+
+export interface ExecutiveBriefing {
+  financialExposure: string;
+  regulatoryImpact: string;
+  downtimeRisk: string;
+  mitigationRoi: string;
+  assumptions: string;
+}
+export interface TechnicalBriefing {
+  mapping: string;
+  commands: string;
+  patches: string;
+  validation: string;
+}
+export type RecruiterRoleId = 'pentest' | 'soc' | 'systems';
+export interface RecruiterRole {
+  id: RecruiterRoleId;
+  label: string;
+  summary: string;
+  certifications: string[];
+  competencies: [string, string, string, string];
+  resumeUrl: string;
+  resumeFilename: string;
+  evidenceApp: AppId;
+}
+export interface RecruiterFastPassConfig {
+  workAuthorization: string;
+  availability: string;
+  workPreference: string;
+  clearance: string;
+  publicKeyUrl: string;
+  roles: RecruiterRole[];
+}
+export interface IncidentReplayStage {
+  id: string;
+  title: string;
+  mitre: string;
+  summary: string;
+  redLog: string;
+  blueLog: string;
+  exploitSyntax: string;
+  detectionRule: string;
+  packetFlow: { source: string; destination: string; protocol: string; observation: string }[];
+  outcome: string;
+  sourceUrl: string;
+}
+
+export interface PentestReportItem {
+  executiveBriefing?: ExecutiveBriefing;
+  technicalBriefing?: TechnicalBriefing;
+  id: string;
+  title: string;
+  clientCode: string;
+  date: string;
+  scope: string;
+  severity: 'Critical' | 'High' | 'Medium' | 'Low';
+  cvssScore: number;
+  cvssVector: string;
+  executiveSummary: string;
+  attackVector: string;
+  exploitChain: {
+    phase: string;
+    description: string;
+    codeSnippet?: string;
+  }[];
+  remediation: string[];
+  verifiedStatus: string;
+}
+
+export interface SocDetectionRule {
+  executiveBriefing?: ExecutiveBriefing;
+  technicalBriefing?: TechnicalBriefing;
+  id: string;
+  title: string;
+  format: 'sigma' | 'suricata' | 'yara';
+  severity: 'Critical' | 'High' | 'Medium' | 'Low';
+  mitreTactic: string;
+  mitreTechniqueId: string;
+  description: string;
+  ruleSyntax: string;
+  logSample?: string;
+}
+
+export interface MastersResearchPillar {
+  title: string;
+  summary: string;
+  findings: string;
+}
+
+export interface MastersResearchData {
+  thesisTitle: string;
+  institution: string;
+  degreeName: string;
+  year: string;
+  abstract: string;
+  defenseStatus: string;
+  pillars: MastersResearchPillar[];
+  metrics: { label: string; value: string }[];
+  citationsCount?: number;
+  paperUrl?: string;
+}
+
+export interface NetHunterPayload {
+  id: string;
+  title: string;
+  targetOs: string;
+  description: string;
+  script: string;
+}
+
+export interface NetHunterConfig {
+  usbArsenalStatus: string;
+  hidStatus: string;
+  monitorMode: boolean;
+  activePayloadId: string;
+  payloads: NetHunterPayload[];
+  recruiterQuickBrief: {
+    tagline: string;
+    summary: string;
+    topHighlights: string[];
+  };
+}
 
 export interface PortfolioTab {
   id: string;
@@ -89,9 +229,79 @@ export interface WidgetsConfig {
   neofetch: NeofetchData;
 }
 
-export const appNames: Record<AppId, string> = { projects: 'Projects', terminal: 'Terminal', settings: 'Settings', mail: 'Mail', about: 'About me', dossier: 'Executive Dossier', flagships: 'Flagship Projects', quickstart: 'Executive Terminal', defense: 'Cyber Defense Lab' };
-export const apps: AppId[] = ['projects', 'terminal', 'settings', 'mail', 'about'];
-export const modeNames: Record<Mode, string> = { macos: 'macOS 27', ios: 'iPhone 16 Pro Max', android: 'Android 15' };
+export interface MissionHudBadge {
+  id: string;
+  label: string;
+  type: 'certified' | 'in-progress' | 'degree';
+}
+
+export interface MissionHudAction {
+  id: string;
+  label: string;
+  icon: string;
+  appId: AppId;
+}
+
+export interface MissionHudTelemetry {
+  status: string;
+  clearance: string;
+  tun0: string;
+  certs: string;
+}
+
+export interface MissionHudStackGroup {
+  domain: string;
+  tools: string[];
+}
+
+export interface MissionHudResearch {
+  title: string;
+  subtitle: string;
+  abstract: string;
+  metrics: { label: string; value: string }[];
+}
+
+export interface MissionHudConfig {
+  title: string;
+  tagline: string;
+  promptLead: string;
+  promptCmd: string;
+  showDragon: boolean;
+  telemetry?: MissionHudTelemetry;
+  terminalOutput?: string[];
+  stackGroups?: MissionHudStackGroup[];
+  research?: MissionHudResearch;
+  badges: MissionHudBadge[];
+  actions: MissionHudAction[];
+}
+
+export const appNames: Record<AppId, string> = {
+  projects: 'Projects Arsenal',
+  terminal: 'Kali Terminal (Zsh)',
+  settings: 'System Settings',
+  mail: 'Secure Transmission',
+  about: 'Operator Dossier',
+  dossier: 'Executive Dossier',
+  flagships: 'Flagship Projects',
+  quickstart: 'Executive Terminal',
+  defense: 'Cyber Defense Lab',
+  'pentest-reports': 'Offensive Pentest Audits',
+  'soc-hunting': 'SOC Threat Hunting Center',
+  'masters-research': "Master's Research & Thesis",
+  'credentials-sig': 'Cryptographic Attestation',
+  'live-soc-script': 'Tactical Script Execution',
+  duckhunter: 'DuckHunter (BadUSB)',
+  'subnet-radar': 'Subnet Radar',
+  'incident-replay': 'Red vs. Blue Incident Replay'
+};
+export const apps: AppId[] = ['projects', 'terminal', 'pentest-reports', 'soc-hunting', 'incident-replay', 'masters-research', 'mail', 'about', 'settings'];
+export const modeNames: Record<Mode, string> = {
+  macos: 'Kali Workstation',
+  desktop: 'Kali Workstation',
+  nethunter: 'Kali NetHunter',
+  ios: 'Kali NetHunter',
+  android: 'Kali NetHunter'
+};
 
 export function readSaved<T>(key: string, fallback: T): T {
   try { return JSON.parse(localStorage.getItem(key) || 'null') ?? fallback; } catch { return fallback; }
@@ -114,10 +324,11 @@ function useSystem() {
   })();
 
   const [mode, setModeState] = useSaved<Mode>('zak.mode', initialMode);
+  const [operatorStance, setOperatorStance] = useSaved<OperatorStance>('zak.operatorStance', 'red');
   const [theme, setTheme] = useSaved<Theme>('zak.theme', cachedPortfolio().config.defaultTheme as Theme);
   const [wallpaper, setWallpaper] = useSaved<Wallpaper>('zak.wallpaper', cachedPortfolio().config.defaultWallpaper as Wallpaper);
-  const [windows, setWindows] = useState<WindowState[]>([{ id: 'projects', minimized: false, maximized: false, x: 0, y: 0, z: 1 }]);
-  const [active, setActive] = useState<AppId | null>(mode === 'macos' ? 'projects' : null);
+  const [windows, setWindows] = useState<WindowState[]>([]);
+  const [active, setActive] = useState<AppId | null>(null);
   const [history, setHistory] = useState<AppId[]>([]);
   const [shade, setShade] = useState(false);
   const [recents, setRecents] = useState(false);
@@ -129,6 +340,7 @@ function useSystem() {
   const [volume, setVolume] = useSaved('zak.volume', 65);
   const [soundOn, setSoundOn] = useSaved('zak.sound', false);
   const [brief, setBrief] = useState(false);
+  const [fastPassOpen, setFastPassOpen] = useState(false);
   const [transition, setTransition] = useState<{ from: Mode; to: Mode } | null>(null);
   const previousWindows = useRef<WindowState[]>([]);
   const previousActive = useRef<AppId | null>(null);
@@ -288,6 +500,8 @@ function useSystem() {
   return {
     mode,
     setMode,
+    operatorStance,
+    setOperatorStance,
     theme,
     setTheme,
     wallpaper,
@@ -317,6 +531,7 @@ function useSystem() {
     volume,
     setVolume,
     soundOn, toggleSound, brief, startBrief, endBrief, transition, setTransition,
+    fastPassOpen, setFastPassOpen,
     toggles,
     setToggles,
     battery,

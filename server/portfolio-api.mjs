@@ -19,6 +19,22 @@ function safeUrl(value, image = false) {
 export function validatePortfolio(data) {
   if (!data || !Array.isArray(data.tabs) || !Array.isArray(data.projects) || !data.config?.bio || !data.config?.widgets || data.projects.length > 100 || data.tabs.length > 30) return false;
   const strings = (item, keys) => item && keys.every(k => typeof item[k] === 'string' && item[k].length < 20000);
+  const briefingsValid = item => (!item.executiveBriefing || strings(item.executiveBriefing, ['financialExposure','regulatoryImpact','downtimeRisk','mitigationRoi','assumptions'])) && (!item.technicalBriefing || strings(item.technicalBriefing, ['mapping','commands','patches','validation']));
+  if (data.config.pentestReports !== undefined && (!Array.isArray(data.config.pentestReports) || !data.config.pentestReports.every(item =>
+    strings(item, ['id','title','clientCode','date','scope','severity','cvssVector','executiveSummary','attackVector','verifiedStatus']) &&
+    ['Critical','High','Medium','Low'].includes(item.severity) && Number.isFinite(item.cvssScore) && item.cvssScore >= 0 && item.cvssScore <= 10 &&
+    Array.isArray(item.exploitChain) && item.exploitChain.every(step => strings(step, ['phase','description']) && (step.codeSnippet === undefined || typeof step.codeSnippet === 'string')) &&
+    Array.isArray(item.remediation) && item.remediation.every(step => typeof step === 'string') && briefingsValid(item)))) return false;
+  if (data.config.socRules !== undefined && (!Array.isArray(data.config.socRules) || !data.config.socRules.every(item =>
+    strings(item, ['id','title','format','severity','mitreTactic','mitreTechniqueId','description','ruleSyntax']) && ['sigma','suricata','yara'].includes(item.format) &&
+    ['Critical','High','Medium','Low'].includes(item.severity) && (item.logSample === undefined || typeof item.logSample === 'string') && briefingsValid(item)))) return false;
+  const fastPass = data.config.recruiterFastPass;
+  if (fastPass !== undefined && (!strings(fastPass, ['workAuthorization','availability','workPreference','clearance','publicKeyUrl']) ||
+    !Array.isArray(fastPass.roles) || fastPass.roles.length !== 3 || new Set(fastPass.roles.map(r => r?.id)).size !== 3 ||
+    !fastPass.roles.every(role => strings(role, ['id','label','summary','resumeUrl','resumeFilename','evidenceApp']) &&
+      ['pentest','soc','systems'].includes(role.id) && ['pentest-reports','soc-hunting','masters-research'].includes(role.evidenceApp) &&
+      Array.isArray(role.competencies) && role.competencies.length === 4 && role.competencies.every(s => typeof s === 'string') &&
+      Array.isArray(role.certifications) && role.certifications.every(s => typeof s === 'string')))) return false;
   if (!data.tabs.every(t => strings(t, ['id','name','slogan','title','subtitle','icon']))) return false;
   if (new Set(data.tabs.map(t => t.id)).size !== data.tabs.length || new Set(data.tabs.map(t => t.name)).size !== data.tabs.length) return false;
   if (!data.projects.every(p => strings(p, ['id','country','title','subtitle','location','description','duration','distance']) && typeof p.image === 'string' && data.tabs.some(t => t.name === p.country) && (!p.tags || (Array.isArray(p.tags) && p.tags.every(t => typeof t === 'string'))) && (!p.architecture || (Array.isArray(p.architecture) && p.architecture.every(n => strings(n, ['id','label','detail'])))) && (!p.metrics || (Array.isArray(p.metrics) && p.metrics.every(m => strings(m, ['label','value','source'])))))) return false;

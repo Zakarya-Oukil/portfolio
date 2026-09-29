@@ -23,6 +23,42 @@ test('seed data validates and preserves requested certification statuses', () =>
   assert.equal(validatePortfolio(seed),true);
   assert.deepEqual(seed.config.widgets.certs.map(c => c.status), ['certified','in-progress','in-progress']);
 });
+test('recruitment fields reject malformed role and report shapes while accepting legacy data', () => {
+  const legacy = structuredClone(seed);
+  delete legacy.config.recruiterFastPass;
+  for (const item of [...legacy.config.pentestReports, ...legacy.config.socRules]) { delete item.executiveBriefing; delete item.technicalBriefing; }
+  assert.equal(validatePortfolio(legacy), true);
+  for (const mutate of [
+    d => { d.config.recruiterFastPass.roles[0].competencies = ['Only one']; },
+    d => { d.config.recruiterFastPass.roles[0].id = 'soc'; },
+    d => { d.config.recruiterFastPass.roles[0].resumeUrl = 'javascript:alert(1)'; },
+    d => { d.config.pentestReports[0].executiveBriefing.financialExposure = 42; },
+    d => { d.config.socRules[0].technicalBriefing.patches = []; },
+    d => { d.config.socRules[0].format = 'invalid'; }
+  ]) { const invalid = structuredClone(seed); mutate(invalid); assert.equal(validatePortfolio(invalid), false); }
+});
+test('recruiter role edits and both report audiences survive authenticated publishing', async t => {
+  const f = await fixture(t), cookie = await f.login();
+  const changed = structuredClone(seed);
+  changed.config.recruiterFastPass.roles[1].competencies[0] = 'Edited SOC competency';
+  changed.config.pentestReports[0].executiveBriefing.financialExposure = 'Reviewed estimate';
+  changed.config.socRules[0].technicalBriefing.patches = 'Reviewed containment patch';
+  assert.equal((await f.post('/api/portfolio-data', changed, cookie)).status, 200);
+  const published = await (await f.request('/api/portfolio-data')).json();
+  assert.equal(published.config.recruiterFastPass.roles[1].competencies[0], 'Edited SOC competency');
+  assert.equal(published.config.pentestReports[0].executiveBriefing.financialExposure, 'Reviewed estimate');
+  assert.equal(published.config.socRules[0].technicalBriefing.patches, 'Reviewed containment patch');
+});
+test('a proposed technical screen reaches only the authenticated local inbox', async t => {
+  const f = await fixture(t);
+  const message = { name: 'Test Recruiter', email: 'recruiter@example.test', subject: '15-minute technical screen request — SOC Analyst', message: 'Proposed time: 2030-01-01T09:00:00.000Z. Duration: 15 minutes. Awaiting confirmation.' };
+  assert.equal((await f.post('/api/mail', message)).status, 200);
+  assert.equal((await f.request('/api/messages')).status, 401);
+  const cookie = await f.login();
+  const inbox = await (await f.request('/api/messages', { headers: { cookie } })).json();
+  assert.equal(inbox[0].message, message.message);
+  assert.equal(inbox[0].subject, message.subject);
+});
 test('public reads work while unauthorized writes and inbox reads fail closed', async t => {
   const f = await fixture(t);
   assert.equal((await f.request('/api/portfolio-data')).status,200);

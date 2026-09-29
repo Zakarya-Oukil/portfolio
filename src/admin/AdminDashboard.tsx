@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { AppIcon } from '../os/Icon';
+import { AppIcon, KaliDragonIcon } from '../os/Icon';
 import './admin.css';
 import { cachePortfolio, cachedPortfolio, fetchPortfolio, DRAFT_KEY, validPortfolio } from '../os/portfolio-store';
 import { CommandCenterAdmin, ProjectExtras } from './CommandCenterAdmin';
+import { CyberAppsAdmin } from './CyberAppsAdmin';
+import { MissionHudConfig, MissionHudBadge, MissionHudAction, MissionHudTelemetry, MissionHudResearch, MissionHudStackGroup } from '../os/state';
 
 interface TabItem {
   id: string;
@@ -103,6 +105,7 @@ interface PortfolioConfig {
     android?: Record<string, string>;
   };
   widgets?: WidgetsConfig;
+  missionHud?: MissionHudConfig;
 }
 
 interface PortfolioData {
@@ -122,7 +125,19 @@ interface MessageItem {
   read?: boolean;
 }
 
-type AdminSection = 'tabs' | 'projects' | 'icons' | 'appearance' | 'widgets' | 'inbox';
+type AdminSection =
+  | 'tabs'
+  | 'projects'
+  | 'icons'
+  | 'appearance'
+  | 'widgets'
+  | 'missionHud'
+  | 'pentestReports'
+  | 'socRules'
+  | 'mastersResearch'
+  | 'netHunter'
+  | 'recruiterFastPass'
+  | 'inbox';
 
 const SYSTEM_APPS = [
   { id: 'projects', name: 'Projects', desc: 'Central showcase of engineering systems and CTF work' },
@@ -554,6 +569,359 @@ export function AdminDashboard() {
     });
   };
 
+  // --- KALI WORKSTATION & MISSION HUD MODIFIERS ---
+  const getHudConfig = (): MissionHudConfig => {
+    return data?.config?.missionHud || {
+      title: 'ZAKARYA OUKIL',
+      tagline: 'Master’s Degree Candidate in Cybersecurity · eJPT Certified · BTL1 SOC Analyst',
+      promptLead: '┌──(zakarya㉿kali)-[~/portfolio]',
+      promptCmd: '└─$ whoami --verbose',
+      showDragon: true,
+      telemetry: {
+        status: 'OPERATIONAL 🟢',
+        clearance: 'L3 SECOPS',
+        tun0: '10.10.14.22',
+        certs: 'eJPT · BTL1 · Security+'
+      },
+      terminalOutput: [
+        'uid=1000(zakarya) gid=1000(kali) groups=1000(kali),27(sudo),1337(redteam,blueteam)',
+        '[+] OPERATOR    : Zakarya Oukil (Security Researcher & Systems Architect)',
+        '[+] ACADEMIC    : Master\'s Degree Candidate in Cybersecurity (Zero-Trust Specialization)',
+        '[+] CREDENTIALS : eJPT Verified · BTL1 SOC Analyst · CompTIA Security+',
+        '[+] CAPABILITIES: Adversarial ML · Threat Hunting · Kernel Sandboxing · Exploit Chaining',
+        '[+] AVAILABILITY: Open to Red Team, Blue Team, & Systems Engineering Roles'
+      ],
+      stackGroups: [
+        {
+          domain: 'Offensive & Red Team',
+          tools: ['Ghidra', 'Burp Suite Pro', 'Metasploit', 'Nmap', 'BloodHound', 'Impacket', 'SQLmap', 'Hashcat']
+        },
+        {
+          domain: 'Defensive & Blue Team (BTL1)',
+          tools: ['Wireshark', 'Suricata / Snort', 'Splunk SIEM', 'Elastic Security', 'Volatility 3', 'Autopsy', 'Zeek']
+        },
+        {
+          domain: 'Systems & Engineering',
+          tools: ['Python (Scapy, AsyncIO)', 'C / C++', 'Linux Kernel 6.x', 'Docker Container Enclaves', 'Kubernetes', 'Git']
+        }
+      ],
+      research: {
+        title: 'Adversarial ML & Kernel Sandboxing in Zero-Trust Runtimes',
+        subtitle: "Master's Degree Research Project & Thesis",
+        abstract: 'Investigating adversarial evasion against neural intrusion detection systems and developing hardware-isolated eBPF runtime sandboxing to prevent post-exploitation privilege escalation in Linux production environments.',
+        metrics: [
+          { label: 'Security Repositories', value: '16+' },
+          { label: 'Audited Pentest Engagements', value: '2' },
+          { label: 'Hands-on Lab Scenarios', value: '100%' },
+          { label: 'Uptime / Stability', value: '99.98%' }
+        ]
+      },
+      badges: [
+        { id: 'b1', label: 'eJPT Certified', type: 'certified' },
+        { id: 'b2', label: 'BTL1 SOC Analyst', type: 'in-progress' },
+        { id: 'b3', label: 'CompTIA Security+', type: 'in-progress' },
+        { id: 'b4', label: 'MSc Cybersecurity', type: 'degree' }
+      ],
+      actions: [
+        { id: 'a1', label: '60-Second Recruiter Brief', icon: 'quickstart', appId: 'quickstart' },
+        { id: 'a2', label: 'SOC Incident Simulator', icon: 'defense', appId: 'defense' },
+        { id: 'a3', label: 'Kali Zsh Shell', icon: 'terminal', appId: 'terminal' },
+        { id: 'a4', label: 'Resume / CV', icon: 'about', appId: 'about' }
+      ]
+    };
+  };
+
+  const handleUpdateMissionHud = (field: keyof MissionHudConfig, value: any) => {
+    if (!data) return;
+    const currentHud = getHudConfig();
+    setData({
+      ...data,
+      config: {
+        ...data.config,
+        missionHud: {
+          ...currentHud,
+          [field]: value
+        }
+      }
+    });
+  };
+
+  const handleAddHudBadge = () => {
+    if (!data) return;
+    const currentHud = getHudConfig();
+    const newBadge: MissionHudBadge = {
+      id: `b_${Date.now()}`,
+      label: 'New Verified Credential',
+      type: 'certified'
+    };
+    setData({
+      ...data,
+      config: {
+        ...data.config,
+        missionHud: {
+          ...currentHud,
+          badges: [...currentHud.badges, newBadge]
+        }
+      }
+    });
+    triggerToast('Added new credential badge to Kali HUD.');
+  };
+
+  const handleRemoveHudBadge = (id: string) => {
+    if (!data) return;
+    const currentHud = getHudConfig();
+    setData({
+      ...data,
+      config: {
+        ...data.config,
+        missionHud: {
+          ...currentHud,
+          badges: currentHud.badges.filter(b => b.id !== id)
+        }
+      }
+    });
+    triggerToast('Removed badge from Kali HUD.');
+  };
+
+  const handleUpdateHudBadge = (id: string, field: keyof MissionHudBadge, value: any) => {
+    if (!data) return;
+    const currentHud = getHudConfig();
+    setData({
+      ...data,
+      config: {
+        ...data.config,
+        missionHud: {
+          ...currentHud,
+          badges: currentHud.badges.map(b => b.id === id ? { ...b, [field]: value } : b)
+        }
+      }
+    });
+  };
+
+  const handleAddHudAction = () => {
+    if (!data) return;
+    const currentHud = getHudConfig();
+    const newAction: MissionHudAction = {
+      id: `a_${Date.now()}`,
+      label: 'New Action',
+      icon: '🚀',
+      appId: 'projects'
+    };
+    setData({
+      ...data,
+      config: {
+        ...data.config,
+        missionHud: {
+          ...currentHud,
+          actions: [...currentHud.actions, newAction]
+        }
+      }
+    });
+    triggerToast('Added action button to Kali HUD.');
+  };
+
+  const handleRemoveHudAction = (id: string) => {
+    if (!data) return;
+    const currentHud = getHudConfig();
+    setData({
+      ...data,
+      config: {
+        ...data.config,
+        missionHud: {
+          ...currentHud,
+          actions: currentHud.actions.filter(a => a.id !== id)
+        }
+      }
+    });
+    triggerToast('Removed action from Kali HUD.');
+  };
+
+  const handleUpdateHudAction = (id: string, field: keyof MissionHudAction, value: any) => {
+    if (!data) return;
+    const currentHud = getHudConfig();
+    setData({
+      ...data,
+      config: {
+        ...data.config,
+        missionHud: {
+          ...currentHud,
+          actions: currentHud.actions.map(a => a.id === id ? { ...a, [field]: value } : a)
+        }
+      }
+    });
+  };
+
+  const handleUpdateHudTelemetry = (field: keyof MissionHudTelemetry, value: string) => {
+    if (!data) return;
+    const currentHud = getHudConfig();
+    const currentTelemetry = currentHud.telemetry || {
+      status: 'OPERATIONAL 🟢',
+      clearance: 'L3 SECOPS',
+      tun0: '10.10.14.22',
+      certs: 'eJPT · BTL1 · Security+'
+    };
+    setData({
+      ...data,
+      config: {
+        ...data.config,
+        missionHud: {
+          ...currentHud,
+          telemetry: {
+            ...currentTelemetry,
+            [field]: value
+          }
+        }
+      }
+    });
+  };
+
+  const handleUpdateHudTerminalOutput = (text: string) => {
+    if (!data) return;
+    const currentHud = getHudConfig();
+    const lines = text.split('\n');
+    setData({
+      ...data,
+      config: {
+        ...data.config,
+        missionHud: {
+          ...currentHud,
+          terminalOutput: lines
+        }
+      }
+    });
+  };
+
+  const handleUpdateHudResearch = (field: keyof MissionHudResearch, value: any) => {
+    if (!data) return;
+    const currentHud = getHudConfig();
+    const currentResearch = currentHud.research || {
+      title: 'Adversarial ML & Kernel Sandboxing in Zero-Trust Runtimes',
+      subtitle: "Master's Degree Research Project & Thesis",
+      abstract: 'Investigating adversarial evasion against neural intrusion detection systems and developing hardware-isolated eBPF runtime sandboxing to prevent post-exploitation privilege escalation in Linux production environments.',
+      metrics: [
+        { label: 'Security Repositories', value: '16+' },
+        { label: 'Audited Pentest Engagements', value: '2' },
+        { label: 'Hands-on Lab Scenarios', value: '100%' },
+        { label: 'Uptime / Stability', value: '99.98%' }
+      ]
+    };
+    setData({
+      ...data,
+      config: {
+        ...data.config,
+        missionHud: {
+          ...currentHud,
+          research: {
+            ...currentResearch,
+            [field]: value
+          }
+        }
+      }
+    });
+  };
+
+  const handleUpdateHudResearchMetric = (index: number, field: 'label' | 'value', val: string) => {
+    if (!data) return;
+    const currentHud = getHudConfig();
+    const currentResearch = currentHud.research || {
+      title: 'Adversarial ML & Kernel Sandboxing in Zero-Trust Runtimes',
+      subtitle: "Master's Degree Research Project & Thesis",
+      abstract: 'Investigating adversarial evasion against neural intrusion detection systems and developing hardware-isolated eBPF runtime sandboxing to prevent post-exploitation privilege escalation in Linux production environments.',
+      metrics: [
+        { label: 'Security Repositories', value: '16+' },
+        { label: 'Audited Pentest Engagements', value: '2' },
+        { label: 'Hands-on Lab Scenarios', value: '100%' },
+        { label: 'Uptime / Stability', value: '99.98%' }
+      ]
+    };
+    const newMetrics = [...(currentResearch.metrics || [])];
+    if (newMetrics[index]) {
+      newMetrics[index] = { ...newMetrics[index], [field]: val };
+    }
+    setData({
+      ...data,
+      config: {
+        ...data.config,
+        missionHud: {
+          ...currentHud,
+          research: {
+            ...currentResearch,
+            metrics: newMetrics
+          }
+        }
+      }
+    });
+  };
+
+  const handleResetMissionHud = () => {
+    if (!data) return;
+    setData({
+      ...data,
+      config: {
+        ...data.config,
+        missionHud: {
+          title: 'ZAKARYA OUKIL',
+          tagline: 'Master’s Degree Candidate in Cybersecurity · eJPT Certified · BTL1 SOC Analyst',
+          promptLead: '┌──(zakarya㉿kali)-[~/portfolio]',
+          promptCmd: '└─$ whoami --verbose',
+          showDragon: true,
+          telemetry: {
+            status: 'OPERATIONAL 🟢',
+            clearance: 'L3 SECOPS',
+            tun0: '10.10.14.22',
+            certs: 'eJPT · BTL1 · Security+'
+          },
+          terminalOutput: [
+            'uid=1000(zakarya) gid=1000(kali) groups=1000(kali),27(sudo),1337(redteam,blueteam)',
+            '[+] OPERATOR    : Zakarya Oukil (Security Researcher & Systems Architect)',
+            '[+] ACADEMIC    : Master\'s Degree Candidate in Cybersecurity (Zero-Trust Specialization)',
+            '[+] CREDENTIALS : eJPT Verified · BTL1 SOC Analyst · CompTIA Security+',
+            '[+] CAPABILITIES: Adversarial ML · Threat Hunting · Kernel Sandboxing · Exploit Chaining',
+            '[+] AVAILABILITY: Open to Red Team, Blue Team, & Systems Engineering Roles'
+          ],
+          stackGroups: [
+            {
+              domain: 'Offensive & Red Team',
+              tools: ['Ghidra', 'Burp Suite Pro', 'Metasploit', 'Nmap', 'BloodHound', 'Impacket', 'SQLmap', 'Hashcat']
+            },
+            {
+              domain: 'Defensive & Blue Team (BTL1)',
+              tools: ['Wireshark', 'Suricata / Snort', 'Splunk SIEM', 'Elastic Security', 'Volatility 3', 'Autopsy', 'Zeek']
+            },
+            {
+              domain: 'Systems & Engineering',
+              tools: ['Python (Scapy, AsyncIO)', 'C / C++', 'Linux Kernel 6.x', 'Docker Container Enclaves', 'Kubernetes', 'Git']
+            }
+          ],
+          research: {
+            title: 'Adversarial ML & Kernel Sandboxing in Zero-Trust Runtimes',
+            subtitle: "Master's Degree Research Project & Thesis",
+            abstract: 'Investigating adversarial evasion against neural intrusion detection systems and developing hardware-isolated eBPF runtime sandboxing to prevent post-exploitation privilege escalation in Linux production environments.',
+            metrics: [
+              { label: 'Security Repositories', value: '16+' },
+              { label: 'Audited Pentest Engagements', value: '2' },
+              { label: 'Hands-on Lab Scenarios', value: '100%' },
+              { label: 'Uptime / Stability', value: '99.98%' }
+            ]
+          },
+          badges: [
+            { id: 'b1', label: 'eJPT Certified', type: 'certified' },
+            { id: 'b2', label: 'BTL1 SOC Analyst', type: 'in-progress' },
+            { id: 'b3', label: 'CompTIA Security+', type: 'in-progress' },
+            { id: 'b4', label: 'MSc Cybersecurity', type: 'degree' }
+          ],
+          actions: [
+            { id: 'a1', label: '60-Second Recruiter Brief', icon: 'quickstart', appId: 'quickstart' },
+            { id: 'a2', label: 'SOC Incident Simulator', icon: 'defense', appId: 'defense' },
+            { id: 'a3', label: 'Kali Zsh Shell', icon: 'terminal', appId: 'terminal' },
+            { id: 'a4', label: 'Resume / CV', icon: 'about', appId: 'about' }
+          ]
+        }
+      }
+    });
+    triggerToast('Reset Mission HUD to default Kali Linux configurations.');
+  };
+
   // Login Screen if not authenticated
   if (!isAuthenticated) {
     return (
@@ -736,6 +1104,48 @@ export function AdminDashboard() {
           >
             <span>🎛️</span> Desktop Widgets
             <span className="admin-nav-badge" style={{ background: '#10b981', color: '#fff' }}>Live</span>
+          </button>
+
+          <button
+            className={`admin-nav-item ${activeSection === 'missionHud' ? 'active' : ''}`}
+            onClick={() => setActiveSection('missionHud')}
+          >
+            <span>🐉</span> Kali Workstation & HUD
+            <span className="admin-nav-badge" style={{ background: '#0284c7', color: '#fff' }}>Kali</span>
+          </button>
+
+          <button className={`admin-nav-item ${activeSection === 'recruiterFastPass' ? 'active' : ''}`} onClick={() => setActiveSection('recruiterFastPass')}><span>⚡</span> Recruiter Fast-Pass</button>
+
+          <button
+            className={`admin-nav-item ${activeSection === 'pentestReports' ? 'active' : ''}`}
+            onClick={() => setActiveSection('pentestReports')}
+          >
+            <span>🎯</span> Pentest Audits CMS
+            <span className="admin-nav-badge" style={{ background: '#ef4444', color: '#fff' }}>Red</span>
+          </button>
+
+          <button
+            className={`admin-nav-item ${activeSection === 'socRules' ? 'active' : ''}`}
+            onClick={() => setActiveSection('socRules')}
+          >
+            <span>🛡️</span> SOC Threat Hunting
+            <span className="admin-nav-badge" style={{ background: '#10b981', color: '#fff' }}>Blue</span>
+          </button>
+
+          <button
+            className={`admin-nav-item ${activeSection === 'mastersResearch' ? 'active' : ''}`}
+            onClick={() => setActiveSection('mastersResearch')}
+          >
+            <span>🎓</span> Master's Research Hub
+            <span className="admin-nav-badge" style={{ background: '#8b5cf6', color: '#fff' }}>Thesis</span>
+          </button>
+
+          <button
+            className={`admin-nav-item ${activeSection === 'netHunter' ? 'active' : ''}`}
+            onClick={() => setActiveSection('netHunter')}
+          >
+            <span>📱</span> NetHunter Mobile Deck
+            <span className="admin-nav-badge" style={{ background: '#06b6d4', color: '#fff' }}>Mobile</span>
           </button>
 
           <button
@@ -1638,6 +2048,380 @@ export function AdminDashboard() {
                 </div>
               </div>
             </div>
+          )}
+
+          {/* SECTION: KALI WORKSTATION & MISSION HUD */}
+          {activeSection === 'missionHud' && (
+            <div>
+              <div className="admin-view-header">
+                <div>
+                  <h2>🐉 Kali Workstation &amp; Mission Command HUD</h2>
+                  <p>Full control over the center interactive whoami HUD: identity, live Zsh prompt, credentials badges, and quick-action launcher buttons.</p>
+                </div>
+                <button
+                  type="button"
+                  className="admin-secondary-btn"
+                  onClick={handleResetMissionHud}
+                  style={{ fontSize: 12 }}
+                >
+                  🔄 Reset to Kali Defaults
+                </button>
+              </div>
+
+              {/* CARD 1: OPERATOR IDENTITY & DRAGON HOLOGRAM */}
+              <div className="admin-card">
+                <div className="admin-card-header">
+                  <h3>
+                    <KaliDragonIcon size={20} color="#38bdf8" /> Operator Identity &amp; Hologram
+                  </h3>
+                  <span style={{ fontSize: 11, color: '#38bdf8' }}>Center Mission HUD Hero Banner</span>
+                </div>
+                <div className="admin-form-grid">
+                  <div className="admin-field">
+                    <label>Operator Name / Call-sign</label>
+                    <input
+                      className="admin-input"
+                      value={getHudConfig().title || ''}
+                      onChange={e => handleUpdateMissionHud('title', e.target.value)}
+                      placeholder="e.g. ZAKARYA OUKIL"
+                    />
+                  </div>
+
+                  <div className="admin-field">
+                    <label>Holographic Kali Dragon Badge</label>
+                    <div style={{ display: 'flex', alignItems: 'center', height: '100%', gap: 12 }}>
+                      <button
+                        type="button"
+                        className={`admin-toggle-switch ${getHudConfig().showDragon !== false ? 'on' : 'off'}`}
+                        onClick={() => handleUpdateMissionHud('showDragon', getHudConfig().showDragon === false ? true : false)}
+                      >
+                        <span className="switch-handle" />
+                        <span className="switch-label">{getHudConfig().showDragon !== false ? 'VISIBLE' : 'HIDDEN'}</span>
+                      </button>
+                      <span style={{ fontSize: 11, color: '#94a3b8' }}>
+                        Display Kali dragon cyber sigil next to operator name
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="admin-field full-width">
+                    <label>Operator Subtitle / Mission Tagline</label>
+                    <input
+                      className="admin-input"
+                      value={getHudConfig().tagline || ''}
+                      onChange={e => handleUpdateMissionHud('tagline', e.target.value)}
+                      placeholder="Master’s Degree Candidate in Cybersecurity · eJPT Certified · BTL1 SOC Analyst"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* CARD: TACTICAL TELEMETRY STATUS RIBBON */}
+              <div className="admin-card">
+                <div className="admin-card-header">
+                  <h3>🛰️ Tactical Telemetry Ribbon</h3>
+                  <span style={{ fontSize: 11, color: '#10b981' }}>Status bar on top of the Mission HUD</span>
+                </div>
+                <div className="admin-form-grid">
+                  <div className="admin-field">
+                    <label>System Operational Status</label>
+                    <input
+                      className="admin-input"
+                      value={getHudConfig().telemetry?.status || ''}
+                      onChange={e => handleUpdateHudTelemetry('status', e.target.value)}
+                      placeholder="OPERATIONAL 🟢"
+                    />
+                  </div>
+
+                  <div className="admin-field">
+                    <label>Security Clearance Level</label>
+                    <input
+                      className="admin-input"
+                      value={getHudConfig().telemetry?.clearance || ''}
+                      onChange={e => handleUpdateHudTelemetry('clearance', e.target.value)}
+                      placeholder="L3 SECOPS"
+                    />
+                  </div>
+
+                  <div className="admin-field">
+                    <label>Active TUN0 VPN IP</label>
+                    <input
+                      className="admin-input"
+                      style={{ fontFamily: 'monospace' }}
+                      value={getHudConfig().telemetry?.tun0 || ''}
+                      onChange={e => handleUpdateHudTelemetry('tun0', e.target.value)}
+                      placeholder="10.10.14.22"
+                    />
+                  </div>
+
+                  <div className="admin-field">
+                    <label>Certifications Ribbon Summary</label>
+                    <input
+                      className="admin-input"
+                      value={getHudConfig().telemetry?.certs || ''}
+                      onChange={e => handleUpdateHudTelemetry('certs', e.target.value)}
+                      placeholder="eJPT · BTL1 · Security+"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* CARD 2: INTERACTIVE ZSH PROMPT LEAD & COMMAND */}
+              <div className="admin-card">
+                <div className="admin-card-header">
+                  <h3>💻 Kali Zsh Terminal Header &amp; Verbose Output</h3>
+                  <span style={{ fontSize: 11, color: '#10b981' }}>Live interactive terminal shell prompt &amp; whoami output</span>
+                </div>
+                <div className="admin-form-grid">
+                  <div className="admin-field">
+                    <label>Prompt Lead (Line 1)</label>
+                    <input
+                      className="admin-input"
+                      style={{ fontFamily: 'monospace' }}
+                      value={getHudConfig().promptLead || ''}
+                      onChange={e => handleUpdateMissionHud('promptLead', e.target.value)}
+                      placeholder="┌──(zakarya㉿kali)-[~/portfolio]"
+                    />
+                  </div>
+
+                  <div className="admin-field">
+                    <label>Shell Command (Line 2)</label>
+                    <input
+                      className="admin-input"
+                      style={{ fontFamily: 'monospace' }}
+                      value={getHudConfig().promptCmd || ''}
+                      onChange={e => handleUpdateMissionHud('promptCmd', e.target.value)}
+                      placeholder="└─$ whoami --verbose"
+                    />
+                  </div>
+
+                  <div className="admin-field full-width">
+                    <label>Terminal Execution Output (1 line per entry)</label>
+                    <textarea
+                      className="admin-textarea"
+                      rows={6}
+                      style={{ fontFamily: 'monospace', fontSize: 12, lineHeight: 1.5 }}
+                      value={(getHudConfig().terminalOutput || []).join('\n')}
+                      onChange={e => handleUpdateHudTerminalOutput(e.target.value)}
+                      placeholder="uid=1000(zakarya) gid=1000(kali)&#10;[+] OPERATOR: Zakarya Oukil"
+                    />
+                    <span style={{ fontSize: 11, color: '#94a3b8' }}>Lines displayed inside the live Zsh terminal execution container.</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* CARD: MASTER'S RESEARCH & LABS SPOTLIGHT */}
+              <div className="admin-card">
+                <div className="admin-card-header">
+                  <h3>🔬 Master's Thesis &amp; Advanced Research (Tab 03)</h3>
+                  <span style={{ fontSize: 11, color: '#a855f7' }}>Specialized academic &amp; lab spotlight</span>
+                </div>
+                <div className="admin-form-grid">
+                  <div className="admin-field full-width">
+                    <label>Research / Thesis Title</label>
+                    <input
+                      className="admin-input"
+                      value={getHudConfig().research?.title || ''}
+                      onChange={e => handleUpdateHudResearch('title', e.target.value)}
+                      placeholder="Adversarial ML & Kernel Sandboxing in Zero-Trust Runtimes"
+                    />
+                  </div>
+
+                  <div className="admin-field full-width">
+                    <label>Research Subtitle / Track</label>
+                    <input
+                      className="admin-input"
+                      value={getHudConfig().research?.subtitle || ''}
+                      onChange={e => handleUpdateHudResearch('subtitle', e.target.value)}
+                      placeholder="Master's Degree Research Project & Thesis"
+                    />
+                  </div>
+
+                  <div className="admin-field full-width">
+                    <label>Abstract / Research Focus</label>
+                    <textarea
+                      className="admin-textarea"
+                      rows={3}
+                      value={getHudConfig().research?.abstract || ''}
+                      onChange={e => handleUpdateHudResearch('abstract', e.target.value)}
+                      placeholder="Investigating adversarial evasion against neural intrusion detection systems..."
+                    />
+                  </div>
+
+                  <div className="admin-field full-width">
+                    <label>Key Research &amp; Lab Metrics</label>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 10 }}>
+                      {(getHudConfig().research?.metrics || []).map((m, idx) => (
+                        <div key={idx} style={{ background: 'rgba(255, 255, 255, 0.03)', padding: 10, borderRadius: 8, border: '1px solid rgba(255, 255, 255, 0.06)' }}>
+                          <label style={{ fontSize: 10, color: '#94a3b8', textTransform: 'uppercase' }}>Metric {idx + 1} Label</label>
+                          <input
+                            className="admin-input"
+                            style={{ marginBottom: 6, fontSize: 12 }}
+                            value={m.label}
+                            onChange={e => handleUpdateHudResearchMetric(idx, 'label', e.target.value)}
+                          />
+                          <label style={{ fontSize: 10, color: '#94a3b8', textTransform: 'uppercase' }}>Metric {idx + 1} Value</label>
+                          <input
+                            className="admin-input"
+                            style={{ fontSize: 13, fontWeight: 700, color: '#38bdf8' }}
+                            value={m.value}
+                            onChange={e => handleUpdateHudResearchMetric(idx, 'value', e.target.value)}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* CARD 3: CREDENTIAL & SPECIALIZATION BADGES */}
+              <div className="admin-card">
+                <div className="admin-card-header">
+                  <h3>🛡️ Credential &amp; Specialization Badges</h3>
+                  <button
+                    type="button"
+                    className="admin-primary-btn"
+                    style={{ padding: '6px 12px', fontSize: 12 }}
+                    onClick={handleAddHudBadge}
+                  >
+                    <span>+</span> Add Badge
+                  </button>
+                </div>
+                <p style={{ fontSize: 12, color: '#94a3b8', marginBottom: 16 }}>
+                  Highlighted badges rendered inside the HUD with corresponding status glows (Green = Certified, Amber = In Progress, Cyan = Academic Degree).
+                </p>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  {getHudConfig().badges.map((b, idx) => (
+                    <div
+                      key={b.id || idx}
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 180px 40px',
+                        gap: 12,
+                        alignItems: 'center',
+                        background: 'rgba(255, 255, 255, 0.03)',
+                        padding: '10px 14px',
+                        borderRadius: 8,
+                        border: '1px solid rgba(255, 255, 255, 0.06)'
+                      }}
+                    >
+                      <input
+                        className="admin-input"
+                        value={b.label}
+                        onChange={e => handleUpdateHudBadge(b.id, 'label', e.target.value)}
+                        placeholder="Badge label (e.g. eJPT Certified)"
+                      />
+                      <select
+                        className="admin-select"
+                        value={b.type}
+                        onChange={e => handleUpdateHudBadge(b.id, 'type', e.target.value as any)}
+                      >
+                        <option value="certified">🟢 Certified (Emerald)</option>
+                        <option value="in-progress">🟡 In Progress (Amber)</option>
+                        <option value="degree">🔵 Academic (Cyan)</option>
+                      </select>
+                      <button
+                        type="button"
+                        className="admin-danger-btn"
+                        style={{ padding: '6px 0', textAlign: 'center' }}
+                        onClick={() => handleRemoveHudBadge(b.id)}
+                        title="Delete Badge"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* CARD 4: QUICK ACTION LAUNCH BUTTONS */}
+              <div className="admin-card">
+                <div className="admin-card-header">
+                  <h3>⚡ Quick Action Launcher Buttons</h3>
+                  <button
+                    type="button"
+                    className="admin-primary-btn"
+                    style={{ padding: '6px 12px', fontSize: 12 }}
+                    onClick={handleAddHudAction}
+                  >
+                    <span>+</span> Add Action
+                  </button>
+                </div>
+                <p style={{ fontSize: 12, color: '#94a3b8', marginBottom: 16 }}>
+                  Rapid conversion launch buttons on the bottom of the HUD triggering applications or workflows directly.
+                </p>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  {getHudConfig().actions.map((a, idx) => (
+                    <div
+                      key={a.id || idx}
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: '60px 1fr 180px 40px',
+                        gap: 12,
+                        alignItems: 'center',
+                        background: 'rgba(255, 255, 255, 0.03)',
+                        padding: '10px 14px',
+                        borderRadius: 8,
+                        border: '1px solid rgba(255, 255, 255, 0.06)'
+                      }}
+                    >
+                      <input
+                        className="admin-input"
+                        style={{ textAlign: 'center' }}
+                        value={a.icon}
+                        onChange={e => handleUpdateHudAction(a.id, 'icon', e.target.value)}
+                        placeholder="⚡"
+                        title="Emoji or Icon Glyph"
+                      />
+                      <input
+                        className="admin-input"
+                        value={a.label}
+                        onChange={e => handleUpdateHudAction(a.id, 'label', e.target.value)}
+                        placeholder="Action Label (e.g. 60-Second Brief)"
+                      />
+                      <select
+                        className="admin-select"
+                        value={a.appId}
+                        onChange={e => handleUpdateHudAction(a.id, 'appId', e.target.value)}
+                      >
+                        <option value="quickstart">⚡ Recruiter Brief (60s)</option>
+                        <option value="defense">🛡️ SOC Incident Simulator</option>
+                        <option value="terminal">💻 Kali Zsh Terminal</option>
+                        <option value="about">📄 Dossier &amp; Resume (CV)</option>
+                        <option value="projects">📂 Projects &amp; Pentests</option>
+                        <option value="settings">⚙️ Settings &amp; OS Switch</option>
+                        <option value="mail">✉️ Direct Inquiry Mail</option>
+                      </select>
+                      <button
+                        type="button"
+                        className="admin-danger-btn"
+                        style={{ padding: '6px 0', textAlign: 'center' }}
+                        onClick={() => handleRemoveHudAction(a.id)}
+                        title="Delete Action"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* SECTIONS: CYBER APPS (PENTEST AUDITS, SOC RULES, MASTERS RESEARCH, NETHUNTER) */}
+          {(activeSection === 'pentestReports' ||
+            activeSection === 'recruiterFastPass' ||
+            activeSection === 'socRules' ||
+            activeSection === 'mastersResearch' ||
+            activeSection === 'netHunter') && (
+            <CyberAppsAdmin
+              data={data}
+              setData={setData}
+              section={activeSection}
+              triggerToast={triggerToast}
+            />
           )}
 
           {/* SECTION: INBOX */}

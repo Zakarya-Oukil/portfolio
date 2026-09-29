@@ -28,7 +28,13 @@ declare module 'react-native' {
     prefetch: (url: string) => Promise<boolean>;
   };
   export const ImageBackground: React.ComponentType<any>;
-  export const Pressable: React.ComponentType<any>;
+  export interface PressableProps {
+    [key: string]: unknown;
+    children?: React.ReactNode;
+    onPress?: (event: React.SyntheticEvent) => void;
+    style?: ViewStyle | readonly unknown[] | ((state: PressableStateCallbackType) => ViewStyle | readonly unknown[]);
+  }
+  export const Pressable: React.ComponentType<PressableProps>;
   export const ScrollView: React.ComponentType<any>;
   export const FlatList: React.ComponentType<any>;
   export const SafeAreaView: React.ComponentType<any>;

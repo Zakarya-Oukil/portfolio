@@ -38,6 +38,10 @@ const paths: Record<string, React.ReactNode> = {
   external: <><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></>,
   sparkles: <path d="m12 3 1.9 4.8L18.7 9l-4.8 1.9L12 15.7l-1.9-4.8L5.3 9l4.8-1.9L12 3zm6 13 1 2.5 2.5 1-2.5 1-1 2.5-1-2.5-2.5-1 2.5-1 1-2.5z"/>,
   palette: <><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.9 0 1.7-.8 1.7-1.7 0-.4-.2-.8-.4-1.1-.3-.3-.4-.8-.4-1.2 0-.9.8-1.7 1.7-1.7H17c2.8 0 5-2.2 5-5 0-5.5-4.5-9.3-10-9.3z"/></>,
+  dragon: <path d="M12.778 5.943s-1.97-.13-5.327.92c-3.42 1.07-5.36 2.587-5.36 2.587s5.098-2.847 10.852-3.008zm7.351 3.095l.257-.017s-1.468-1.78-4.278-2.648c1.58.642 2.954 1.493 4.021 2.665zm.42.74c.039-.068.166.217.263.337.004.024.01.039-.045.027-.005-.025-.013-.032-.013-.032s-.135-.08-.177-.137c-.041-.057-.049-.157-.028-.195zm3.448 8.479s.312-3.578-5.31-4.403a18.277 18.277 0 0 0-2.524-.187c-4.506.06-4.67-5.197-1.275-5.462 1.407-.116 3.087.643 4.73 1.408-.007.204.002.385.136.552.134.168.648.35.813.445.164.094.691.43 1.014.85.07-.131.654-.512.654-.512s-.14.003-.465-.119c-.326-.122-.713-.49-.722-.511-.01-.022-.015-.055.06-.07.059-.049-.072-.207-.13-.265-.058-.058-.445-.716-.454-.73-.009-.016-.012-.031-.04-.05-.085-.027-.46.04-.46.04s-.575-.283-.774-.893c.003.107-.099.224 0 .469-.3-.127-.558-.344-.762-.88-.12.305 0 .499 0 .499s-.707-.198-.82-.85c-.124.293 0 .469 0 .469s-1.153-.602-3.069-.61c-1.283-.118-1.55-2.374-1.43-2.754 0 0-1.85-.975-5.493-1.406-3.642-.43-6.628-.065-6.628-.065s6.45-.31 11.617 1.783c.176.785.704 2.094.989 2.723-.815.563-1.733 1.092-1.876 2.97-.143 1.878 1.472 3.53 3.474 3.58 1.9.102 3.214.116 4.806.942 1.52.84 2.766 3.4 2.89 5.703.132-1.709-.509-5.383-3.5-6.498 4.181.732 4.549 3.832 4.549 3.832zM12.68 5.663l-.15-.485s-2.484-.441-5.822-.204C3.37 5.211 0 6.38 0 6.38s6.896-1.735 12.68-.717Z" fill="currentColor"/>,
+  folder: <path d="M4 4h6l2 2h8a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/>,
+  cert: <><circle cx="12" cy="8" r="6"/><path d="M15.48 13.9 17 22l-5-3-5 3 1.52-8.1"/></>,
+  script: <><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></>,
 };
 
 export function Icon({ name, size = 20, ...rest }: { name: string; size?: number } & React.SVGProps<SVGSVGElement>) {
@@ -341,3 +345,437 @@ export function AppIcon({
     </span>
   );
 }
+
+export function KaliDragonIcon({ size = 20, className = '', color = 'currentColor', ...rest }: { size?: number; className?: string; color?: string } & React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill={color} className={className} xmlns="http://www.w3.org/2000/svg" aria-label="Kali Linux" {...rest}>
+      <path d="M12.778 5.943s-1.97-.13-5.327.92c-3.42 1.07-5.36 2.587-5.36 2.587s5.098-2.847 10.852-3.008zm7.351 3.095l.257-.017s-1.468-1.78-4.278-2.648c1.58.642 2.954 1.493 4.021 2.665zm.42.74c.039-.068.166.217.263.337.004.024.01.039-.045.027-.005-.025-.013-.032-.013-.032s-.135-.08-.177-.137c-.041-.057-.049-.157-.028-.195zm3.448 8.479s.312-3.578-5.31-4.403a18.277 18.277 0 0 0-2.524-.187c-4.506.06-4.67-5.197-1.275-5.462 1.407-.116 3.087.643 4.73 1.408-.007.204.002.385.136.552.134.168.648.35.813.445.164.094.691.43 1.014.85.07-.131.654-.512.654-.512s-.14.003-.465-.119c-.326-.122-.713-.49-.722-.511-.01-.022-.015-.055.06-.07.059-.049-.072-.207-.13-.265-.058-.058-.445-.716-.454-.73-.009-.016-.012-.031-.04-.05-.085-.027-.46.04-.46.04s-.575-.283-.774-.893c.003.107-.099.224 0 .469-.3-.127-.558-.344-.762-.88-.12.305 0 .499 0 .499s-.707-.198-.82-.85c-.124.293 0 .469 0 .469s-1.153-.602-3.069-.61c-1.283-.118-1.55-2.374-1.43-2.754 0 0-1.85-.975-5.493-1.406-3.642-.43-6.628-.065-6.628-.065s6.45-.31 11.617 1.783c.176.785.704 2.094.989 2.723-.815.563-1.733 1.092-1.876 2.97-.143 1.878 1.472 3.53 3.474 3.58 1.9.102 3.214.116 4.806.942 1.52.84 2.766 3.4 2.89 5.703.132-1.709-.509-5.383-3.5-6.498 4.181.732 4.549 3.832 4.549 3.832zM12.68 5.663l-.15-.485s-2.484-.441-5.822-.204C3.37 5.211 0 6.38 0 6.38s6.896-1.735 12.68-.717Z" />
+    </svg>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/*             HIGHEST QUALITY BESPOKE CYBERSECURITY OS ICONS                 */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Tactical Arsenal Crate - Flagship Security Projects
+ * Titanium beveled chassis, holographic cyan targeting reticle, energy cores
+ */
+export function BespokeArsenalIcon({ size = 52 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" className="bespoke-svg-icon" aria-label="Flagship Arsenal">
+      <defs>
+        <linearGradient id="ars-plate" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#1e293b" />
+          <stop offset="50%" stopColor="#0f172a" />
+          <stop offset="100%" stopColor="#020617" />
+        </linearGradient>
+        <linearGradient id="ars-glow" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#38bdf8" />
+          <stop offset="100%" stopColor="#0284c7" />
+        </linearGradient>
+        <linearGradient id="ars-accent" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#00f0ff" />
+          <stop offset="100%" stopColor="#2563eb" />
+        </linearGradient>
+        <filter id="ars-shadow" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="6" stdDeviation="5" floodColor="#000000" floodOpacity="0.65" />
+          <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="#38bdf8" floodOpacity="0.4" />
+        </filter>
+      </defs>
+      {/* Outer Tactical Frame */}
+      <g filter="url(#ars-shadow)">
+        <rect x="8" y="10" width="64" height="60" rx="14" fill="url(#ars-plate)" stroke="rgba(56,189,248,0.4)" strokeWidth="1.5" />
+        <rect x="10" y="12" width="60" height="56" rx="12" stroke="rgba(255,255,255,0.12)" strokeWidth="1" />
+        {/* Reinforced Corner Brackets */}
+        <path d="M12 24V14H22M68 24V14H58M12 56V66H22M68 56V66H58" stroke="url(#ars-glow)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+        {/* Carbon Mesh Grill */}
+        <line x1="20" y1="28" x2="60" y2="28" stroke="#334155" strokeWidth="1" strokeDasharray="3 3" />
+        <line x1="20" y1="52" x2="60" y2="52" stroke="#334155" strokeWidth="1" strokeDasharray="3 3" />
+        {/* Holographic Aim Reticle */}
+        <circle cx="40" cy="40" r="16" stroke="url(#ars-accent)" strokeWidth="1.5" strokeDasharray="6 4" opacity="0.8" />
+        <circle cx="40" cy="40" r="7" fill="url(#ars-glow)" fillOpacity="0.25" stroke="#38bdf8" strokeWidth="1.8" />
+        {/* Crosshair Spikes */}
+        <line x1="40" y1="20" x2="40" y2="29" stroke="#00f0ff" strokeWidth="2" strokeLinecap="round" />
+        <line x1="40" y1="51" x2="40" y2="60" stroke="#00f0ff" strokeWidth="2" strokeLinecap="round" />
+        <line x1="20" y1="40" x2="29" y2="40" stroke="#00f0ff" strokeWidth="2" strokeLinecap="round" />
+        <line x1="51" y1="40" x2="60" y2="40" stroke="#00f0ff" strokeWidth="2" strokeLinecap="round" />
+        {/* Central Quantum Core */}
+        <circle cx="40" cy="40" r="3.2" fill="#ffffff" />
+        {/* Tactical Stencil Badge */}
+        <rect x="27" y="16" width="26" height="6" rx="2" fill="#0369a1" fillOpacity="0.4" stroke="rgba(56,189,248,0.5)" strokeWidth="0.8" />
+        <text x="40" y="21" fill="#7dd3fc" fontSize="5" fontWeight="800" textAnchor="middle" fontFamily="monospace" letterSpacing="0.8">ARSENAL</text>
+      </g>
+    </svg>
+  );
+}
+
+/**
+ * Offensive Pentest Dossier - eJPT Audits & Exploits
+ * Obsidian clipboard, crimson exploit shield, cracked biometric lock
+ */
+export function BespokePentestIcon({ size = 52 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" className="bespoke-svg-icon" aria-label="Pentest Reports">
+      <defs>
+        <linearGradient id="pen-base" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#2a080c" />
+          <stop offset="60%" stopColor="#150508" />
+          <stop offset="100%" stopColor="#0a0204" />
+        </linearGradient>
+        <linearGradient id="pen-red" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#ff4d6d" />
+          <stop offset="100%" stopColor="#c9184a" />
+        </linearGradient>
+        <linearGradient id="pen-rim" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#ff758f" />
+          <stop offset="100%" stopColor="#800f2f" />
+        </linearGradient>
+        <filter id="pen-shadow" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="6" stdDeviation="5" floodColor="#000000" floodOpacity="0.7" />
+          <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="#ff4d6d" floodOpacity="0.4" />
+        </filter>
+      </defs>
+      <g filter="url(#pen-shadow)">
+        {/* Clipboard Backing */}
+        <rect x="12" y="10" width="56" height="62" rx="12" fill="url(#pen-base)" stroke="rgba(255,77,109,0.4)" strokeWidth="1.5" />
+        <rect x="14" y="12" width="52" height="58" rx="10" stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
+        {/* Top Metallic Clip */}
+        <path d="M28 8C28 6.89543 28.8954 6 30 6H50C51.1046 6 52 6.89543 52 8V14H28V8Z" fill="#3f1418" stroke="#ff4d6d" strokeWidth="1.2" />
+        <circle cx="40" cy="10" r="2" fill="#ff758f" />
+        {/* Exploit Target Shield */}
+        <path d="M40 24L56 30V44C56 53 49 61 40 64C31 61 24 53 24 44V30L40 24Z" fill="#1c070a" stroke="url(#pen-red)" strokeWidth="1.8" />
+        {/* Binary / Circuit Trace within Shield */}
+        <path d="M32 38H48M34 44H46M37 50H43" stroke="rgba(255,117,143,0.3)" strokeWidth="1" strokeDasharray="2 2" />
+        {/* Cracked Lock Core Emblem */}
+        <path d="M35 38V34C35 31.2386 37.2386 29 40 29C42.7614 29 45 31.2386 45 34V38" stroke="#ff758f" strokeWidth="2.2" strokeLinecap="round" />
+        <rect x="33" y="38" width="14" height="11" rx="2.5" fill="url(#pen-red)" />
+        {/* Keyhole Exploit Vector */}
+        <circle cx="40" cy="42.5" r="1.6" fill="#ffffff" />
+        <path d="M39.3 43.5L38.8 46.5H41.2L40.7 43.5" fill="#ffffff" />
+        {/* Laser crack across lock */}
+        <path d="M31 36L49 46" stroke="#ffffff" strokeWidth="1.2" strokeLinecap="round" opacity="0.8" />
+      </g>
+    </svg>
+  );
+}
+
+/**
+ * Defensive SOC Operations - BTL1 Incident Logs & SIEM
+ * Cobalt Aegis shield, rotating radar sweep, live packet rings, sentinel node
+ */
+export function BespokeSocIcon({ size = 52 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" className="bespoke-svg-icon" aria-label="SOC Blue Team">
+      <defs>
+        <linearGradient id="soc-base" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#0a1931" />
+          <stop offset="50%" stopColor="#030b1e" />
+          <stop offset="100%" stopColor="#01040d" />
+        </linearGradient>
+        <linearGradient id="soc-blue" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#38bdf8" />
+          <stop offset="50%" stopColor="#2563eb" />
+          <stop offset="100%" stopColor="#1d4ed8" />
+        </linearGradient>
+        <linearGradient id="soc-radar" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#10b981" />
+          <stop offset="100%" stopColor="#06b6d4" />
+        </linearGradient>
+        <filter id="soc-shadow" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="6" stdDeviation="5" floodColor="#000000" floodOpacity="0.7" />
+          <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="#2563eb" floodOpacity="0.5" />
+        </filter>
+      </defs>
+      <g filter="url(#soc-shadow)">
+        {/* Layered Hexagonal Base */}
+        <path d="M40 8L68 22V58L40 72L12 58V22L40 8Z" fill="url(#soc-base)" stroke="url(#soc-blue)" strokeWidth="1.8" />
+        <path d="M40 13L63 25V55L40 67L17 55V25L40 13Z" stroke="rgba(255,255,255,0.12)" strokeWidth="1" />
+        {/* Radar Concentric Rings */}
+        <circle cx="40" cy="40" r="20" stroke="#1e3a8a" strokeWidth="1.2" strokeDasharray="3 3" />
+        <circle cx="40" cy="40" r="12" stroke="#2563eb" strokeWidth="1" opacity="0.6" />
+        <circle cx="40" cy="40" r="5" stroke="#38bdf8" strokeWidth="1.2" />
+        {/* Radar Sweep Arc */}
+        <path d="M40 40L55 26A20 20 0 0 1 60 40Z" fill="url(#soc-radar)" fillOpacity="0.3" />
+        <line x1="40" y1="40" x2="55" y2="26" stroke="#34d399" strokeWidth="1.8" strokeLinecap="round" />
+        {/* Central Sentinel Core */}
+        <circle cx="40" cy="40" r="2.5" fill="#10b981" />
+        {/* Intercepted Threat Points */}
+        <circle cx="48" cy="31" r="2" fill="#ef4444" />
+        <circle cx="31" cy="47" r="1.5" fill="#38bdf8" />
+        {/* Top Status Pill */}
+        <rect x="29" y="16" width="22" height="5" rx="2" fill="#1e3a8a" fillOpacity="0.5" stroke="#38bdf8" strokeWidth="0.8" />
+        <text x="40" y="20.2" fill="#93c5fd" fontSize="4.5" fontWeight="800" textAnchor="middle" fontFamily="monospace">BTL1-SOC</text>
+      </g>
+    </svg>
+  );
+}
+
+/**
+ * Cybersecurity Master's Research - Academic & Cryptographic Folio
+ * Quantum encryption prism, holographic neural circuits, gold/cyan data streams
+ */
+export function BespokeResearchIcon({ size = 52 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" className="bespoke-svg-icon" aria-label="Master's Research">
+      <defs>
+        <linearGradient id="res-base" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#1e1b4b" />
+          <stop offset="60%" stopColor="#0f0e26" />
+          <stop offset="100%" stopColor="#050512" />
+        </linearGradient>
+        <linearGradient id="res-violet" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#a855f7" />
+          <stop offset="100%" stopColor="#6366f1" />
+        </linearGradient>
+        <linearGradient id="res-gold" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#fbbf24" />
+          <stop offset="100%" stopColor="#d97706" />
+        </linearGradient>
+        <filter id="res-shadow" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="6" stdDeviation="5" floodColor="#000000" floodOpacity="0.7" />
+          <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="#a855f7" floodOpacity="0.4" />
+        </filter>
+      </defs>
+      <g filter="url(#res-shadow)">
+        {/* Research Folio Base */}
+        <rect x="12" y="10" width="56" height="62" rx="12" fill="url(#res-base)" stroke="url(#res-violet)" strokeWidth="1.5" />
+        <rect x="15" y="13" width="50" height="56" rx="9" stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
+        {/* Book Spine Bevel */}
+        <rect x="12" y="10" width="7" height="62" rx="3" fill="#312e81" fillOpacity="0.6" />
+        {/* Quantum Isometric Prism */}
+        <path d="M40 22L56 31V50L40 59L24 50V31L40 22Z" fill="#1e1b4b" stroke="url(#res-violet)" strokeWidth="1.6" />
+        <path d="M40 22V40M40 40L56 31M40 40L24 31M40 40V59M40 40L56 50M40 40L24 50" stroke="rgba(168,85,247,0.4)" strokeWidth="1.2" />
+        {/* Central Cryptographic Key Glyphs */}
+        <circle cx="40" cy="40" r="5" fill="url(#res-gold)" fillOpacity="0.25" stroke="#fbbf24" strokeWidth="1.5" />
+        <circle cx="40" cy="40" r="2" fill="#ffffff" />
+        {/* Academic Degree Laurel Base */}
+        <path d="M28 58C32 62 48 62 52 58" stroke="url(#res-gold)" strokeWidth="1.6" strokeLinecap="round" />
+        <rect x="33" y="16" width="14" height="4.5" rx="1.5" fill="#4338ca" stroke="#818cf8" strokeWidth="0.8" />
+        <text x="40" y="19.5" fill="#e0e7ff" fontSize="3.5" fontWeight="800" textAnchor="middle" fontFamily="monospace">MSc·SEC</text>
+      </g>
+    </svg>
+  );
+}
+
+/**
+ * Executive Curriculum Vitae - Holographic Red PDF
+ * Dark glass parchment, ruby PDF badge, holographic wax seal, microcircuits
+ */
+export function BespokePdfIcon({ size = 52 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" className="bespoke-svg-icon" aria-label="Curriculum Vitae">
+      <defs>
+        <linearGradient id="pdf-paper" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#1e293b" />
+          <stop offset="50%" stopColor="#0f172a" />
+          <stop offset="100%" stopColor="#020617" />
+        </linearGradient>
+        <linearGradient id="pdf-ruby" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#ef4444" />
+          <stop offset="100%" stopColor="#b91c1c" />
+        </linearGradient>
+        <linearGradient id="pdf-fold" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#64748b" />
+          <stop offset="100%" stopColor="#334155" />
+        </linearGradient>
+        <filter id="pdf-shadow" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="6" stdDeviation="5" floodColor="#000000" floodOpacity="0.7" />
+          <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="#ef4444" floodOpacity="0.4" />
+        </filter>
+      </defs>
+      <g filter="url(#pdf-shadow)">
+        {/* Folded Document Base */}
+        <path d="M16 10C16 7.79086 17.7909 6 20 6H48L64 22V66C64 68.2091 62.2091 70 60 70H20C17.7909 70 16 68.2091 16 66V10Z" fill="url(#pdf-paper)" stroke="rgba(239,68,68,0.45)" strokeWidth="1.5" />
+        {/* Fold Corner */}
+        <path d="M48 6V20C48 21.1046 48.8954 22 50 22H64" fill="url(#pdf-fold)" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
+        {/* Text Guidelines */}
+        <line x1="24" y1="24" x2="42" y2="24" stroke="#64748b" strokeWidth="2.2" strokeLinecap="round" />
+        <line x1="24" y1="30" x2="40" y2="30" stroke="#475569" strokeWidth="1.8" strokeLinecap="round" />
+        <line x1="24" y1="36" x2="44" y2="36" stroke="#475569" strokeWidth="1.8" strokeLinecap="round" />
+        {/* Prominent Ruby PDF Badge Plate */}
+        <rect x="20" y="44" width="40" height="18" rx="4.5" fill="url(#pdf-ruby)" />
+        <rect x="21" y="45" width="38" height="16" rx="3.5" stroke="rgba(255,255,255,0.3)" strokeWidth="1" />
+        <text x="40" y="57" fill="#ffffff" fontSize="11" fontWeight="900" textAnchor="middle" fontFamily="sans-serif" letterSpacing="1">PDF</text>
+        {/* Verified Holographic Security Seal */}
+        <circle cx="53" cy="31" r="5" fill="#0369a1" fillOpacity="0.4" stroke="#38bdf8" strokeWidth="1.2" />
+        <path d="M51 31L52.5 32.5L55 29.5" stroke="#38bdf8" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+      </g>
+    </svg>
+  );
+}
+
+/**
+ * Verified Cryptographic Signature - eJPT & BTL1 Credentials
+ * Multi-ring cryptographic medal, dual verification ribbon, SHA-256 seal
+ */
+export function BespokeCertSigIcon({ size = 52 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" className="bespoke-svg-icon" aria-label="Verified Credentials">
+      <defs>
+        <linearGradient id="sig-gold" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#34d399" />
+          <stop offset="50%" stopColor="#10b981" />
+          <stop offset="100%" stopColor="#047857" />
+        </linearGradient>
+        <linearGradient id="sig-core" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#065f46" />
+          <stop offset="100%" stopColor="#022c22" />
+        </linearGradient>
+        <filter id="sig-shadow" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="6" stdDeviation="5" floodColor="#000000" floodOpacity="0.7" />
+          <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="#10b981" floodOpacity="0.5" />
+        </filter>
+      </defs>
+      <g filter="url(#sig-shadow)">
+        {/* Ceremonial Ribbon Hangings */}
+        <path d="M30 46L22 68L34 62L40 68L36 46" fill="#047857" stroke="rgba(255,255,255,0.15)" strokeWidth="1" />
+        <path d="M50 46L58 68L46 62L40 68L44 46" fill="#065f46" stroke="rgba(255,255,255,0.15)" strokeWidth="1" />
+        {/* Outer Radiant Cog/Ring */}
+        <circle cx="40" cy="34" r="24" fill="#064e3b" stroke="url(#sig-gold)" strokeWidth="2.2" />
+        <circle cx="40" cy="34" r="20" fill="url(#sig-core)" stroke="rgba(255,255,255,0.2)" strokeWidth="1" strokeDasharray="3 3" />
+        <circle cx="40" cy="34" r="16" stroke="#34d399" strokeWidth="1" opacity="0.6" />
+        {/* Heavy Verification Checkmark */}
+        <path d="M28 34L36 42L52 24" stroke="#ffffff" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M28 34L36 42L52 24" stroke="#a7f3d0" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+        {/* Stamped Keyhole Node */}
+        <circle cx="40" cy="18" r="1.5" fill="#facc15" />
+      </g>
+    </svg>
+  );
+}
+
+/**
+ * Cyber Incident Script - live_soc_alert.sh
+ * Carbon fiber cartridge, hazard warning chevron, neon terminal prompt, sparks
+ */
+export function BespokeScriptIcon({ size = 52 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" className="bespoke-svg-icon" aria-label="Interactive SOC Alert">
+      <defs>
+        <linearGradient id="sh-body" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#1e293b" />
+          <stop offset="50%" stopColor="#0f172a" />
+          <stop offset="100%" stopColor="#030712" />
+        </linearGradient>
+        <linearGradient id="sh-cyan" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#38bdf8" />
+          <stop offset="100%" stopColor="#0284c7" />
+        </linearGradient>
+        <linearGradient id="sh-hazard" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#f59e0b" />
+          <stop offset="100%" stopColor="#ef4444" />
+        </linearGradient>
+        <filter id="sh-shadow" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="6" stdDeviation="5" floodColor="#000000" floodOpacity="0.7" />
+          <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="#06b6d4" floodOpacity="0.45" />
+        </filter>
+      </defs>
+      <g filter="url(#sh-shadow)">
+        {/* Terminal Cartridge Shell */}
+        <rect x="12" y="10" width="56" height="62" rx="12" fill="url(#sh-body)" stroke="url(#sh-cyan)" strokeWidth="1.6" />
+        <rect x="14" y="12" width="52" height="58" rx="10" stroke="rgba(255,255,255,0.12)" strokeWidth="1" />
+        {/* Hazard Top Warning Strip */}
+        <path d="M14 20H66" stroke="url(#sh-hazard)" strokeWidth="3" strokeDasharray="6 4" />
+        {/* Shebang #! Indicator */}
+        <text x="22" y="38" fill="#38bdf8" fontSize="16" fontWeight="900" fontFamily="monospace">#!</text>
+        {/* Command Line Prompt Glyph */}
+        <path d="M22 47L30 53L22 59M34 59H48" stroke="#10b981" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" />
+        {/* Glowing Cursor Pulse */}
+        <rect x="52" y="52" width="5" height="8" rx="1" fill="#34d399" />
+        {/* Lightning Spark */}
+        <path d="M56 26L50 35H55L49 44L61 33H56L59 26H56Z" fill="url(#sh-hazard)" />
+      </g>
+    </svg>
+  );
+}
+
+/**
+ * Bespoke HUD Action Icon: 60-Second Recruiter Brief
+ * Holographic cyan targeting reticle with emerald plasma lightning crest
+ */
+export function BespokeQuickstartActionIcon({ size = 20 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="hud-action-svg" aria-hidden="true">
+      <defs>
+        <linearGradient id="q-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#38bdf8" />
+          <stop offset="60%" stopColor="#10b981" />
+          <stop offset="100%" stopColor="#059669" />
+        </linearGradient>
+      </defs>
+      <circle cx="12" cy="12" r="10" stroke="rgba(56,189,248,0.3)" strokeWidth="1.2" strokeDasharray="3 2" />
+      <circle cx="12" cy="12" r="7" stroke="rgba(16,185,129,0.4)" strokeWidth="1" />
+      <path d="M13 2.5L6.5 12.5H12L10.5 21.5L18 10.5H12.5L13 2.5Z" fill="url(#q-grad)" stroke="#ffffff" strokeWidth="0.8" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+/**
+ * Bespoke HUD Action Icon: SOC Incident Simulator
+ * Cobalt Aegis shield with rotating radar sweep and alert node
+ */
+export function BespokeDefenseActionIcon({ size = 20 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="hud-action-svg" aria-hidden="true">
+      <defs>
+        <linearGradient id="d-shield" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#1e3a8a" />
+          <stop offset="100%" stopColor="#0f172a" />
+        </linearGradient>
+      </defs>
+      <path d="M12 2.5L20 5.5V12.5C20 17.5 16.5 20.8 12 22C7.5 20.8 4 17.5 4 12.5V5.5L12 2.5Z" fill="url(#d-shield)" stroke="#38bdf8" strokeWidth="1.4" />
+      <circle cx="12" cy="12" r="5" stroke="rgba(56,189,248,0.4)" strokeWidth="0.8" strokeDasharray="2 2" />
+      <path d="M12 12L16 8.5A5 5 0 0 1 17 12Z" fill="#10b981" fillOpacity="0.45" />
+      <circle cx="12" cy="12" r="1.5" fill="#38bdf8" />
+      <circle cx="14.5" cy="9.5" r="1" fill="#ef4444" />
+    </svg>
+  );
+}
+
+/**
+ * Bespoke HUD Action Icon: Kali Zsh Shell
+ * Terminal console frame with prompt glyph and phosphor cursor
+ */
+export function BespokeTerminalActionIcon({ size = 20 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="hud-action-svg" aria-hidden="true">
+      <rect x="2.5" y="3.5" width="19" height="17" rx="3.5" fill="#090d16" stroke="#38bdf8" strokeWidth="1.3" />
+      <line x1="2.5" y1="7.5" x2="21.5" y2="7.5" stroke="rgba(56,189,248,0.3)" strokeWidth="0.8" />
+      <circle cx="5" cy="5.5" r="0.8" fill="#ef4444" />
+      <circle cx="7.5" cy="5.5" r="0.8" fill="#f59e0b" />
+      <circle cx="10" cy="5.5" r="0.8" fill="#10b981" />
+      <path d="M6 11L9.5 13.5L6 16" stroke="#10b981" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+      <rect x="11.5" y="15" width="4.5" height="2" rx="0.5" fill="#38bdf8" />
+    </svg>
+  );
+}
+
+/**
+ * Bespoke HUD Action Icon: Official Resume & Dossier
+ * Folded cryptographic document with ruby PDF badge plate
+ */
+export function BespokeResumeActionIcon({ size = 20 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="hud-action-svg" aria-hidden="true">
+      <defs>
+        <linearGradient id="r-doc" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#1e293b" />
+          <stop offset="100%" stopColor="#0f172a" />
+        </linearGradient>
+      </defs>
+      <path d="M5 3.5C5 2.67157 5.67157 2 6.5 2H14.5L19 6.5V20.5C19 21.3284 18.3284 22 17.5 22H6.5C5.67157 22 5 21.3284 5 20.5V3.5Z" fill="url(#r-doc)" stroke="rgba(255,255,255,0.2)" strokeWidth="1.2" />
+      <path d="M14.5 2V6.5H19" fill="#334155" stroke="rgba(255,255,255,0.2)" strokeWidth="0.8" />
+      <rect x="7" y="13" width="10" height="5.5" rx="1.5" fill="#ef4444" />
+      <text x="12" y="17" fill="#ffffff" fontSize="3.6" fontWeight="900" textAnchor="middle" fontFamily="sans-serif">PDF</text>
+      <circle cx="15.5" cy="9.5" r="1.5" fill="#38bdf8" />
+    </svg>
+  );
+}
+
+// Backward-compatibility aliases
+export const AuthenticCyberFolder = BespokeArsenalIcon;
+export const AuthenticPdfFile = BespokePdfIcon;
+export const AuthenticCertBadge = BespokeCertSigIcon;
+export const AuthenticScriptFile = BespokeScriptIcon;

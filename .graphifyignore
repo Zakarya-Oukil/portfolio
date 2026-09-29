@@ -1,0 +1,4 @@
+.agents/
+.claude/
+graphify-out/
+skills-lock.json

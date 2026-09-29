@@ -2,8 +2,10 @@ import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { SystemProvider } from './os/state';
 import { Shell } from './os/Shell';
 const AdminDashboard = lazy(() => import('./admin/AdminDashboard').then(module => ({ default: module.AdminDashboard })));
+import '@fontsource-variable/geist/wght.css';
 import './os/styles.css';
 import './os/command-center.css';
+import './os/recruiter-entry.css';
 
 export default function App() {
   const [isAdmin, setIsAdmin] = useState(() => {

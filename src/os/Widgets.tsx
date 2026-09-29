@@ -196,12 +196,12 @@ export function CertificationsWidget() {
 export function NeofetchWidget() {
   const s = useSystemContext();
   const specs = s.config?.widgets?.neofetch || {
-    os: 'ZakOS 27 (macOS Sequoia / Hardened Linux)',
-    host: 'Apple M-Series / Virtual Systems Rig',
-    kernel: 'Linux 6.8.0-Hardened / POSIX',
-    shell: 'zsh 5.9 (x86_64-darwin22.0)',
+    os: 'Kali GNU/Linux Rolling 2024.3 (x86_64)',
+    host: 'Offensive Security Lab Rig (Bare Metal)',
+    kernel: 'Linux 6.8.0-kali-amd64',
+    shell: 'zsh 5.9 (x86_64-debian-linux-gnu)',
     uptime: '99.98% High Availability',
-    cipher: 'AES-256-GCM / TLS 1.3 Active',
+    cipher: 'ChaCha20-Poly1305 / TLS 1.3 Active',
     memory: '16.11 GB / 32 GB (Active)'
   };
 
@@ -209,8 +209,8 @@ export function NeofetchWidget() {
     <DraggableWidget className="neofetch-widget">
       <div className="widget-title">
         <Icon name="terminal" size={15} />
-        <span>Hardware & Kernel Specs</span>
-        <span className="neofetch-status-pill">POSIX KERNEL</span>
+        <span>Hardware &amp; Kernel Specs</span>
+        <span className="neofetch-status-pill">KALI 2024.3</span>
       </div>
 
       <div className="neofetch-stage">
@@ -221,7 +221,7 @@ export function NeofetchWidget() {
   /  (..)  \\
   \\  /||\\  /
    \\/    \\/`}</pre>
-          <span className="neofetch-badge">ZAKAR·OS</span>
+          <span className="neofetch-badge">KALI·SEC</span>
         </div>
 
         <div className="neofetch-lines">
