@@ -1,19 +1,19 @@
 import React, { useEffect } from 'react';
-import '@fontsource-variable/geist/wght.css';
-import '@fontsource-variable/geist-mono/wght.css';
+import '@fontsource-variable/jetbrains-mono/wght.css';
+import './fonts.css';
 import './site.css';
 import { CASE_STUDIES } from './content';
-import { Home, SiteFooter, SiteNav } from './Home';
+import { Home, SiteFooter, SiteHeader } from './Home';
 import { CaseStudyPage, NotFound, WorkIndexPage } from './Pages';
 import { usePath } from './router';
 
 const BASE_TITLE = 'Zakarya Oukil | Security Engineer';
 
 function titleFor(path: string): string {
-  const slug = path.startsWith('/work/') ? path.slice(6).replace(/\/$/, '') : '';
-  const study = CASE_STUDIES.find(item => item.slug === slug);
+  const clean = path.replace(/\/$/, '');
+  const study = CASE_STUDIES.find(item => `/work/${item.slug}` === clean);
   if (study) return `${study.title} | Zakarya Oukil`;
-  if (path.replace(/\/$/, '') === '/work') return 'All projects | Zakarya Oukil';
+  if (clean === '/work') return 'All projects | Zakarya Oukil';
   return BASE_TITLE;
 }
 
@@ -30,8 +30,8 @@ export default function Site() {
 
   return <div className="st-root">
     <a className="st-skip" href="#main">Skip to content</a>
-    <SiteNav />
-    {clean === '/' ? page : <main id="main">{page}</main>}
+    <SiteHeader />
+    <main id="main">{page}</main>
     <SiteFooter />
   </div>;
 }

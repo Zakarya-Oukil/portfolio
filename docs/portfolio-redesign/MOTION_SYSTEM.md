@@ -1,3 +1,5 @@
+> Superseded (2026-09-29): this describes the earlier Kali.SEC entry screen on branch `kali-sec-v1`. The current design is the declassified case-file redesign on `redesign-v2`; its decisions live in the Obsidian vault at `00 Claude-Brain/05 Projects/Portfolio Redesign — Decisions.md`.
+
 # Motion system
 
 ## Signature interactions actually implemented (GSAP 3.15 + `@gsap/react`)
