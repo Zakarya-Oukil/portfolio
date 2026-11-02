@@ -35,3 +35,4 @@ server/messages.json
 !.env.example
 artifacts/
 server/messages.json
+deploy-admin/

@@ -1,11 +1,14 @@
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { createPortfolioApi } from './portfolio-api.mjs';
 process.env.NODE_ENV ||= 'production';
-const root = path.resolve('dist');
+// Resolve files from this script's location, not the working directory: hosts start the app from varying folders.
+const base = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const root = path.join(base, 'dist');
 if (!fs.existsSync(path.join(root, 'index.html'))) throw new Error('Run npm run build first.');
-const api = createPortfolioApi({ directory: process.env.DATA_DIR ? path.resolve(process.env.DATA_DIR) : path.resolve('server') });
+const api = createPortfolioApi({ directory: process.env.DATA_DIR ? path.resolve(process.env.DATA_DIR) : path.join(base, 'server'), seedFile: path.join(base, 'src/data/seed.json') });
 const types = { '.html':'text/html; charset=utf-8', '.js':'text/javascript', '.css':'text/css', '.json':'application/json', '.svg':'image/svg+xml', '.png':'image/png', '.jpg':'image/jpeg', '.mp4':'video/mp4', '.mp3':'audio/mpeg', '.woff2':'font/woff2', '.pdf':'application/pdf' };
 const server = http.createServer((req, res) => api(req, res, () => {
   if (!['GET','HEAD'].includes(req.method)) { res.writeHead(405); res.end(); return; }
