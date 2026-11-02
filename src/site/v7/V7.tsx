@@ -17,6 +17,7 @@ import { CaseView, IndexView, MissingView, usePageChrome } from '../shared/Inner
 import { onceVisible, scrollToId } from './motion7';
 import { MotionCtx, SheetLink } from './ctx';
 import { Plotter } from './Plotter';
+import { ContactPanel } from './ContactPanel';
 
 const LabIndex = lazy(() => import('../lab/LabPages').then(m => ({ default: m.LabIndex })));
 const LabSheetView = lazy(() => import('../lab/LabPages').then(m => ({ default: m.LabSheetView })));
@@ -376,6 +377,7 @@ function Contact() {
   return <section className="v7-section v7-contact" id="contact" data-section="Contact" ref={root} aria-labelledby="v7-contact">
     <h2 className="v7-h2" id="v7-contact">Write to me.</h2>
     <p className="v7-lede">Pick whichever channel is easiest. I read all of them.</p>
+    <ContactPanel email={live.email} mailHref={mailtoFor(live.email, SUBJECT)} bookingUrl={live.bookingUrl} />
     <div className="v7-contact-grid">
       <ul className="v7-title-block">{channels.map(channel => <li key={channel.label} data-row onPointerEnter={event => spring(event.currentTarget, 10)} onPointerLeave={event => spring(event.currentTarget, 0)}>
         <a href={channel.href} {...(channel.ext ? { target: '_blank', rel: 'noreferrer noopener' } : {})}>

@@ -12,7 +12,7 @@ RewriteRule ^ /index.html [L]
   Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
   Header always set Cross-Origin-Opener-Policy "same-origin"
   Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
-  Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; media-src 'self' https:; connect-src 'self' https://api.github.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; media-src 'self' https:; connect-src 'self' https://api.github.com https://admin.zakaryaoukil.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
   <FilesMatch "\.(js|css|woff2|webp|png|svg|mp4|mp3)$">
     Header set Cache-Control "public, max-age=31536000, immutable"
   </FilesMatch>

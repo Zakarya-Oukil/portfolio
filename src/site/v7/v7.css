@@ -222,3 +222,25 @@
 @media (prefers-reduced-motion: reduce) { .v7 *, .v7-wipe { transition-duration: .01ms !important; animation-duration: .01ms !important; } }
 
 html:has(.v7) { scroll-behavior: auto; }
+
+/* Contact panel: native <dialog> sheet from the right edge */
+.v7-contact-open { margin-top: 20px; }
+.v7-panel { position: fixed; inset: 0 0 0 auto; margin: 0; width: min(480px, 100vw); max-width: 100vw; height: 100dvh; max-height: 100dvh; padding: 0; border: 0; border-left: 1px solid var(--line-strong); background: var(--ink); color: var(--bone); overflow-y: auto; }
+.v7-panel::backdrop { background: rgba(0, 0, 0, .6); }
+.v7-panel[open] { animation: v7-panel-in .28s cubic-bezier(.16, 1, .3, 1); }
+@keyframes v7-panel-in { from { transform: translateX(32px); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .v7-panel[open] { animation: none; } }
+.v7-panel-in { padding: clamp(20px, 4vw, 32px); display: grid; gap: 20px; }
+.v7-panel-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.v7-panel-head h2 { font-size: clamp(1.5rem, 4vw, 2rem); }
+.v7-panel-x { min-height: 44px; padding: 0 4px; background: none; border: 0; color: var(--dim); font: inherit; text-decoration: underline; text-underline-offset: .32em; cursor: pointer; }
+.v7-panel-x:hover { color: var(--bone); }
+.v7-form { display: grid; gap: 16px; }
+.v7-form label { display: grid; gap: 6px; color: var(--dim); font-size: .95rem; }
+.v7-form input, .v7-form select, .v7-form textarea { width: 100%; min-height: 44px; padding: 10px 12px; background: transparent; color: var(--bone); border: 1px solid var(--line-strong); border-radius: 0; font: inherit; font-size: 16px; }
+.v7-form textarea { resize: vertical; }
+.v7-form select option { background: var(--ink); color: var(--bone); }
+.v7-form input:focus-visible, .v7-form select:focus-visible, .v7-form textarea:focus-visible, .v7-panel-x:focus-visible { outline: 2px solid var(--bone); outline-offset: 2px; }
+.v7-form button[disabled] { opacity: .6; cursor: progress; }
+.v7-form-error { color: var(--red-text); }
+.v7-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }

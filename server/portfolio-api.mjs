@@ -65,19 +65,24 @@ export function createPortfolioApi({ directory = path.resolve('server'), seedFil
   const dataFile = path.join(directory, 'data.json'), sessionFile = path.join(directory, 'sessions.local.json'), messagesFile = path.join(directory, 'messages.json');
   const localAuth = readJson(path.join(directory, 'auth.local.json'), {});
   const auth = suppliedAuth || { username: process.env.ADMIN_USERNAME || localAuth.username, passwordHash: process.env.ADMIN_PASSWORD_HASH || localAuth.passwordHash };
+  const allowedOrigins = (process.env.ALLOWED_ORIGINS || 'https://zakaryaoukil.com,https://www.zakaryaoukil.com').split(',').map(o => o.trim());
   const sessions = readJson(sessionFile, {}), attempts = new Map();
   const saveSessions = () => writeJson(sessionFile, sessions);
   const json = (res, status, body) => { res.statusCode = status; res.setHeader('Content-Type', 'application/json'); res.setHeader('Cache-Control', 'no-store'); res.setHeader('X-Content-Type-Options', 'nosniff'); res.end(JSON.stringify(body)); };
   return async function portfolioApi(req, res, next) {
     const route = (req.url || '').split('?')[0];
     if (!route.startsWith('/api/')) return next?.();
+    // The public site on another origin may POST inquiries to /api/mail only; every other route stays same-origin.
+    const mailOrigin = route === '/api/mail' && allowedOrigins.includes(req.headers.origin) ? req.headers.origin : '';
+    if (mailOrigin) { res.setHeader('Access-Control-Allow-Origin', mailOrigin); res.setHeader('Vary', 'Origin'); res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS'); res.setHeader('Access-Control-Allow-Headers', 'Content-Type'); }
+    if (route === '/api/mail' && req.method === 'OPTIONS') { res.statusCode = mailOrigin ? 204 : 403; return res.end(); }
     try {
       const key = digest((req.headers.cookie || '').split(';').map(p => p.trim()).find(p => p.startsWith('zak_session='))?.slice(12) || '');
       const authenticated = !!sessions[key] && sessions[key] > now();
       const cookie = (token, age) => `zak_session=${token}; HttpOnly; SameSite=Strict; Path=/; Max-Age=${age}${process.env.NODE_ENV === 'production' ? '; Secure' : ''}`;
       if (!['GET','HEAD'].includes(req.method)) {
         const origin = req.headers.origin;
-        if ((origin && new URL(origin).host !== req.headers.host) || req.headers['sec-fetch-site'] === 'cross-site') return json(res, 403, { error: 'Cross-origin writes are not allowed' });
+        if (!mailOrigin && ((origin && new URL(origin).host !== req.headers.host) || req.headers['sec-fetch-site'] === 'cross-site')) return json(res, 403, { error: 'Cross-origin writes are not allowed' });
         if (!req.headers['content-type']?.startsWith('application/json')) return json(res, 415, { error: 'JSON required' });
       }
       if (route === '/api/admin/session' && req.method === 'GET') return json(res, authenticated ? 200 : 401, { authenticated });
@@ -103,6 +108,7 @@ export function createPortfolioApi({ directory = path.resolve('server'), seedFil
         const ip = `mail:${req.socket.remoteAddress}`, attempt = attempts.get(ip);
         if (attempt?.expires > now() && attempt.count >= 5) return json(res, 429, { error: 'Please wait before sending another inquiry.' });
         const body = await readBody(req, 20000);
+        if (body.website) return json(res, 200, { success: true }); // honeypot: real visitors never fill this hidden field
         if (!['name','email','subject','message'].every(k => typeof body[k] === 'string' && body[k].trim() && body[k].length <= 8000) || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(body.email)) return json(res, 400, { error: 'Complete all inquiry fields with a valid email.' });
         attempts.set(ip, { count: (attempt?.expires > now() ? attempt.count : 0) + 1, expires: now() + 900000 });
         const messages = readJson(messagesFile, []); if (messages.length >= 1000) return json(res, 503, { error: 'Inbox is full. Please use a published contact link.' });

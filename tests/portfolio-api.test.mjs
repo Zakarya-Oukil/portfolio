@@ -113,3 +113,15 @@ test('inquiries are validated and visible only in the authenticated inbox', asyn
   assert.equal((await f.post('/api/messages/delete',{id:messages[0].id},cookie)).status,200);
   assert.deepEqual(await (await f.request('/api/messages',{headers:{cookie}})).json(),[]);
 });
+test('the public site origin may post to /api/mail only, and the honeypot stores nothing', async t => {
+  const f = await fixture(t), site = 'https://zakaryaoukil.com';
+  const mail = { name: 'Test Person', email: 'test@example.com', subject: 'Hiring', message: 'Local test fixture only.' };
+  const preflight = await f.request('/api/mail', { method: 'OPTIONS', headers: { origin: site } });
+  assert.equal(preflight.status, 204); assert.equal(preflight.headers.get('access-control-allow-origin'), site);
+  assert.equal((await f.request('/api/mail', { method: 'OPTIONS', headers: { origin: 'https://evil.example' } })).status, 403);
+  const sent = await f.post('/api/mail', mail, undefined, { origin: site }); assert.equal(sent.status, 200); assert.equal(sent.headers.get('access-control-allow-origin'), site);
+  assert.equal((await f.post('/api/mail', { ...mail, website: 'http://spam.example' }, undefined, { origin: site })).status, 200);
+  assert.equal((await f.post('/api/admin/logout', {}, undefined, { origin: site })).status, 403);
+  const cookie = await f.login();
+  assert.equal((await (await f.request('/api/messages', { headers: { cookie } })).json()).length, 1);
+});
