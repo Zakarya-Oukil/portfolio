@@ -495,6 +495,7 @@ level: high`,
                 <label style={{ marginTop: 6 }}>Metric #{idx + 1} Value</label>
                 <input
                   className="admin-input"
+                  aria-label={`Metric #${idx + 1} value`}
                   value={m.value}
                   onChange={e => handleUpdateMetric(idx, 'value', e.target.value)}
                 />
@@ -609,7 +610,7 @@ level: high`,
         <div className="admin-card">
           <h3>DuckHunter (BadUSB DuckyScript Payloads)</h3>
           {netHunter.payloads.map((p, idx) => (
-            <div key={p.id || idx} style={{ marginBottom: 20, paddingBottom: 16, borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+            <div key={p.id || idx} style={{ marginBottom: 20, paddingBottom: 16, borderBottom: '1px solid var(--a-line)' }}>
               <div className="admin-form-grid">
                 <div className="admin-field">
                   <label>Payload Title</label>

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { AppIcon, KaliDragonIcon } from '../os/Icon';
 import './admin.css';
+import '../site/fonts.css';
+import '@fontsource-variable/jetbrains-mono/wght.css';
 import { cachePortfolio, cachedPortfolio, fetchPortfolio, DRAFT_KEY, validPortfolio } from '../os/portfolio-store';
 import { CommandCenterAdmin, ProjectExtras } from './CommandCenterAdmin';
 import { CyberAppsAdmin } from './CyberAppsAdmin';
@@ -157,6 +159,24 @@ export function AdminDashboard() {
   const [toast, setToast] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [uploadingImage, setUploadingImage] = useState<string | null>(null);
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    try { const saved = localStorage.getItem('admin-theme'); if (saved === 'dark' || saved === 'light') return saved; } catch { /* storage can be blocked */ }
+    return window.matchMedia?.('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  });
+  const [navOpen, setNavOpen] = useState(false);
+  // On the admin subdomain the public site is the parent domain; elsewhere it is the same origin.
+  const siteUrl = window.location.hostname.startsWith('admin.') ? 'https://' + window.location.hostname.slice('admin.'.length) : '/';
+  useEffect(() => { try { localStorage.setItem('admin-theme', theme); } catch { /* storage can be blocked */ } }, [theme]);
+  // shortcut: link each field label to its control after render instead of editing ~100 fields; move to htmlFor ids if the forms are refactored.
+  useEffect(() => {
+    document.querySelectorAll('.admin-field').forEach((field, index) => {
+      const label = field.querySelector(':scope > label');
+      const control = field.querySelector('input:not([type=hidden]), select, textarea');
+      if (!label || !control) return;
+      if (!control.id) control.id = `admin-field-${index}`;
+      if (!label.getAttribute('for')) label.setAttribute('for', control.id);
+    });
+  });
 
   // Authentication State
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -922,84 +942,68 @@ export function AdminDashboard() {
     triggerToast('Reset Mission HUD to default Kali Linux configurations.');
   };
 
-  // Login Screen if not authenticated
+  // Sign in screen when not authenticated
   if (!isAuthenticated) {
     return (
-      <div className="admin-login-stage">
+      <div className="admin-login-stage" data-theme={theme}>
         <div className="admin-login-card">
           <div className="admin-login-header">
-            <div className="admin-login-logo">z.</div>
-            <h2>ZakOS Admin Authenticator</h2>
-            <p>Enter your master security credentials to access the portfolio studio.</p>
+            <h2>Admin</h2>
+            <p>Sign in to edit the site, the project list and the inbox.</p>
           </div>
 
           <form className="admin-login-form" onSubmit={handleLogin}>
             {loginError && (
-              <div className="admin-login-error">
-                <span>⚠️</span>
+              <div className="admin-login-error" role="alert">
                 <span>{loginError}</span>
               </div>
             )}
 
             <div className="admin-field">
-              <label>Username</label>
+              <label htmlFor="admin-username">Username</label>
               <input
+                id="admin-username"
                 type="text"
                 className="admin-input"
                 value={usernameInput}
                 onChange={e => setUsernameInput(e.target.value)}
-                placeholder="Enter admin username"
                 autoComplete="username"
                 required
               />
             </div>
 
             <div className="admin-field">
-              <label>Password</label>
+              <label htmlFor="admin-password">Password</label>
               <div style={{ position: 'relative' }}>
                 <input
+                  id="admin-password"
                   type={showPassword ? 'text' : 'password'}
                   className="admin-input"
-                  style={{ width: '100%', paddingRight: 40 }}
+                  style={{ paddingRight: 72 }}
                   value={passwordInput}
                   onChange={e => setPasswordInput(e.target.value)}
-                  placeholder="Enter admin password"
                   autoComplete="current-password"
                   required
                 />
                 <button
                   type="button"
+                  className="admin-password-toggle"
                   onClick={() => setShowPassword(!showPassword)}
-                  style={{
-                    position: 'absolute',
-                    right: 12,
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    background: 'none',
-                    border: 0,
-                    color: '#94a3b8',
-                    cursor: 'pointer',
-                    fontSize: 14
-                  }}
-                  aria-label="Toggle password visibility"
+                  aria-pressed={showPassword}
                 >
-                  {showPassword ? '👁️' : '🔒'}
+                  {showPassword ? 'Hide' : 'Show'}
                 </button>
               </div>
             </div>
 
-            <button
-              type="submit"
-              className="admin-login-submit"
-              disabled={loggingIn}
-            >
-              {loggingIn ? 'Authenticating…' : 'Unlock Admin Workstation ⇥'}
+            <button type="submit" className="admin-login-submit" disabled={loggingIn}>
+              {loggingIn ? 'Signing in…' : 'Sign in'}
             </button>
           </form>
 
           <div className="admin-login-footer">
-            <span>Portfolio OS security partition</span>
-            <a href="/">← Return to Public System</a>
+            <span>Five wrong attempts lock sign-in for 15 minutes.</span>
+            <a href={siteUrl}>Back to the site</a>
           </div>
         </div>
       </div>
@@ -1008,157 +1012,100 @@ export function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="admin-portal" style={{ justifyContent: 'center', alignItems: 'center' }}>
-        <div style={{ textAlign: 'center' }}>
-          <div className="admin-logo-monogram" style={{ margin: '0 auto 16px' }}>z.</div>
-          <h2>Loading ZakOS Admin Studio…</h2>
-        </div>
+      <div className="admin-portal" data-theme={theme} style={{ justifyContent: 'center', alignItems: 'center' }}>
+        <p>Loading the admin…</p>
       </div>
     );
   }
 
   if (!data) {
     return (
-      <div className="admin-portal" style={{ justifyContent: 'center', alignItems: 'center' }}>
-        <p>Failed to connect to ZakOS server.</p>
+      <div className="admin-portal" data-theme={theme} style={{ justifyContent: 'center', alignItems: 'center' }}>
+        <p>Could not reach the server. Reload the page to try again.</p>
       </div>
     );
   }
 
   const currentTabProjects = data.projects.filter(p => p.country === selectedProjectTab);
 
+  const navGroups: { title: string; items: { id: AdminSection; label: string; count?: number }[] }[] = [
+    { title: 'Site', items: [
+      { id: 'tabs', label: 'Tabs & disciplines', count: data.tabs.length },
+      { id: 'projects', label: 'Projects', count: data.projects.length },
+      { id: 'icons', label: 'App icons' },
+      { id: 'appearance', label: 'Themes & profile' },
+      { id: 'widgets', label: 'Desktop widgets' }
+    ] },
+    { title: 'Evidence', items: [
+      { id: 'missionHud', label: 'Kali workstation & HUD' },
+      { id: 'recruiterFastPass', label: 'Recruiter fast-pass' },
+      { id: 'pentestReports', label: 'Pentest audits' },
+      { id: 'socRules', label: 'SOC threat hunting' },
+      { id: 'mastersResearch', label: 'Master’s research' },
+      { id: 'netHunter', label: 'NetHunter deck' }
+    ] },
+    { title: 'Messages', items: [
+      { id: 'inbox', label: 'Inbox', count: messages.length }
+    ] }
+  ];
+  const goTo = (id: AdminSection) => { setActiveSection(id); setNavOpen(false); };
+  const secondaryActions = (
+    <>
+      <a href={siteUrl} className="admin-site-link" target="_blank" rel="noreferrer noopener">Preview site</a>
+      <span className="admin-theme-toggle" role="group" aria-label="Theme">
+        <button type="button" aria-pressed={theme === 'dark'} onClick={() => setTheme('dark')}>Dark</button>
+        <span aria-hidden="true">/</span>
+        <button type="button" aria-pressed={theme === 'light'} onClick={() => setTheme('light')}>Light</button>
+      </span>
+      <button type="button" className="admin-link-btn" onClick={handleLogout} title="Sign out and lock the admin">Lock</button>
+    </>
+  );
+
   return (
-    <div className="admin-portal">
-      {/* Top Navigation */}
+    <div className="admin-portal" data-theme={theme}>
       <header className="admin-header">
         <div className="admin-brand">
-          <div className="admin-logo-monogram">z.</div>
-          <div className="admin-title-group">
-            <h1>
-              ZakOS Admin Studio
-              <span className="admin-badge">LIVE CMS</span>
-            </h1>
-          </div>
+          <span className="admin-brand-name">Zakarya Oukil</span>
+          <span className="admin-brand-tag">Admin</span>
         </div>
 
         <div className="admin-header-actions">
-          <a href="/" className="admin-site-link">
-            <span>←</span> View Portfolio
-          </a>
+          <div className="admin-header-links">{secondaryActions}</div>
           <button
-            className="admin-save-btn"
-            onClick={handleSaveData}
-            disabled={saving}
+            type="button"
+            className="admin-link-btn admin-nav-toggle"
+            aria-expanded={navOpen}
+            aria-controls="admin-sidebar"
+            onClick={() => setNavOpen(open => !open)}
           >
-            {saving ? 'Saving to Server…' : '💾 Save & Publish'}
+            {navOpen ? 'Close' : 'Menu'}
           </button>
-          <button
-            className="admin-site-link"
-            onClick={handleLogout}
-            style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#f87171', borderColor: 'rgba(239, 68, 68, 0.25)', cursor: 'pointer' }}
-            title="Log out and lock Admin Studio"
-          >
-            🔒 Lock
+          <button className="admin-save-btn" onClick={handleSaveData} disabled={saving}>
+            {saving ? 'Publishing…' : 'Save & publish'}
           </button>
         </div>
       </header>
 
-      {/* Main Container */}
-      <div className="admin-publish-status" role="status">{saveStatus || 'Edits autosave as a private browser draft. Save & Publish updates the portfolio.'}{storageWarning && <strong>{storageWarning}</strong>}</div>
+      <div className="admin-publish-status" role="status">{saveStatus || 'Edits autosave as a private draft in this browser. Save & publish updates the site.'}{storageWarning && <strong>{storageWarning}</strong>}</div>
       <div className="admin-body">
-        {/* Sidebar */}
-        <aside className="admin-sidebar">
-          <button
-            className={`admin-nav-item ${activeSection === 'tabs' ? 'active' : ''}`}
-            onClick={() => setActiveSection('tabs')}
-          >
-            <span>📑</span> Tabs & Disciplines
-            <span className="admin-nav-badge">{data.tabs.length}</span>
-          </button>
-
-          <button
-            className={`admin-nav-item ${activeSection === 'projects' ? 'active' : ''}`}
-            onClick={() => setActiveSection('projects')}
-          >
-            <span>💻</span> Projects Manager
-            <span className="admin-nav-badge">{data.projects.length}</span>
-          </button>
-
-          <button
-            className={`admin-nav-item ${activeSection === 'icons' ? 'active' : ''}`}
-            onClick={() => setActiveSection('icons')}
-          >
-            <span>📱</span> App Icons (Per OS)
-          </button>
-
-          <button
-            className={`admin-nav-item ${activeSection === 'appearance' ? 'active' : ''}`}
-            onClick={() => setActiveSection('appearance')}
-          >
-            <span>🎨</span> Themes & Profile
-          </button>
-
-          <button
-            className={`admin-nav-item ${activeSection === 'widgets' ? 'active' : ''}`}
-            onClick={() => setActiveSection('widgets')}
-          >
-            <span>🎛️</span> Desktop Widgets
-            <span className="admin-nav-badge" style={{ background: '#10b981', color: '#fff' }}>Live</span>
-          </button>
-
-          <button
-            className={`admin-nav-item ${activeSection === 'missionHud' ? 'active' : ''}`}
-            onClick={() => setActiveSection('missionHud')}
-          >
-            <span>🐉</span> Kali Workstation & HUD
-            <span className="admin-nav-badge" style={{ background: '#0284c7', color: '#fff' }}>Kali</span>
-          </button>
-
-          <button className={`admin-nav-item ${activeSection === 'recruiterFastPass' ? 'active' : ''}`} onClick={() => setActiveSection('recruiterFastPass')}><span>⚡</span> Recruiter Fast-Pass</button>
-
-          <button
-            className={`admin-nav-item ${activeSection === 'pentestReports' ? 'active' : ''}`}
-            onClick={() => setActiveSection('pentestReports')}
-          >
-            <span>🎯</span> Pentest Audits CMS
-            <span className="admin-nav-badge" style={{ background: '#ef4444', color: '#fff' }}>Red</span>
-          </button>
-
-          <button
-            className={`admin-nav-item ${activeSection === 'socRules' ? 'active' : ''}`}
-            onClick={() => setActiveSection('socRules')}
-          >
-            <span>🛡️</span> SOC Threat Hunting
-            <span className="admin-nav-badge" style={{ background: '#10b981', color: '#fff' }}>Blue</span>
-          </button>
-
-          <button
-            className={`admin-nav-item ${activeSection === 'mastersResearch' ? 'active' : ''}`}
-            onClick={() => setActiveSection('mastersResearch')}
-          >
-            <span>🎓</span> Master's Research Hub
-            <span className="admin-nav-badge" style={{ background: '#8b5cf6', color: '#fff' }}>Thesis</span>
-          </button>
-
-          <button
-            className={`admin-nav-item ${activeSection === 'netHunter' ? 'active' : ''}`}
-            onClick={() => setActiveSection('netHunter')}
-          >
-            <span>📱</span> NetHunter Mobile Deck
-            <span className="admin-nav-badge" style={{ background: '#06b6d4', color: '#fff' }}>Mobile</span>
-          </button>
-
-          <button
-            className={`admin-nav-item ${activeSection === 'inbox' ? 'active' : ''}`}
-            onClick={() => setActiveSection('inbox')}
-          >
-            <span>📬</span> Inquiries Inbox
-            {messages.length > 0 && (
-              <span className="admin-nav-badge" style={{ background: '#0284c7', color: '#fff' }}>
-                {messages.length}
-              </span>
-            )}
-          </button>
+        <aside id="admin-sidebar" className={`admin-sidebar${navOpen ? ' open' : ''}`} aria-label="Sections">
+          {navGroups.map(group => (
+            <React.Fragment key={group.title}>
+              <div className="admin-nav-group">{group.title}</div>
+              {group.items.map(item => (
+                <button
+                  key={item.id}
+                  className={`admin-nav-item ${activeSection === item.id ? 'active' : ''}`}
+                  aria-current={activeSection === item.id ? 'page' : undefined}
+                  onClick={() => goTo(item.id)}
+                >
+                  {item.label}
+                  {item.count ? <span className="admin-nav-badge">{item.count}</span> : null}
+                </button>
+              ))}
+            </React.Fragment>
+          ))}
+          <div className="admin-nav-foot">{secondaryActions}</div>
         </aside>
 
         {/* Content Area */}
@@ -1286,7 +1233,7 @@ export function AdminDashboard() {
 
               {currentTabProjects.length === 0 ? (
                 <div className="admin-card" style={{ textAlign: 'center', padding: '40px 20px' }}>
-                  <p style={{ color: '#94a3b8' }}>No projects yet in "{selectedProjectTab}".</p>
+                  <p style={{ color: 'var(--a-dim)' }}>No projects yet in "{selectedProjectTab}".</p>
                   <button
                     className="admin-primary-btn"
                     style={{ marginTop: 14 }}
@@ -1302,7 +1249,7 @@ export function AdminDashboard() {
                       <div className="admin-project-title-preview"><button className="admin-secondary-btn" aria-label={`Move ${proj.title} up`} disabled={pIdx === 0} onClick={() => { const items = [...data.projects]; const a = items.findIndex(p => p.id === proj.id); const b = items.findIndex(p => p.id === currentTabProjects[pIdx - 1].id); [items[a], items[b]] = [items[b], items[a]]; setData({ ...data, projects: items }); }}>↑</button><button className="admin-secondary-btn" aria-label={`Move ${proj.title} down`} disabled={pIdx === currentTabProjects.length - 1} onClick={() => { const items = [...data.projects]; const a = items.findIndex(p => p.id === proj.id); const b = items.findIndex(p => p.id === currentTabProjects[pIdx + 1].id); [items[a], items[b]] = [items[b], items[a]]; setData({ ...data, projects: items }); }}>↓</button>
                         <span className="admin-project-num">#{pIdx + 1}</span>
                         <strong style={{ fontSize: 16 }}>{proj.title || 'Untitled Project'}</strong>
-                        <span style={{ color: '#94a3b8', fontSize: 12 }}>— {proj.subtitle}</span>
+                        <span style={{ color: 'var(--a-dim)', fontSize: 12 }}>{proj.subtitle}</span>
                       </div>
                       <button
                         className="admin-danger-btn"
@@ -1422,8 +1369,7 @@ export function AdminDashboard() {
                             />
                             <div>
                               <label className="admin-file-upload-btn">
-                                <span>📁</span>
-                                {uploadingImage === proj.id ? 'Uploading…' : 'Upload Image File'}
+                                {uploadingImage === proj.id ? 'Uploading…' : 'Upload image File'}
                                 <input
                                   type="file"
                                   accept="image/*"
@@ -1438,7 +1384,7 @@ export function AdminDashboard() {
                                 />
                               </label>
                             </div>
-                            <small style={{ color: '#64748b' }}>
+                            <small style={{ color: 'var(--a-faint)' }}>
                               Paste any direct image URL or upload a JPG/PNG/SVG directly from your device.
                             </small>
                           </div>
@@ -1463,16 +1409,16 @@ export function AdminDashboard() {
                   className="admin-primary-btn"
                   onClick={() => handleCopyIconsToAll(selectedIconOS)}
                 >
-                  <span>📋</span> Copy {selectedIconOS.toUpperCase()} to All OS
+                  Copy {selectedIconOS.toUpperCase()} to All OS
                 </button>
               </div>
 
               {/* OS Selector Tabs */}
               <div style={{ display: 'flex', gap: 10, marginBottom: 26, flexWrap: 'wrap' }}>
                 {[
-                  { id: 'macos', label: '🖥️ macOS 27 (Liquid Glass Desktop Squircle)' },
-                  { id: 'ios', label: '📱 iPhone 16 Pro Max (iOS 18 Squircle)' },
-                  { id: 'android', label: '🤖 Android 15 (Material You Adaptive Circle)' }
+                  { id: 'macos', label: 'macOS 27 (Liquid Glass Desktop Squircle)' },
+                  { id: 'ios', label: 'iPhone 16 Pro Max (iOS 18 Squircle)' },
+                  { id: 'android', label: 'Android 15 (Material You Adaptive Circle)' }
                 ].map(osTab => (
                   <button
                     key={osTab.id}
@@ -1497,7 +1443,7 @@ export function AdminDashboard() {
                       <div className="admin-icon-top">
                         <div className="admin-icon-title">
                           <h4>{app.name}</h4>
-                          <span style={{ fontSize: 11, color: '#64748b' }}>({app.id})</span>
+                          <span style={{ fontSize: 11, color: 'var(--a-faint)' }}>({app.id})</span>
                         </div>
                         <span className={isCustom ? 'admin-icon-badge-custom' : 'admin-icon-badge-default'}>
                           {isCustom ? 'Custom Image Active' : 'Default Authentic SVG'}
@@ -1513,7 +1459,7 @@ export function AdminDashboard() {
                         />
                       </div>
 
-                      <p style={{ fontSize: 11, color: '#94a3b8', margin: 0, lineHeight: 1.5 }}>
+                      <p style={{ fontSize: 11, color: 'var(--a-dim)', margin: 0, lineHeight: 1.5 }}>
                         {app.desc}
                       </p>
 
@@ -1529,7 +1475,6 @@ export function AdminDashboard() {
 
                       <div className="admin-icon-actions">
                         <label className="admin-file-upload-btn" style={{ margin: 0 }}>
-                          <span>📁</span>
                           {uploadingImage === contextKey ? 'Uploading…' : 'Upload Icon File'}
                           <input
                             type="file"
@@ -1574,7 +1519,7 @@ export function AdminDashboard() {
               {/* GitHub Activity Integration */}
               <div className="admin-card">
                 <div className="admin-card-header">
-                  <h3>🐙 GitHub Activity Integration</h3>
+                  <h3>GitHub Activity Integration</h3>
                 </div>
                 <div className="admin-form-grid">
                   <div className="admin-field full-width">
@@ -1593,7 +1538,7 @@ export function AdminDashboard() {
                       }
                       placeholder="e.g. Zakarya-Oukil"
                     />
-                    <small style={{ color: '#94a3b8', marginTop: 4 }}>
+                    <small style={{ color: 'var(--a-dim)', marginTop: 4 }}>
                       Public activity and commit telemetry from this profile automatically render in the macOS Desktop GitHub widget for all visitors.
                     </small>
                   </div>
@@ -1602,7 +1547,7 @@ export function AdminDashboard() {
 
               <div className="admin-card">
                 <div className="admin-card-header">
-                  <h3>🎨 System Appearance Defaults</h3>
+                  <h3>System Appearance Defaults</h3>
                 </div>
                 <div className="admin-form-grid">
                   <div className="admin-field">
@@ -1636,7 +1581,7 @@ export function AdminDashboard() {
 
               <div className="admin-card">
                 <div className="admin-card-header">
-                  <h3>👤 Developer Identity & Bio</h3>
+                  <h3>Developer Identity & Bio</h3>
                 </div>
                 <div className="admin-form-grid">
                   <div className="admin-field">
@@ -1692,8 +1637,8 @@ export function AdminDashboard() {
               {/* 1. VISIBILITY SWITCHBOARD */}
               <div className="admin-card">
                 <div className="admin-card-header">
-                  <h3>🎚️ Widget Visibility Switchboard</h3>
-                  <span style={{ fontSize: 11, color: '#94a3b8' }}>Toggle widgets visible on the public desktop</span>
+                  <h3>Widget Visibility Switchboard</h3>
+                  <span style={{ fontSize: 11, color: 'var(--a-dim)' }}>Toggle widgets visible on the public desktop</span>
                 </div>
                 <div className="admin-widgets-grid">
                   {[
@@ -1729,8 +1674,8 @@ export function AdminDashboard() {
               {/* 2. EXECUTIVE ABOUT ME WIDGET EDITOR */}
               <div className="admin-card">
                 <div className="admin-card-header">
-                  <h3>👤 Executive About Me Card</h3>
-                  <span style={{ fontSize: 11, color: '#10b981' }}>Top conversion widget for recruiters</span>
+                  <h3>Executive About Me Card</h3>
+                  <span style={{ fontSize: 12, color: 'var(--a-dim)' }}>Top conversion widget for recruiters</span>
                 </div>
                 <div className="admin-form-grid">
                   <div className="admin-field" style={{ gridColumn: 'span 2' }}>
@@ -1738,9 +1683,9 @@ export function AdminDashboard() {
                     <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
                       <div className="about-avatar-preview">
                         {data.config.widgets?.about?.avatar ? (
-                          <img src={data.config.widgets.about.avatar} alt="Avatar" style={{ width: 56, height: 56, borderRadius: '50%', objectFit: 'cover', border: '2px solid #10b981' }} />
+                          <img src={data.config.widgets.about.avatar} alt="Avatar" style={{ width: 56, height: 56, borderRadius: '50%', objectFit: 'cover', border: '1px solid var(--a-line-strong)' }} />
                         ) : (
-                          <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'linear-gradient(135deg, #10b981, #047857)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: 18 }}>ZO</div>
+                          <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'var(--a-raised)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--a-text)', fontWeight: 700, fontSize: 18 }}>ZO</div>
                         )}
                       </div>
                       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -1753,7 +1698,7 @@ export function AdminDashboard() {
                         />
                         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                           <label className="admin-upload-btn" style={{ fontSize: 11, padding: '4px 10px', cursor: 'pointer' }}>
-                            <span>📁 Upload Image</span>
+                            <span>Upload image</span>
                             <input
                               type="file"
                               accept="image/*"
@@ -1822,9 +1767,9 @@ export function AdminDashboard() {
                       value={data.config.widgets?.about?.statusType || 'available'}
                       onChange={e => handleUpdateAbout('statusType', e.target.value as any)}
                     >
-                      <option value="available">🟢 Available (Green Radar Glow)</option>
-                      <option value="open">🔵 Open to Offers / Contracts (Cyan Glow)</option>
-                      <option value="busy">🟡 In High Demand / Limited (Amber Glow)</option>
+                      <option value="available">Available (Green Radar Glow)</option>
+                      <option value="open">Open to Offers / Contracts (Cyan Glow)</option>
+                      <option value="busy">In High Demand / Limited (Amber Glow)</option>
                     </select>
                   </div>
 
@@ -1875,8 +1820,8 @@ export function AdminDashboard() {
               <div className="admin-card">
                 <div className="admin-card-header">
                   <div>
-                    <h3>🏆 CTF & Certifications Bento</h3>
-                    <p style={{ margin: 0, fontSize: 11, color: '#94a3b8' }}>Verifiable security credentials and competition ranks displayed on the desktop</p>
+                    <h3>CTF & Certifications Bento</h3>
+                    <p style={{ margin: 0, fontSize: 11, color: 'var(--a-dim)' }}>Verifiable security credentials and competition ranks displayed on the desktop</p>
                   </div>
                   <button type="button" className="admin-primary-btn" onClick={handleAddCert} style={{ padding: '6px 12px', fontSize: 12 }}>
                     + Add Credential
@@ -1885,12 +1830,12 @@ export function AdminDashboard() {
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                   {(data.config.widgets?.certs || []).map((cert, index) => (
-                    <div key={cert.id || index} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, padding: 14 }}>
+                    <div key={cert.id || index} style={{ background: 'var(--a-raised)', border: '1px solid var(--a-line)', borderRadius: 0, padding: 14 }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                           <span style={{ width: 10, height: 10, borderRadius: '50%', background: cert.accent || '#38bdf8' }} />
-                          <strong style={{ fontSize: 13, color: '#f8fafc' }}>{cert.title || 'Untitled Credential'}</strong>
-                          <span style={{ fontSize: 9.5, padding: '1px 6px', borderRadius: 4, background: 'rgba(255,255,255,0.08)', color: cert.accent || '#38bdf8', border: `1px solid ${cert.accent || '#38bdf8'}` }}>
+                          <strong style={{ fontSize: 13, color: 'var(--a-text)' }}>{cert.title || 'Untitled Credential'}</strong>
+                          <span style={{ fontSize: 9.5, padding: '1px 6px', borderRadius: 4, background: 'var(--a-raised)', color: 'var(--a-text)', border: '1px solid var(--a-line-strong)' }}>
                             {cert.badge}
                           </span>
                         </div>
@@ -1982,8 +1927,8 @@ export function AdminDashboard() {
               {/* 4. HARDENED NEOFETCH SPECS EDITOR */}
               <div className="admin-card">
                 <div className="admin-card-header">
-                  <h3>🖥️ Hardened Neofetch / Systems Specs</h3>
-                  <span style={{ fontSize: 11, color: '#38bdf8' }}>Terminal-inspired liquid glass bento card</span>
+                  <h3>Hardened Neofetch / Systems Specs</h3>
+                  <span style={{ fontSize: 12, color: 'var(--a-dim)' }}>Terminal-inspired liquid glass bento card</span>
                 </div>
                 <div className="admin-form-grid">
                   <div className="admin-field">
@@ -2055,7 +2000,7 @@ export function AdminDashboard() {
             <div>
               <div className="admin-view-header">
                 <div>
-                  <h2>🐉 Kali Workstation &amp; Mission Command HUD</h2>
+                  <h2>Kali Workstation &amp; Mission Command HUD</h2>
                   <p>Full control over the center interactive whoami HUD: identity, live Zsh prompt, credentials badges, and quick-action launcher buttons.</p>
                 </div>
                 <button
@@ -2064,7 +2009,7 @@ export function AdminDashboard() {
                   onClick={handleResetMissionHud}
                   style={{ fontSize: 12 }}
                 >
-                  🔄 Reset to Kali Defaults
+                  Reset to Kali defaults
                 </button>
               </div>
 
@@ -2074,7 +2019,7 @@ export function AdminDashboard() {
                   <h3>
                     <KaliDragonIcon size={20} color="#38bdf8" /> Operator Identity &amp; Hologram
                   </h3>
-                  <span style={{ fontSize: 11, color: '#38bdf8' }}>Center Mission HUD Hero Banner</span>
+                  <span style={{ fontSize: 12, color: 'var(--a-dim)' }}>Center Mission HUD Hero Banner</span>
                 </div>
                 <div className="admin-form-grid">
                   <div className="admin-field">
@@ -2098,7 +2043,7 @@ export function AdminDashboard() {
                         <span className="switch-handle" />
                         <span className="switch-label">{getHudConfig().showDragon !== false ? 'VISIBLE' : 'HIDDEN'}</span>
                       </button>
-                      <span style={{ fontSize: 11, color: '#94a3b8' }}>
+                      <span style={{ fontSize: 11, color: 'var(--a-dim)' }}>
                         Display Kali dragon cyber sigil next to operator name
                       </span>
                     </div>
@@ -2119,8 +2064,8 @@ export function AdminDashboard() {
               {/* CARD: TACTICAL TELEMETRY STATUS RIBBON */}
               <div className="admin-card">
                 <div className="admin-card-header">
-                  <h3>🛰️ Tactical Telemetry Ribbon</h3>
-                  <span style={{ fontSize: 11, color: '#10b981' }}>Status bar on top of the Mission HUD</span>
+                  <h3>Tactical Telemetry Ribbon</h3>
+                  <span style={{ fontSize: 12, color: 'var(--a-dim)' }}>Status bar on top of the Mission HUD</span>
                 </div>
                 <div className="admin-form-grid">
                   <div className="admin-field">
@@ -2169,8 +2114,8 @@ export function AdminDashboard() {
               {/* CARD 2: INTERACTIVE ZSH PROMPT LEAD & COMMAND */}
               <div className="admin-card">
                 <div className="admin-card-header">
-                  <h3>💻 Kali Zsh Terminal Header &amp; Verbose Output</h3>
-                  <span style={{ fontSize: 11, color: '#10b981' }}>Live interactive terminal shell prompt &amp; whoami output</span>
+                  <h3>Kali Zsh Terminal Header &amp; Verbose Output</h3>
+                  <span style={{ fontSize: 12, color: 'var(--a-dim)' }}>Live interactive terminal shell prompt &amp; whoami output</span>
                 </div>
                 <div className="admin-form-grid">
                   <div className="admin-field">
@@ -2205,7 +2150,7 @@ export function AdminDashboard() {
                       onChange={e => handleUpdateHudTerminalOutput(e.target.value)}
                       placeholder="uid=1000(zakarya) gid=1000(kali)&#10;[+] OPERATOR: Zakarya Oukil"
                     />
-                    <span style={{ fontSize: 11, color: '#94a3b8' }}>Lines displayed inside the live Zsh terminal execution container.</span>
+                    <span style={{ fontSize: 11, color: 'var(--a-dim)' }}>Lines displayed inside the live Zsh terminal execution container.</span>
                   </div>
                 </div>
               </div>
@@ -2213,8 +2158,8 @@ export function AdminDashboard() {
               {/* CARD: MASTER'S RESEARCH & LABS SPOTLIGHT */}
               <div className="admin-card">
                 <div className="admin-card-header">
-                  <h3>🔬 Master's Thesis &amp; Advanced Research (Tab 03)</h3>
-                  <span style={{ fontSize: 11, color: '#a855f7' }}>Specialized academic &amp; lab spotlight</span>
+                  <h3>Master's Thesis &amp; Advanced Research (Tab 03)</h3>
+                  <span style={{ fontSize: 12, color: 'var(--a-dim)' }}>Specialized academic &amp; lab spotlight</span>
                 </div>
                 <div className="admin-form-grid">
                   <div className="admin-field full-width">
@@ -2252,18 +2197,20 @@ export function AdminDashboard() {
                     <label>Key Research &amp; Lab Metrics</label>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 10 }}>
                       {(getHudConfig().research?.metrics || []).map((m, idx) => (
-                        <div key={idx} style={{ background: 'rgba(255, 255, 255, 0.03)', padding: 10, borderRadius: 8, border: '1px solid rgba(255, 255, 255, 0.06)' }}>
-                          <label style={{ fontSize: 10, color: '#94a3b8', textTransform: 'uppercase' }}>Metric {idx + 1} Label</label>
+                        <div key={idx} style={{ background: 'var(--a-raised)', padding: 10, borderRadius: 0, border: '1px solid var(--a-line)' }}>
+                          <label style={{ fontSize: 10, color: 'var(--a-dim)', textTransform: 'uppercase' }}>Metric {idx + 1} Label</label>
                           <input
                             className="admin-input"
                             style={{ marginBottom: 6, fontSize: 12 }}
+                            aria-label={`Metric ${idx + 1} label`}
                             value={m.label}
                             onChange={e => handleUpdateHudResearchMetric(idx, 'label', e.target.value)}
                           />
-                          <label style={{ fontSize: 10, color: '#94a3b8', textTransform: 'uppercase' }}>Metric {idx + 1} Value</label>
+                          <label style={{ fontSize: 10, color: 'var(--a-dim)', textTransform: 'uppercase' }}>Metric {idx + 1} Value</label>
                           <input
                             className="admin-input"
-                            style={{ fontSize: 13, fontWeight: 700, color: '#38bdf8' }}
+                            style={{ fontSize: 13, fontWeight: 700 }}
+                            aria-label={`Metric ${idx + 1} value`}
                             value={m.value}
                             onChange={e => handleUpdateHudResearchMetric(idx, 'value', e.target.value)}
                           />
@@ -2277,7 +2224,7 @@ export function AdminDashboard() {
               {/* CARD 3: CREDENTIAL & SPECIALIZATION BADGES */}
               <div className="admin-card">
                 <div className="admin-card-header">
-                  <h3>🛡️ Credential &amp; Specialization Badges</h3>
+                  <h3>Credential &amp; Specialization Badges</h3>
                   <button
                     type="button"
                     className="admin-primary-btn"
@@ -2287,7 +2234,7 @@ export function AdminDashboard() {
                     <span>+</span> Add Badge
                   </button>
                 </div>
-                <p style={{ fontSize: 12, color: '#94a3b8', marginBottom: 16 }}>
+                <p style={{ fontSize: 12, color: 'var(--a-dim)', marginBottom: 16 }}>
                   Highlighted badges rendered inside the HUD with corresponding status glows (Green = Certified, Amber = In Progress, Cyan = Academic Degree).
                 </p>
 
@@ -2300,10 +2247,10 @@ export function AdminDashboard() {
                         gridTemplateColumns: '1fr 180px 40px',
                         gap: 12,
                         alignItems: 'center',
-                        background: 'rgba(255, 255, 255, 0.03)',
+                        background: 'var(--a-raised)',
                         padding: '10px 14px',
                         borderRadius: 8,
-                        border: '1px solid rgba(255, 255, 255, 0.06)'
+                        border: '1px solid var(--a-line)'
                       }}
                     >
                       <input
@@ -2314,12 +2261,13 @@ export function AdminDashboard() {
                       />
                       <select
                         className="admin-select"
+                        aria-label="Badge type"
                         value={b.type}
                         onChange={e => handleUpdateHudBadge(b.id, 'type', e.target.value as any)}
                       >
-                        <option value="certified">🟢 Certified (Emerald)</option>
-                        <option value="in-progress">🟡 In Progress (Amber)</option>
-                        <option value="degree">🔵 Academic (Cyan)</option>
+                        <option value="certified">Certified (Emerald)</option>
+                        <option value="in-progress">In Progress (Amber)</option>
+                        <option value="degree">Academic (Cyan)</option>
                       </select>
                       <button
                         type="button"
@@ -2328,7 +2276,7 @@ export function AdminDashboard() {
                         onClick={() => handleRemoveHudBadge(b.id)}
                         title="Delete Badge"
                       >
-                        ✕
+                        Remove
                       </button>
                     </div>
                   ))}
@@ -2338,7 +2286,7 @@ export function AdminDashboard() {
               {/* CARD 4: QUICK ACTION LAUNCH BUTTONS */}
               <div className="admin-card">
                 <div className="admin-card-header">
-                  <h3>⚡ Quick Action Launcher Buttons</h3>
+                  <h3>Quick Action Launcher Buttons</h3>
                   <button
                     type="button"
                     className="admin-primary-btn"
@@ -2348,7 +2296,7 @@ export function AdminDashboard() {
                     <span>+</span> Add Action
                   </button>
                 </div>
-                <p style={{ fontSize: 12, color: '#94a3b8', marginBottom: 16 }}>
+                <p style={{ fontSize: 12, color: 'var(--a-dim)', marginBottom: 16 }}>
                   Rapid conversion launch buttons on the bottom of the HUD triggering applications or workflows directly.
                 </p>
 
@@ -2361,10 +2309,10 @@ export function AdminDashboard() {
                         gridTemplateColumns: '60px 1fr 180px 40px',
                         gap: 12,
                         alignItems: 'center',
-                        background: 'rgba(255, 255, 255, 0.03)',
+                        background: 'var(--a-raised)',
                         padding: '10px 14px',
                         borderRadius: 8,
-                        border: '1px solid rgba(255, 255, 255, 0.06)'
+                        border: '1px solid var(--a-line)'
                       }}
                     >
                       <input
@@ -2383,16 +2331,17 @@ export function AdminDashboard() {
                       />
                       <select
                         className="admin-select"
+                        aria-label="Opens app"
                         value={a.appId}
                         onChange={e => handleUpdateHudAction(a.id, 'appId', e.target.value)}
                       >
-                        <option value="quickstart">⚡ Recruiter Brief (60s)</option>
-                        <option value="defense">🛡️ SOC Incident Simulator</option>
-                        <option value="terminal">💻 Kali Zsh Terminal</option>
-                        <option value="about">📄 Dossier &amp; Resume (CV)</option>
-                        <option value="projects">📂 Projects &amp; Pentests</option>
-                        <option value="settings">⚙️ Settings &amp; OS Switch</option>
-                        <option value="mail">✉️ Direct Inquiry Mail</option>
+                        <option value="quickstart">Recruiter Brief (60s)</option>
+                        <option value="defense">SOC Incident Simulator</option>
+                        <option value="terminal">Kali Zsh Terminal</option>
+                        <option value="about">Dossier &amp; Resume (CV)</option>
+                        <option value="projects">Projects &amp; Pentests</option>
+                        <option value="settings">Settings &amp; OS Switch</option>
+                        <option value="mail">Direct Inquiry Mail</option>
                       </select>
                       <button
                         type="button"
@@ -2401,7 +2350,7 @@ export function AdminDashboard() {
                         onClick={() => handleRemoveHudAction(a.id)}
                         title="Delete Action"
                       >
-                        ✕
+                        Remove
                       </button>
                     </div>
                   ))}
@@ -2436,7 +2385,7 @@ export function AdminDashboard() {
 
               {messages.length === 0 ? (
                 <div className="admin-card" style={{ textAlign: 'center', padding: '40px 20px' }}>
-                  <p style={{ color: '#94a3b8' }}>Your inbox is currently clear. No incoming inquiries.</p>
+                  <p style={{ color: 'var(--a-dim)' }}>Your inbox is currently clear. No incoming inquiries.</p>
                 </div>
               ) : (
                 messages.map(msg => (
@@ -2466,7 +2415,7 @@ export function AdminDashboard() {
                         className="admin-primary-btn"
                         style={{ textDecoration: 'none' }}
                       >
-                        ✉️ Reply via Email
+                        Reply by email
                       </a>
                       <button
                         className="admin-danger-btn"
